@@ -1,0 +1,12 @@
+.env
+.env.*
+apps/**/.env
+apps/**/.env.*
+node_modules
+apps/**/node_modules
+.next
+apps/**/.next
+dist
+coverage
+.codex-*.log
+.codex-*.png
