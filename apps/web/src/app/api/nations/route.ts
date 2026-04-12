@@ -1,8 +1,4 @@
-import { Role } from "@prisma/client";
 import { canonNations, createNationWikiTemplate } from "@nation-wheel/shared";
-import { getPrisma } from "@/lib/prisma";
-import { withCanonMetadata } from "@/lib/nations";
-import { nationStatsSchema } from "@/lib/validation";
 
 export async function GET() {
   if (!process.env.DATABASE_URL) {
@@ -16,6 +12,10 @@ export async function GET() {
   }
 
   try {
+    const [{ getPrisma }, { withCanonMetadata }] = await Promise.all([
+      import("@/lib/prisma"),
+      import("@/lib/nations"),
+    ]);
     const nations = await getPrisma().nation.findMany({
       orderBy: { name: "asc" },
       include: {
@@ -39,7 +39,13 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const { requireRoleOrBot } = await import("@/lib/permissions");
+    const [{ Role }, { getPrisma }, { requireRoleOrBot }, { nationStatsSchema }] =
+      await Promise.all([
+        import("@prisma/client"),
+        import("@/lib/prisma"),
+        import("@/lib/permissions"),
+        import("@/lib/validation"),
+      ]);
     const user = await requireRoleOrBot(request, [Role.ADMIN]);
     const payload = nationStatsSchema.parse(await request.json());
     const nation = await getPrisma().nation.create({

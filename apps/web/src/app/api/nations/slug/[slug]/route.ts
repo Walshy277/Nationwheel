@@ -1,6 +1,4 @@
 import { canonNations, createNationWikiTemplate } from "@nation-wheel/shared";
-import { getPrisma } from "@/lib/prisma";
-import { withCanonMetadata } from "@/lib/nations";
 
 export async function GET(
   _request: Request,
@@ -28,6 +26,10 @@ export async function GET(
   }
 
   try {
+    const [{ getPrisma }, { withCanonMetadata }] = await Promise.all([
+      import("@/lib/prisma"),
+      import("@/lib/nations"),
+    ]);
     const nation = await getPrisma().nation.findUnique({
       where: { slug },
       include: {
