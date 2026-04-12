@@ -19,7 +19,7 @@ const allowEmailAccountLinking =
   process.env.ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING === "true";
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(getPrisma()),
+  adapter: process.env.DATABASE_URL ? PrismaAdapter(getPrisma()) : undefined,
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
