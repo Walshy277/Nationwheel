@@ -22,6 +22,10 @@ export function withCanonMetadata<T extends NationStats>(nation: T) {
 }
 
 export async function listNationSummaries() {
+  if (!process.env.DATABASE_URL) {
+    return mockNations;
+  }
+
   try {
     const prisma = getPrisma();
     const nations = await prisma.nation.findMany({
@@ -62,6 +66,11 @@ export async function listNationSummaries() {
 }
 
 export async function getNationProfile(slug: string) {
+  if (!process.env.DATABASE_URL) {
+    const nation = getMockNationBySlug(slug);
+    return nation ? { ...nation, wiki: getMockWiki(nation) } : null;
+  }
+
   try {
     const prisma = getPrisma();
     const nation = await prisma.nation.findUnique({

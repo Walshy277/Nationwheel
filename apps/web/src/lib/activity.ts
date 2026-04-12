@@ -13,6 +13,10 @@ export type ActivityFeedItem = {
 };
 
 export async function listActivityFeed(): Promise<ActivityFeedItem[]> {
+  if (!process.env.DATABASE_URL) {
+    return listCanonActivityFeed();
+  }
+
   try {
     const actions = await getPrisma().loreAction.findMany({
       orderBy: { updatedAt: "desc" },
@@ -38,30 +42,34 @@ export async function listActivityFeed(): Promise<ActivityFeedItem[]> {
       timestamp: (action.updates[0]?.createdAt ?? action.updatedAt).toISOString(),
     }));
   } catch {
-    return canonNations.flatMap((nation) => {
-      const notes =
-        nation.statNotes?.map((note, index) => ({
-          id: `${nation.slug}-note-${index}`,
-          nationName: nation.name,
-          nationSlug: nation.slug,
-          title: "Status modifier",
-          detail: note,
-          type: "Current status",
-          status: "Canon",
-        })) ?? [];
-
-      const actions =
-        nation.actions?.map((action, index) => ({
-          id: `${nation.slug}-action-${index}`,
-          nationName: nation.name,
-          nationSlug: nation.slug,
-          title: action.type,
-          detail: action.action,
-          type: action.type,
-          status: "Canon",
-        })) ?? [];
-
-      return [...notes, ...actions];
-    });
+    return listCanonActivityFeed();
   }
+}
+
+function listCanonActivityFeed() {
+  return canonNations.flatMap((nation) => {
+    const notes =
+      nation.statNotes?.map((note, index) => ({
+        id: `${nation.slug}-note-${index}`,
+        nationName: nation.name,
+        nationSlug: nation.slug,
+        title: "Status modifier",
+        detail: note,
+        type: "Current status",
+        status: "Canon",
+      })) ?? [];
+
+    const actions =
+      nation.actions?.map((action, index) => ({
+        id: `${nation.slug}-action-${index}`,
+        nationName: nation.name,
+        nationSlug: nation.slug,
+        title: action.type,
+        detail: action.action,
+        type: action.type,
+        status: "Canon",
+      })) ?? [];
+
+    return [...notes, ...actions];
+  });
 }
