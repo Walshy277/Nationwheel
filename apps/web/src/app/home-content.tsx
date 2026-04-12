@@ -63,7 +63,7 @@ function FeaturedCard({
   );
 }
 
-export async function HomeContent() {
+export async function LandingPage() {
   const nations = await listNationSummaries();
   const nationCount = nations.length;
   const featured = featuredSlots
@@ -103,7 +103,7 @@ export async function HomeContent() {
               Nation Wheel
             </h1>
           </div>
-          <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-300">
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-300">
             Browse profiles, compare canon stats, check rankings, and open the
             season map from one command center.
           </p>
@@ -149,7 +149,7 @@ export async function HomeContent() {
             href="/activity"
             className="text-sm font-semibold text-zinc-400 hover:text-emerald-100"
           >
-            View activity archive
+            Activity archive
           </Link>
         </Panel>
       </section>

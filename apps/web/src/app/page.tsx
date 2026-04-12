@@ -1,5 +1,5 @@
-import { HomeContent } from "./home-content";
+import { LandingPage } from "./home-content";
 
-export default function HomePage() {
-  return <HomeContent />;
+export default function IndexPage() {
+  return <LandingPage />;
 }
