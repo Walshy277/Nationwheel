@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import {
   formatMoney,
-  formatGdpDisplay,
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
@@ -30,16 +29,14 @@ const metricRows = [
   {
     key: "gdp",
     label: "GDP",
-    unit: "nominal USD",
-    iconSrc: "/assets/currency.png",
-    info: "Dollar-prefixed values are direct nominal USD. Bare canon currency values convert at 1 global currency = $1B. K, M, B, and T mean thousand, million, billion, and trillion.",
-    getValue: (nation: NationSummary) => formatGdpDisplay(nation),
+    unit: "normalized dollars",
+    info: "Dollar-prefixed and compact values are treated as total nominal GDP. K, M, B, and T mean thousand, million, billion, and trillion.",
+    getValue: (nation: NationSummary) => formatMoney(getGdpTotal(nation)),
   },
   {
     key: "gdpPerCapita",
     label: "GDP per Capita",
     unit: "dollars per person",
-    iconSrc: "/assets/currency.png",
     info: "Derived by dividing total nominal GDP by population. Unknown means one of those inputs cannot be normalized.",
     getValue: (nation: NationSummary) => formatMoney(getGdpPerCapita(nation)),
   },
@@ -337,15 +334,6 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
                   <th className="px-4 py-4 font-semibold text-zinc-100">
                     <span className="flex items-center gap-2">
                       {row.label}
-                      {"iconSrc" in row && row.iconSrc ? (
-                        <Image
-                          src={row.iconSrc}
-                          alt="Global currency"
-                          width={18}
-                          height={18}
-                          className="h-4 w-4 rounded object-cover"
-                        />
-                      ) : null}
                       {"info" in row && row.info ? (
                         <InfoTooltip label={`${row.label} details`}>
                           {row.info}

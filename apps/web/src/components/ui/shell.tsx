@@ -12,7 +12,7 @@ export function PageShell({
   return (
     <main
       className={cn(
-        "mx-auto grid w-full max-w-7xl gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12",
+        "mx-auto grid w-full max-w-7xl gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12",
         className,
       )}
     >
@@ -31,7 +31,7 @@ export function Panel({
   return (
     <section
       className={cn(
-        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/94 p-5 shadow-xl shadow-black/25 ring-1 ring-white/[0.04] sm:p-6",
+        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-lg shadow-black/20 ring-1 ring-white/[0.04] sm:p-6",
         className,
       )}
     >

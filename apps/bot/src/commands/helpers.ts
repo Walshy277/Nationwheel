@@ -7,7 +7,6 @@ import {
 } from "discord.js";
 import {
   canonNations,
-  formatGdpDisplay,
   formatMoney,
   formatNumber,
   getGdpPerCapita,
@@ -84,7 +83,7 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
     { name: "People", value: nation.people, inline: true },
     {
       name: "GDP",
-      value: `${formatGdpDisplay(nation)}\nConverted: ${formatMoney(gdpTotal)}`,
+      value: formatMoney(gdpTotal),
       inline: true,
     },
     { name: "GDP per Capita", value: formatMoney(gdpPerCapita), inline: true },
@@ -134,11 +133,9 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
     description: `${nation.government}\n${nation.economy}`,
     color: 0x38d6b5,
     fields,
-    thumbnail: {
-      url: usesBobakoin
-        ? assetUrl("/assets/bobakoin_crypto.png")
-        : assetUrl("/assets/currency.png"),
-    },
+    thumbnail: usesBobakoin
+      ? { url: assetUrl("/assets/bobakoin_crypto.png") }
+      : undefined,
     footer: { text: "Nation Wheel profile" },
   };
 }

@@ -1,10 +1,8 @@
 import {
   formatMoney,
-  formatGdpDisplay,
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
-  isGlobalCurrencyGdp,
   getPopulationDensity,
   type NationStats,
 } from "@nation-wheel/shared";
@@ -14,7 +12,6 @@ export function NationStatGrid({ nation }: { nation: NationStats }) {
   const gdpTotal = getGdpTotal(nation);
   const gdpPerCapita = getGdpPerCapita(nation);
   const populationDensity = getPopulationDensity(nation);
-  const usesGlobalCurrency = isGlobalCurrencyGdp(nation);
   const usesBobakoin = nation.economy.toLowerCase().includes("bobakoin");
   const optionalStats = [
     ["GDP per Capita", formatMoney(gdpPerCapita)],
@@ -40,15 +37,9 @@ export function NationStatGrid({ nation }: { nation: NationStats }) {
       <MetricCard label="Government" value={nation.government} />
       <MetricCard
         label="GDP"
-        value={formatGdpDisplay(nation)}
-        unit={
-          usesGlobalCurrency
-            ? `${formatMoney(gdpTotal)} after conversion. 1 global currency = $1B.`
-            : "Total nominal GDP."
-        }
-        info="Dollar-prefixed values are treated as direct nominal USD. Bare canon currency values use the global currency conversion rate of 1 currency = $1B. K, M, B, and T mean thousand, million, billion, and trillion."
-        iconSrc="/assets/currency.png"
-        iconAlt="Global currency"
+        value={formatMoney(gdpTotal)}
+        unit="Total nominal GDP, normalized to dollars for rankings."
+        info="Dollar-prefixed and compact values are treated as total nominal GDP. K, M, B, and T mean thousand, million, billion, and trillion."
       />
       <MetricCard
         label="Economy"

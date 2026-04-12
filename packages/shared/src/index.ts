@@ -4,12 +4,10 @@ export { governmentAliasEntries, normalizeGovernment } from "./governments";
 export {
   formatMoney,
   formatNumber,
-  formatGdpDisplay,
   getGdpPerCapita,
   getGdpTotal,
   getMetricValue,
   getPopulationDensity,
-  isGlobalCurrencyGdp,
   parseArea,
   parseCompactNumber,
   parseMilitaryScore,

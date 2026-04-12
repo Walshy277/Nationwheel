@@ -27,8 +27,6 @@ const suffixMultipliers: Record<string, number> = {
   t: 1_000_000_000_000,
 };
 
-export const GLOBAL_CURRENCY_TO_USD = 1_000_000_000;
-
 export function parseCompactNumber(input: string | undefined) {
   if (!input) return null;
   const normalized = input
@@ -79,24 +77,12 @@ export function parseMilitaryScore(input: string | undefined) {
 
 export function getGdpTotal(nation: NationStats) {
   const gdp = parseCompactNumber(nation.gdp);
-  if (gdp === null) return null;
-
-  return nation.gdp.includes("$") ? gdp : gdp * GLOBAL_CURRENCY_TO_USD;
-}
-
-export function isGlobalCurrencyGdp(nation: NationStats) {
-  return Boolean(nation.gdp.trim() && !nation.gdp.includes("$"));
-}
-
-export function formatGdpDisplay(nation: NationStats) {
-  return isGlobalCurrencyGdp(nation)
-    ? nation.gdp
-    : formatMoney(getGdpTotal(nation));
+  return gdp;
 }
 
 export function getGdpPerCapita(nation: NationStats) {
   const population = parseCompactNumber(nation.people);
-  const gdp = getGdpTotal(nation);
+  const gdp = parseCompactNumber(nation.gdp);
   if (!gdp) return null;
   if (!population) return null;
   return gdp / population;
@@ -112,21 +98,17 @@ export function getPopulationDensity(nation: NationStats) {
 export function formatMoney(value: number | null) {
   if (value === null || !Number.isFinite(value)) return "Unknown";
 
-  const formatCompactMoney = (amount: number, suffix = "") => {
-    const formatter = new Intl.NumberFormat("en-US", {
-      maximumFractionDigits: amount >= 100 ? 0 : 1,
-    });
-    return `$${formatter.format(amount)}${suffix}`;
-  };
+  const formatter = new Intl.NumberFormat("en-US", {
+    maximumFractionDigits: value >= 100 ? 0 : 1,
+  });
 
   if (value >= 1_000_000_000_000)
-    return formatCompactMoney(value / 1_000_000_000_000, "T");
+    return `$${formatter.format(value / 1_000_000_000_000)}T`;
   if (value >= 1_000_000_000)
-    return formatCompactMoney(value / 1_000_000_000, "B");
-  if (value >= 1_000_000)
-    return formatCompactMoney(value / 1_000_000, "M");
-  if (value >= 1_000) return formatCompactMoney(value / 1_000, "K");
-  return formatCompactMoney(value);
+    return `$${formatter.format(value / 1_000_000_000)}B`;
+  if (value >= 1_000_000) return `$${formatter.format(value / 1_000_000)}M`;
+  if (value >= 1_000) return `$${formatter.format(value / 1_000)}K`;
+  return `$${formatter.format(value)}`;
 }
 
 export function formatNumber(value: number | null, suffix = "") {
@@ -143,7 +125,7 @@ export function getMetricValue(
 ): MetricValue {
   if (key === "gdp") {
     const value = getGdpTotal(nation);
-    return { value, label: formatGdpDisplay(nation) };
+    return { value, label: formatMoney(value) };
   }
 
   if (key === "military") {

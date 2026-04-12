@@ -7,7 +7,6 @@ import {
   type NationSummary,
 } from "@nation-wheel/shared";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
-import { listActivityFeed } from "@/lib/activity";
 import { listNationSummaries } from "@/lib/nations";
 
 const featuredSlots = [
@@ -16,6 +15,17 @@ const featuredSlots = [
   { key: "gdp", label: "Largest GDP", detail: "GDP" },
   { key: "military", label: "Largest Military", detail: "Military score" },
   { key: "hdi", label: "Highest HDI", detail: "HDI" },
+] as const;
+
+const quickLinks = [
+  ["Nation Directory", "/nations", "Search every nation profile."],
+  ["Compare Nations", "/compare", "Select 2-4 nations side by side."],
+  [
+    "Leaderboards",
+    "/leaderboards",
+    "Rank land, GDP, military, population, and HDI.",
+  ],
+  ["Season Map", "/map", "Open the world reference map."],
 ] as const;
 
 function FeaturedCard({
@@ -31,8 +41,6 @@ function FeaturedCard({
   value: string;
   rank: number;
 }) {
-  const isGdp = detail === "GDP";
-
   return (
     <Link href={`/nations/${nation.slug}`} className="group block">
       <Panel className="h-full transition group-hover:-translate-y-0.5 group-hover:border-emerald-300/70 group-hover:bg-[color:var(--panel-strong)]">
@@ -45,20 +53,9 @@ function FeaturedCard({
         <h2 className="mt-5 text-2xl font-black text-zinc-50">{nation.name}</h2>
         <p className="mt-2 text-sm text-zinc-400">{nation.government}</p>
         <div className="mt-5 rounded-lg border border-white/10 bg-black/20 p-4">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-semibold uppercase text-zinc-500">
-              {detail}
-            </p>
-            {isGdp ? (
-              <Image
-                src="/assets/currency.png"
-                alt="Global currency"
-                width={24}
-                height={24}
-                className="h-6 w-6 rounded-md object-cover"
-              />
-            ) : null}
-          </div>
+          <p className="text-xs font-semibold uppercase text-zinc-500">
+            {detail}
+          </p>
           <p className="mt-2 text-xl font-black text-emerald-100">{value}</p>
         </div>
       </Panel>
@@ -67,10 +64,7 @@ function FeaturedCard({
 }
 
 export async function HomeContent() {
-  const [nations, activity] = await Promise.all([
-    listNationSummaries(),
-    listActivityFeed(),
-  ]);
+  const nations = await listNationSummaries();
   const nationCount = nations.length;
   const featured = featuredSlots
     .map((slot) => {
@@ -93,7 +87,7 @@ export async function HomeContent() {
 
   return (
     <PageShell>
-      <section className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
+      <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-center">
         <div>
           <Badge tone="accent">{nationCount} canon nations</Badge>
           <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -110,8 +104,8 @@ export async function HomeContent() {
             </h1>
           </div>
           <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-300">
-            Top nations by land, population, GDP, military, HDI, and overall
-            strength.
+            Browse profiles, compare canon stats, check rankings, and open the
+            season map from one command center.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -134,32 +128,28 @@ export async function HomeContent() {
             </Link>
           </div>
         </div>
-        <Panel>
-          <Badge tone="warning">Live queue</Badge>
-          <h2 className="mt-4 text-2xl font-bold text-zinc-50">
-            Latest Activity
-          </h2>
-          <div className="mt-4 grid gap-3">
-            {activity.slice(0, 3).map((item) => (
+        <Panel className="grid gap-4">
+          <Badge tone="neutral">World Index</Badge>
+          <h2 className="text-2xl font-bold text-zinc-50">Start Here</h2>
+          <div className="grid gap-3">
+            {quickLinks.map(([label, href, text]) => (
               <Link
-                key={item.id}
-                href={`/nations/${item.nationSlug}`}
-                className="rounded-lg border border-white/10 bg-black/20 p-3 hover:border-emerald-300/70 hover:bg-white/5"
+                key={href}
+                href={href}
+                className="rounded-lg border border-white/10 bg-black/20 p-4 hover:border-emerald-300/70 hover:bg-white/5"
               >
-                <span className="block text-sm font-bold text-zinc-50">
-                  {item.nationName}
-                </span>
-                <span className="mt-1 line-clamp-2 block text-xs leading-5 text-zinc-300">
-                  {item.title}: {item.detail}
+                <span className="block font-bold text-zinc-50">{label}</span>
+                <span className="mt-1 block text-sm leading-6 text-zinc-300">
+                  {text}
                 </span>
               </Link>
             ))}
           </div>
           <Link
             href="/activity"
-            className="mt-4 inline-block rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-50 hover:bg-amber-300/10"
+            className="text-sm font-semibold text-zinc-400 hover:text-emerald-100"
           >
-            Open Activity Feed
+            View activity archive
           </Link>
         </Panel>
       </section>
