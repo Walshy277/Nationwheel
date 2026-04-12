@@ -27,6 +27,8 @@ const suffixMultipliers: Record<string, number> = {
   t: 1_000_000_000_000,
 };
 
+export const GLOBAL_CURRENCY_TO_USD = 1_000_000_000;
+
 export function parseCompactNumber(input: string | undefined) {
   if (!input) return null;
   const normalized = input
@@ -77,12 +79,14 @@ export function parseMilitaryScore(input: string | undefined) {
 
 export function getGdpTotal(nation: NationStats) {
   const gdp = parseCompactNumber(nation.gdp);
-  return gdp;
+  if (gdp === null) return null;
+
+  return nation.gdp.includes("$") ? gdp : gdp * GLOBAL_CURRENCY_TO_USD;
 }
 
 export function getGdpPerCapita(nation: NationStats) {
   const population = parseCompactNumber(nation.people);
-  const gdp = parseCompactNumber(nation.gdp);
+  const gdp = getGdpTotal(nation);
   if (!gdp) return null;
   if (!population) return null;
   return gdp / population;

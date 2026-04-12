@@ -10,6 +10,7 @@ import {
   formatMoney,
   formatNumber,
   getGdpPerCapita,
+  getGdpTotal,
   getPopulationDensity,
 } from "@nation-wheel/shared";
 import type { ApiNation } from "../api-client";
@@ -29,6 +30,10 @@ export function mapUrl() {
 
 export function activityUrl() {
   return new URL("/activity", config.webUrl).toString();
+}
+
+export function assetUrl(path: string) {
+  return new URL(path, config.webUrl).toString();
 }
 
 export function nationActionRow(nation: Pick<ApiNation, "slug">) {
@@ -70,11 +75,17 @@ export function miniAppActionRow() {
 }
 
 export function nationProfileEmbed(nation: ApiNation): APIEmbed {
+  const gdpTotal = getGdpTotal(nation);
   const gdpPerCapita = getGdpPerCapita(nation);
   const populationDensity = getPopulationDensity(nation);
+  const usesBobakoin = nation.economy.toLowerCase().includes("bobakoin");
   const fields: NonNullable<APIEmbed["fields"]> = [
     { name: "People", value: nation.people, inline: true },
-    { name: "GDP", value: nation.gdp, inline: true },
+    {
+      name: "GDP",
+      value: `${formatMoney(gdpTotal)}\nCanon entry: ${nation.gdp}`,
+      inline: true,
+    },
     { name: "GDP per Capita", value: formatMoney(gdpPerCapita), inline: true },
     {
       name: "Population per km2",
@@ -122,6 +133,11 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
     description: `${nation.government}\n${nation.economy}`,
     color: 0x38d6b5,
     fields,
+    thumbnail: {
+      url: usesBobakoin
+        ? assetUrl("/assets/bobakoin_crypto.png")
+        : assetUrl("/assets/currency.png"),
+    },
     footer: { text: "Nation Wheel profile" },
   };
 }

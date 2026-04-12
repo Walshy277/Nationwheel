@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   formatNumber,
   rankNations,
@@ -30,6 +31,8 @@ function FeaturedCard({
   value: string;
   rank: number;
 }) {
+  const isGdp = detail === "GDP";
+
   return (
     <Link href={`/nations/${nation.slug}`} className="group block">
       <Panel className="h-full transition group-hover:-translate-y-0.5 group-hover:border-emerald-300/70 group-hover:bg-[color:var(--panel-strong)]">
@@ -42,9 +45,20 @@ function FeaturedCard({
         <h2 className="mt-5 text-2xl font-black text-zinc-50">{nation.name}</h2>
         <p className="mt-2 text-sm text-zinc-400">{nation.government}</p>
         <div className="mt-5 rounded-lg border border-white/10 bg-black/20 p-4">
-          <p className="text-xs font-semibold uppercase text-zinc-500">
-            {detail}
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs font-semibold uppercase text-zinc-500">
+              {detail}
+            </p>
+            {isGdp ? (
+              <Image
+                src="/assets/currency.png"
+                alt="Global currency"
+                width={24}
+                height={24}
+                className="h-6 w-6 rounded-md object-cover"
+              />
+            ) : null}
+          </div>
           <p className="mt-2 text-xl font-black text-emerald-100">{value}</p>
         </div>
       </Panel>
@@ -82,9 +96,19 @@ export async function HomeContent() {
       <section className="grid gap-6 lg:grid-cols-[1fr_360px] lg:items-end">
         <div>
           <Badge tone="accent">{nationCount} canon nations</Badge>
-          <h1 className="mt-5 max-w-3xl text-5xl font-black leading-tight text-zinc-50 md:text-6xl">
-            Nation Wheel
-          </h1>
+          <div className="mt-5 flex flex-wrap items-center gap-4">
+            <Image
+              src="/assets/nationwheel_logo.jpg"
+              alt="Nation Wheel"
+              width={84}
+              height={84}
+              className="h-20 w-20 rounded-lg border border-emerald-300/35 object-cover shadow-xl shadow-black/30"
+              priority
+            />
+            <h1 className="max-w-3xl text-5xl font-black leading-tight text-zinc-50 md:text-6xl">
+              Nation Wheel
+            </h1>
+          </div>
           <p className="mt-5 max-w-xl text-lg leading-8 text-zinc-300">
             Top nations by land, population, GDP, military, HDI, and overall
             strength.

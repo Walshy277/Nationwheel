@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function PageShell({
@@ -92,17 +93,34 @@ export function MetricCard({
   value,
   unit,
   info,
+  iconSrc,
+  iconAlt,
 }: {
   label: string;
   value: string;
   unit?: string;
   info?: ReactNode;
+  iconSrc?: string;
+  iconAlt?: string;
 }) {
   return (
     <div className="rounded-lg border border-white/12 bg-black/25 p-4">
-      <div className="flex items-center gap-2 text-xs font-semibold uppercase text-zinc-300">
-        <span>{label}</span>
-        {info ? <InfoTooltip label={`${label} details`}>{info}</InfoTooltip> : null}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase text-zinc-300">
+          <span>{label}</span>
+          {info ? (
+            <InfoTooltip label={`${label} details`}>{info}</InfoTooltip>
+          ) : null}
+        </div>
+        {iconSrc ? (
+          <Image
+            src={iconSrc}
+            alt={iconAlt ?? ""}
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-md object-cover"
+          />
+        ) : null}
       </div>
       <div className="mt-2 text-base font-bold leading-6 text-zinc-50">
         {value}

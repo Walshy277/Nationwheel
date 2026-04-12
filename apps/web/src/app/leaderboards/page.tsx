@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   rankNations,
   rankOverallNations,
@@ -17,7 +18,7 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
   {
     key: "gdp",
     title: "GDP",
-    note: "Total nominal GDP normalized from canon GDP entries.",
+    note: "Total nominal GDP. Bare canon currency values convert at 1 global currency = $1B.",
   },
   {
     key: "military",
@@ -104,7 +105,16 @@ export default async function LeaderboardsPage() {
             <Panel key={board.key}>
               <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h2 className="text-2xl font-bold text-zinc-50">
+                  <h2 className="flex items-center gap-3 text-2xl font-bold text-zinc-50">
+                    {board.key === "gdp" ? (
+                      <Image
+                        src="/assets/currency.png"
+                        alt="Global currency"
+                        width={28}
+                        height={28}
+                        className="h-7 w-7 rounded-md object-cover"
+                      />
+                    ) : null}
                     {board.title}
                   </h2>
                   <p className="mt-2 text-sm leading-6 text-zinc-400">

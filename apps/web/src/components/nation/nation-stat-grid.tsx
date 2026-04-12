@@ -2,14 +2,17 @@ import {
   formatMoney,
   formatNumber,
   getGdpPerCapita,
+  getGdpTotal,
   getPopulationDensity,
   type NationStats,
 } from "@nation-wheel/shared";
 import { MetricCard } from "@/components/ui/shell";
 
 export function NationStatGrid({ nation }: { nation: NationStats }) {
+  const gdpTotal = getGdpTotal(nation);
   const gdpPerCapita = getGdpPerCapita(nation);
   const populationDensity = getPopulationDensity(nation);
+  const usesBobakoin = nation.economy.toLowerCase().includes("bobakoin");
   const optionalStats = [
     ["GDP per Capita", formatMoney(gdpPerCapita)],
     [
@@ -34,11 +37,18 @@ export function NationStatGrid({ nation }: { nation: NationStats }) {
       <MetricCard label="Government" value={nation.government} />
       <MetricCard
         label="GDP"
-        value={nation.gdp}
-        unit="Total nominal GDP, normalized to dollars for rankings."
-        info="Dollar-prefixed and compact values are treated as total nominal GDP. K, M, B, and T mean thousand, million, billion, and trillion."
+        value={formatMoney(gdpTotal)}
+        unit={`Canon entry: ${nation.gdp}. Bare currency values convert at 1 global currency = $1B.`}
+        info="Dollar-prefixed values are treated as direct nominal USD. Bare canon currency values use the global currency conversion rate of 1 currency = $1B. K, M, B, and T mean thousand, million, billion, and trillion."
+        iconSrc="/assets/currency.png"
+        iconAlt="Global currency"
       />
-      <MetricCard label="Economy" value={nation.economy} />
+      <MetricCard
+        label="Economy"
+        value={nation.economy}
+        iconSrc={usesBobakoin ? "/assets/bobakoin_crypto.png" : undefined}
+        iconAlt={usesBobakoin ? "Bobakoin crypto coin" : undefined}
+      />
       <MetricCard
         label="Military"
         value={nation.military}

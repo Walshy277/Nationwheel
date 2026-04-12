@@ -2,7 +2,7 @@ import {
   SlashCommandBuilder,
   type ChatInputCommandInteraction,
 } from "discord.js";
-import { activityUrl, miniAppActionRow } from "./helpers";
+import { activityUrl, assetUrl, miniAppActionRow } from "./helpers";
 
 export const nationwheelCommand = {
   data: new SlashCommandBuilder()
@@ -17,6 +17,7 @@ export const nationwheelCommand = {
           url: activityUrl(),
           description: "Open profiles, leaderboards, the map, and wiki tools.",
           color: 0x38d6b5,
+          thumbnail: { url: assetUrl("/assets/nationwheel_logo.jpg") },
         },
       ],
       components: [miniAppActionRow()],

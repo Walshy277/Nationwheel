@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { canAccessControlPanel } from "@nation-wheel/shared";
 import { getCurrentUser } from "@/lib/auth";
 import { listNationSummaries } from "@/lib/nations";
@@ -34,9 +35,14 @@ export async function TopNav() {
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080907]/92 backdrop-blur-xl">
       <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-3">
-          <span className="grid h-9 w-9 place-items-center rounded-lg border border-emerald-300/35 bg-emerald-300/10 text-sm font-black text-emerald-100">
-            NW
-          </span>
+          <Image
+            src="/assets/nationwheel_logo.jpg"
+            alt="Nation Wheel"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-lg border border-emerald-300/35 object-cover"
+            priority
+          />
           <span className="text-sm font-bold uppercase text-zinc-100">
             Nation Wheel
           </span>

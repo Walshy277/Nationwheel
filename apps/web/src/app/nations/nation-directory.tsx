@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import {
   formatMoney,
@@ -133,6 +134,9 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
         {visibleNations.map((nation) => {
           const area = parseArea(nation.area);
           const gdp = getGdpTotal(nation);
+          const usesBobakoin = nation.economy
+            .toLowerCase()
+            .includes("bobakoin");
           return (
             <Link
               key={nation.slug}
@@ -168,12 +172,33 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
                     </strong>
                   </div>
                   <div className="rounded-lg border border-white/10 bg-black/20 p-3">
-                    <span className="block text-zinc-500">GDP</span>
+                    <span className="flex items-center gap-2 text-zinc-500">
+                      <Image
+                        src="/assets/currency.png"
+                        alt="Global currency"
+                        width={18}
+                        height={18}
+                        className="h-4 w-4 rounded object-cover"
+                      />
+                      GDP
+                    </span>
                     <strong className="mt-1 block text-zinc-100">
                       {formatMoney(gdp)}
                     </strong>
                   </div>
                 </div>
+                {usesBobakoin ? (
+                  <div className="mt-4 flex items-center gap-3 rounded-lg border border-amber-200/20 bg-amber-200/10 p-3 text-sm font-semibold text-amber-50">
+                    <Image
+                      src="/assets/bobakoin_crypto.png"
+                      alt="Bobakoin crypto coin"
+                      width={32}
+                      height={32}
+                      className="h-8 w-8 rounded-full object-cover"
+                    />
+                    Bobakoin economy
+                  </div>
+                ) : null}
               </Panel>
             </Link>
           );
