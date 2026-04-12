@@ -1,0 +1,1026 @@
+﻿Nation Wheel Status
+
+
+Primis
+
+
+ * People: 25M
+ *  Government : Colony - Military Government
+ *  GDP : 500k
+ *  Economy : Tech & Oil
+ *  Military : Large 5 / 11
+ *  Geo-Political Status : Colony of Moravia
+ *  Block : Defence Accords
+
+
+Melandia 
+ *  People : 750M
+ *  Government : Monarchy
+ *  GDP : 6M
+ *  Economy : Geothermal / Gems
+ *  Military : Air Superpower 7 / 11
+ *  Geo-Political Status : War (vs Lithuania)
+ *  Block : None
+    
+Isma 
+ *  People : 1M
+ *  Government : Fallen Empire
+ *  GDP : 500k
+ *  Economy : Finance / Gems
+ *  Military : None 0 / 11
+ *  Geo-Political Status : War (vs Vladaria)
+ *  Block : None
+    
+Yoggy 
+ *  People : 60M
+ *  Government : Junta
+ *  GDP : 900k
+ *  Economy : Textiles / Minerals
+ *  Military : Naval Superpower 7 / 11
+ *  Geo-Political Status : Hostile (vs Zandoro)
+ *  Block : None
+    
+Liberterra (Ourterra) 
+ *  People : 150M
+ *  Government : Communist Democracy
+ *  GDP : 100k
+ *  Economy : Freshwater
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Freeze (vs Imeria)
+ *  Block : Novus Ordo Mundi
+    
+Belvion 
+ *  People : 80M
+ *  Government : Republic
+ *  GDP : 600k
+ *  Economy : Energy / Textiles
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : War (vs Freelandia)
+ *  Block : None
+    
+Fredya 
+ *  People : 400M
+ *  Government : Technocracy
+ *  GDP : 400k
+ *  Economy : $2.5T Manuf. / Fire god
+ *  Military : Medium 4 / 11
+ *  Geo-Political Status : Techno-Magic
+ *  Block : None
+   
+Nordmere 
+ *  People : 30M
+ *  Government : Constitutional Monarchy
+ *  GDP : 400k
+ *  Economy : $150B Green Economy
+ *  Military : Small 2 / 11
+ *  Geo-Political Status : Rival (Shadow Conf.)
+ *  Block : Novus Ordo Mundi
+    
+Catomane 
+ *  People : 50M
+ *  Government : Stratocracy
+ *  GDP : 400k
+ *  Economy : $5T Innovation / Fire god
+ *  Military : Special Forces 7 / 11
+ *  Geo-Political Status : Tension (vs Omaleko)
+ *  Block : Novus Ordo Mundi
+    
+Dalgaristan 
+ *  People : 175M
+ *  Government : Socialist Republic
+ *  GDP : 900k
+ *  Economy : $2T Surveillance
+ *  Military : Advanced 6 / 11
+ *  Geo-Political Status : Former War (vs URHNB)
+ *  Block : POF Alliance
+    
+Northern Lights 
+ *  People : 40M
+ *  Government : Ritualistic Kingdom
+ *  GDP : 800k
+ *  Economy : $100B Pharma
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : Dual Rituals
+ *  Block : None
+    
+Moradior 
+ *  People : 175M
+ *  Government : Robotic Dominion
+ *  GDP : 750k
+ *  Economy : $2.5T Robotics
+ *  Military : Regional Power 8 / 11
+ *  Geo-Political Status : War (vs Rei-Kai)
+ *  Block : Defence Accords
+    
+Great Lithuania (DIVIDED)
+ *  People : 60M
+ *  Government : Expansionist Republic
+ *  GDP : 1M
+ *  Economy : $50B Healthcare
+ *  Military : Expansionist 10 / 11
+ *  Geo-Political Status : War (vs Melandia [Lost])
+ *  Block : None
+    
+Maronia 
+ *  People : 100M
+ *  Government : Traditional Kingdom
+ *  GDP : 9M
+ *  Economy : $700B Agriculture / Mythology
+ *  Military : Air Superpower 7 / 11
+ *  Geo-Political Status : Freeze (vs Belvion)
+ *  Block : None
+     
+Daroille 
+ *  People : 15M
+ *  Government : Corporate Confederation
+ *  GDP : 100k
+ *  Economy : $3T Casinos
+ *  Military : Medium 4 / 11
+ *  Geo-Political Status : Allied (Qashira)
+ *  Block : Novus Ordo Mundi
+    
+Torenza 
+ *  People : 50M
+ *  Government : Authoritarian Republic
+ *  GDP : 600k
+ *  Economy : $6T Space / Human
+ *  Military : Expansionist 10 / 11
+ *  Geo-Political Status : Allied (Primis)
+ *  Block : Defence Accords
+     
+Imeria 
+ *  People : 5M
+ *  Government : Colony - Feudal Warlords
+ *  GDP : 10k
+ *  Economy : $400B Warlords
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Colony of Vienzerna
+ *  Block : None
+    
+Wonderia 
+ *  People : 80M
+ *  Government : Colony - Cybernetic Regency
+ *  GDP : 750k
+ *  Economy : $400B Cybernetics
+ *  Military : Cyber Hegemony / Cyberwarfare 11 / 11
+ *  Geo-Political Status : Prot. of Yoggy
+ *  Block : None
+    
+B. Obrero 
+ *  People : 750k
+ *  Government : Progressive Union
+ *  GDP : 50k
+ *  Economy : $500M Church Tax
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : PARIAH
+ *  Block : HATED BY ALL
+    
+Vienzerna 
+ *  People : 125M
+ *  Government : Trade Empire
+ *  GDP : 750k
+ *  Economy : $3.5T Guilds
+ *  Military : Expansionist 10 / 11
+ *  Geo-Political Status : Colonizer
+ *  Block : None
+   
+Vladaria 
+ *  People : 5M
+ *  Government : Theocratic Kingdom
+ *  GDP : 200k
+ *  Economy : $1B AI / Ditopism
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : War (vs Isma)
+ *  Block : Royal Wedding alliance
+    
+Bernaland 
+ *  People : 5M
+ *  Government : Federal Republic
+ *  GDP : 200k
+ *  Economy : $1B Robotics
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Allied (Scopeople)
+ *  Block : Novus Ordo Mundi
+     
+Plesshurye 
+ *  People : 500M
+ *  Government : Democratic Republic
+ *  GDP : 800k
+ *  Economy : $6T Finance / Space
+ *  Military : Spatial Superpower 7 / 11
+ *  Geo-Political Status : Exploration Culture
+ *  Block : None
+    
+Rei-Kai 
+ *  People : 70M
+ *  Government : Fascist Empire
+ *  GDP : 500k
+ *  Economy : $7T Biotech
+ *  Military : Advanced 6 / 11
+ *  Geo-Political Status : War (vs Moradior)
+ *  Block : POF Alliance
+    
+Zharak-Ten 
+ *  People : 200M
+ *  Government : Maritime Democracy
+ *  GDP : 900k
+ *  Economy : $500B Fish / Ent. / Shamanic
+ *  Military : Advanced 6 / 11
+ *  Geo-Political Status : Allied (Navatonia)
+ *  Block : Novus Ordo Mundi
+    
+Zottegem 
+ *  People : 30M
+ *  Government : Financial Oligarchy
+ *  GDP : 400k
+ *  Economy : $40B Shadow Bank
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Allied (Moradior)
+ *  Block : Defence Accords
+    
+Fish State 
+ *  People : 25M
+ *  Government : Naval Junta
+ *  GDP : 300k
+ *  Economy : $400B Maritime
+ *  Military : Large 5 / 11
+ *  Geo-Political Status : War (vs Imeria)
+ *  Block : None
+    
+Anuruthor 
+ *  People : 40M
+ *  Government : Protectorate
+ *  GDP : 500k
+ *  Economy : $1T Heavy Industry
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Rival (vs Rei-Kai)
+ *  Block : None
+    
+Shadow Conf. 
+ *  People : 175M
+ *  Government : Pirate Confederation
+ *  GDP : 500k
+ *  Economy : $1.5T Piracy
+ *  Military : Large 5 / 11
+ *  Geo-Political Status : Rival (vs Nordmere)
+ *  Block : None
+    
+Tunguska 
+ *  People : 750k
+ *  Government : Colony - Clan Council
+ *  GDP : 175k
+ *  Economy : $200B Ritual Tour.
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Colony of U. Tribes
+ *  Block : Novus Ordo Mundi
+    
+C. Ranchers 
+ *  People : 10M
+ *  Government : Anarchist Commune
+ *  GDP : 100k
+ *  Economy : $5B Ranching
+ *  Military : Regional Influence Army 8 / 11
+ *  Geo-Political Status : Anarchist
+ *  Block : Royal Wedding alliance
+    
+Solaria 
+ *  People : 100M
+ *  Government : Federal Empire
+ *  GDP : 60k
+ *  Economy : $9T Shadow Banking
+ *  Military : Large 5 / 11
+ *  Geo-Political Status : Defense Pact (Dalgaristan)
+ *  Block : POF Alliance
+    
+Skressia 
+ *  People : 15M
+ *  Government : Drone Republic
+ *  GDP : 1k
+ *  Economy : $50B Drones
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : War (vs Azur Axis)
+ *  Block : None
+    
+Great Moravia 
+ *  People : 900M
+ *  Government : Cyber Dictatorship
+ *  GDP : 3M
+ *  Economy : $8T Cyber / Loans
+ *  Military : WORLD MENACE 11 /11
+ *  Geo-Political Status : War (vs Golden Land)
+ *  Block : Defence Accords
+    
+ABOC 
+ *  People : 700M
+ *  Government : Decentralized Union
+ *  GDP : 90k
+ *  Economy : $1T Waste Mgt
+ *  Military : None 0 / 11
+ *  Geo-Political Status : Trade (Rei-Kai)
+ *  Block : None
+    
+Voidia 
+ *  People : 40M
+ *  Government : Agrarian Monarchy
+ *  GDP : 200k
+ *  Economy : $500B Agriculture - Alien Cult
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : Freeze (vs Maronia)
+ *  Block : None
+    
+Runonno 
+ *  People : 25M
+ *  Government : Military Superstate
+ *  GDP : 800k
+ *  Economy : $1T Security
+ *  Military : Land Superpower 7 / 11
+ *  Geo-Political Status : VS EVERYONE
+ *  Block : None
+    
+Azur Axis 
+ *  People : 40M
+ *  Government : AI Corporatocracy
+ *  GDP : 500k
+ *  Economy : $900B Shell / AI
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : War (vs Skressia)
+ *  Block : None
+    
+Freelandia 
+ *  People : 15M
+ *  Government : Industrial Republic
+ *  GDP : 350k
+ *  Economy : $900B Heavy Ind.
+ *  Military : Regional Power 8 / 11
+ *  Geo-Political Status : War (vs Belvion)
+ *  Block : None
+    40 Aragon 
+ *  People : 80M
+ *  Government : Media Monarchy
+ *  GDP : 350k
+ *  Economy : $3T Entertainment
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : Allied (Whiterun)
+ *  Block : Novus Ordo Mundi
+    
+Scopeople 
+ *  People : 30M
+ *  Government : Tribal Kingdom
+ *  GDP : 175k
+ *  Economy : $1B Local Trade
+ *  Military : None 0 / 11
+ *  Geo-Political Status : Allied (Bernaland)
+ *  Block : Novus Ordo Mundi
+    
+Aura Sancta 
+ *  People : 500M
+ *  Government : Empire
+ *  GDP : 12M
+ *  Economy : $10T Tourism
+ *  Military : WORLD POLICE 11 / 11
+ *  Geo-Political Status : World Peace Doctrine
+ *  Block : Novus Ordo Mundi
+    
+Navatonia 
+ *  People : 300M
+ *  Government : Shamanic Republic
+ *  GDP : 750k
+ *  Economy : $3T Mining / Shaman
+ *  Military : Regional Power 8 / 11
+ *  Geo-Political Status : Allied (Zharak-Ten)
+ *  Block : Novus Ordo Mundi
+    
+Abolitionist G. 
+ *  People : 200M
+ *  Government : Guild Republic
+ *  GDP : 75k
+ *  Economy : $9T Black Market
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : PARIAH
+ *  Block : HATED BY ALL
+    
+Golden Land 
+ *  People : 25M
+ *  Government : Mercantile Democracy
+ *  GDP : 125k
+ *  Economy : $3T Grey Market
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : War (vs Moravia)
+ *  Block : None
+    
+Whiterun 
+ *  People : 30M
+ *  Government : Academic Republic
+ *  GDP : 300k
+ *  Economy : $600B Education
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Allied (Aragon)
+ *  Block : Novus Ordo Mundi
+    
+United Tribes 
+ *  People : 10M
+ *  Government : Tribal Confederation
+ *  GDP : 200k
+ *  Economy : $400B Green Econ
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Parent of Tunguska
+ *  Block : Novus Ordo Mundi
+    
+Icelania 
+ *  People : 125M
+ *  Government : Pharma Republic
+ *  GDP : 400k
+ *  Economy : $14T Pharma / Manuf
+ *  Military : Advanced Army 6 / 11
+ *  Geo-Political Status : Rival (Catomane)
+ *  Block : None
+    
+Omaleko 
+ *  People : 400M
+ *  Government : Social Commonwealth
+ *  GDP : 1M
+ *  Economy : $12T Oil / Auto
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Tension (Catomane)
+ *  Block : Defence Accords
+    
+Rootbeerism 
+ *  People : 80M
+ *  Government : Corporate State
+ *  GDP : 200k
+ *  Economy : $1T Call Centers
+ *  Military : Special Forces 7 / 11
+ *  Geo-Political Status : Trade (Runonno)
+ *  Block : None
+    
+Dowenia 
+ *  People : 1.2B
+ *  Government : Crypto Anarchy
+ *  GDP : 1M
+ *  Economy : $5T Crypto / Bank
+ *  Military : None 0 / 11
+ *  Geo-Political Status : Underground Networks
+ *  Block : None
+    
+Schizolandia 
+ *  People : 100k
+ *  Government : People's Union
+ *  GDP : 40k
+ *  Economy : $50M Cultural / Druidic
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Hostile (Moravia)
+ *  Block : Novus Ordo Mundi
+    
+Lumenie 
+ *  People : 5M
+ *  Government : Colony - Nomadics
+ *  GDP : 125k
+ *  Economy : $100M AI / Robots
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Prot. of B. Obrero
+ *  Block : Novus Ordo Mundi
+    
+URHNB 
+ *  People : 15M
+ *  Government : United Republics
+ *  GDP : 900k
+ *  Economy : $100B Defense
+ *  Military : Continental Power 9 / 11
+ *  Geo-Political Status : Former War (vs Dalgaristan)
+ *  Block : None
+    
+Black Cult 
+ *  People : 250M
+ *  Government : Expansionist Theocracy
+ *  GDP : 500k
+ *  Economy : $7T Energy / Manuf
+ *  Military : Expansionist 10 / 11
+ *  Geo-Political Status : PARIAH
+ *  Block : HATED BY ALL
+    
+Greater Celtia 
+ *  People : 90M
+ *  Government : Clan Empire
+ *  GDP : $30T
+ *  Economy : Cloning
+ *  Military : Air Superpower 7 / 11
+ *  Geo-Political Status : Rival (Solaria)
+ *  Block : None
+    
+Sabrayana 
+ *  People : 2.5B
+ *  Government : Magical Empire
+ *  GDP : $12T
+ *  Economy : Magic Cards - Shamanic
+ *  Military : Expansionist Power
+ *  Area : 12 300 000 km2
+ *  Geo-Political Status : Allied (Melandia)
+ *  Block : None
+   
+Aesyl 
+ *  People : 7M
+ *  Government : Independent Commune
+ *  GDP : 40k
+ *  Economy : $150B Wooden Chairs
+ *  Military : Advanced Army 6 / 11
+ *  Geo-Political Status : Guaranteed by ALL
+ *  Block : Global Arbiter (HQ)
+    
+Techlandia 
+ *  People : 60M
+ *  Government : Technocracy
+ *  GDP : 500k
+ *  Economy : $8T Space / Nuclear
+ *  Military : Spatial Superpower 7 / 11
+ *  Geo-Political Status : Allied (Navatonia)
+ *  Block : Novus Ordo Mundi
+   
+Black League 
+ *  People : 150M
+ *  Government : Forced Labor Union
+ *  GDP : 800k
+ *  Economy : $5T Forced Labor
+ *  Military : Land Superpower 7 / 11
+ *  Geo-Political Status : War (vs Belvion)
+ *  Block : None
+    
+Norasia 
+ *  People : 250k
+ *  Government : Republic
+ *  GDP : 75k
+ *  Economy : $20B Salt Monopoly
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Allied (Dalgaristan)
+ *  Block : None
+    
+Rootberia 
+ *  People : 3M
+ *  Government : Gambling State
+ *  GDP : 40k
+ *  Economy : $30B Gambling
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Trade (Voidia)
+ *  Block : None
+    
+Solandria 
+ *  People : 15M
+ *  Government : Colony
+ *  GDP : 250k
+ *  Economy : $700B Cybernetics / Fire god
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Colony of Sabrayana
+ *  Block : None
+    
+Traguera 
+ *  People : 5M
+ *  Government : Authoritarian Republic
+ *  GDP : Not Specified
+ *  Economy : $15B Addiction Food
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Allied (Golden Land)
+ *  Block : None
+    
+Dravencia 
+ *  People : 150M
+ *  Government : Fascist State
+ *  GDP : 400k
+ *  Economy : $12T Rare Wood
+ *  Military : Large Army 5 / 11
+ *  Geo-Political Status : Allied (Anuruthor)
+ *  Block : None
+    
+Zhiva-Zarina 
+ *  People : 5M
+ *  Government : Confederation
+ *  GDP : 450k
+ *  Economy : $90B Health / Auto
+ *  Military : Small Defensive 2 / 11
+ *  Geo-Political Status : Trade (Belvion)
+ *  Block : None
+    
+Qashira 
+ *  People : 10M
+ *  Government : Parliamentary Democracy
+ *  GDP : 400k
+ *  Economy : $900B Education
+ *  Military : Regional Power 8 / 11
+ *  Geo-Political Status : Allied (Daroille)
+ *  Block : Novus Ordo Mundi
+    
+Karakum 
+ *  People : 3M
+ *  Government : Communist Republic
+ *  GDP : 300k
+ *  Economy : $4B Hydropower
+ *  Military : None 0 / 11
+ *  Geo-Political Status : Prot. (B. Obrero)
+ *  Block : Novus Ordo Mundi
+    
+Zandoro 
+ *  People : 4M
+ *  Government : Military Dictatorship
+ *  GDP : 175k
+ *  Economy : $110B Art / Bananas
+ *  Military : Large Army 5 / 11
+ *  Geo-Political Status : Hostile (Yoggy)
+ *  Block : None
+    
+Zubrossya 
+ *  People : 15M
+ *  Government : Communist Republic
+ *  GDP : 450k
+ *  Economy : $500B Global Data
+ *  Military : Advanced Army 6 / 11
+ *  Geo-Political Status : Tension (Moravia)
+ *  Block : None
+    
+Yerna 
+ *  People : 250M
+ *  Government : Fascist Republic
+ *  GDP : 1M
+ *  Economy : $9T Lit. / Subscriptions
+ *  Military : Land Superpower 7 / 11
+ *  Geo-Political Status : Influence (Moradior)
+ *  Block : Defence Accords
+    
+Katzash 
+ *  People : 50M
+ *  Government : Federal Democracy
+ *  GDP : 800k
+ *  Economy : $1T Paper / Innov.
+ *  Military : Expansionist 10 / 11
+ *  Geo-Political Status : Allied (Moravia)
+ *  Block : Defence Accords
+    
+Syrenthia 
+ *  People : 250k
+ *  Government : Colony - Warrior Council
+ *  GDP : 60k
+ *  Economy : $40B Mercenaries
+ *  Military : Special Forces 7 / 11
+ *  Geo-Political Status : Prot. of Moravia
+ *  Block : Defence Accords
+    
+Xentael 
+ *  People : 7M
+ *  Government : Communist State
+ *  GDP : 150k
+ *  Economy : $150B Nuc. Waste
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Trade (Rei-Kai)
+ *  Block : None
+    
+Ditopia 
+ *  People : 1M
+ *  Government : Theocracy
+ *  GDP : 20k
+ *  Economy : $90B Rails / Holy / Ditopism
+ *  Military : Advanced Army 6 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : Global Arbiter
+    
+Veltaris 
+ *  People : 125M
+ *  Government : Absolute Monarchy
+ *  GDP : 1M
+ *  Economy : $18T Monopolies
+ *  Military : WORLD ARBITER 11 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : Global Arbiter
+    
+Santa Kova 
+ *  People : 115M
+ *  Government : Confederation
+ *  GDP : 1M
+ *  Economy : $2T Literrature and Voice acting
+ *  Military : Naval Superpower 7 / 11
+ *  Geo-Political Status : South Defence Accords
+ *  Block : Defence Accords
+    
+ShieldHolm 
+ *  People : 10M
+ *  Government : Authoritarian Republic
+ *  GDP : 750k
+ *  Economy : $500B Troll farm - Cloning
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+    
+Kingdom of Maple 
+ *  People : 30M
+ *  Government : Monarchy
+ *  GDP : 900k
+ *  Economy : $900B Oil / Gas and Anime
+ *  Military : Army Alliances 7 / 11
+ *  Geo-Political Status : POF Alliance
+ *  Block : POF Alliance
+    
+Britonia 
+ *  People : 5M
+ *  Government : Military Dictatorship
+ *  GDP : 3M
+ *  Economy : $90B Corruption
+ *  Military : Standard 3 / 11
+ *  Geo-Political Status : Not Specified
+ *  Block : Defence Accords
+    
+Chungun Republic 
+ *  People : 50M
+ *  Government : Presidential Republic
+ *  GDP : 500k
+ *  Economy : $900B Healthcare
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Not Specified
+ *  Block : Defence Accords
+    
+Cordolia 
+ *  People : 30M
+ *  Government : Communist State
+ *  GDP : 3M
+ *  Economy : $1T Cybernetics and Shadow trade
+ *  Military : Cybernetics Army 7 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+    
+Golden River Confederation 
+ *  People : 7M
+ *  Government : Confederation
+ *  GDP : 450k
+ *  Economy : $8T Bananas and Maritime trade
+ *  Military : Naval Superpower 7 / 11
+ *  Geo-Political Status : POF Alliance
+ *  Block : POF Alliance
+    
+Great Valoria 
+ *  People : 25M
+ *  Government : Shamanic Council
+ *  GDP : 600k
+ *  Economy : $500B Church tax
+ *  Military : Medium Army 4 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+  
+Royal Guild of Jamland
+
+
+ *  People : 7M
+ *  Size: 300 000 km2
+ *  Government : Guild Merchant State
+ *  GDP : 
+ *  Economy : $300 B - Manufacturing
+ *  Military : Small defensive army 4 / 11
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.84
+
+
+United Geats
+
+
+ *  People : 200M
+ *  Size: 6 000 000 km2
+ *  Government : Parliamentary Democracy
+ *  GDP : 
+ *  Economy : $10 T - Agriculture & Textile
+ *  Military : Large army
+ *  Culture: Isolation. & Oral trad.
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.82
+
+
+
+
+
+
+Geometrizan
+
+
+*  People : 2M
+ *  Size: 60 000 km2
+ *  Government : Parliamentary Democracy
+ *  GDP : 
+ *  Economy : $100 B - Tourist exploitation
+ *  Military : Standard army
+ *  Culture: Urban & Progressive
+ *  Geo-Political Status : Non-Aligned
+ *  Block : POF (Member)
+ *  HDI: 0.88
+
+
+Union of Man and Nature
+
+
+*  People : 7M
+ *  Size: 900 000 km2
+ *  Government : Colony - Plesshurye
+ *  GDP : 
+ *  Economy : $300 B - Hydropower
+ *  Military : Medium army
+ *  Culture: Mystical Nature
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.71
+
+
+New Eldia
+
+
+*  People : 40M
+ *  Size: 450 000 km2
+ *  Government : Authoritarian Republic
+ *  GDP : 
+ *  Economy : $4T - Social Credit & Voice acting
+ *  Military : Regional military
+ *  Culture: Name changing / Magic
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.79
+
+
+Republic of the Sun
+
+
+*  People : 30M
+ *  Size: 300 000 km2
+ *  Government : Theocracy (Fire God)
+ *  GDP : 
+ *  Economy : $10 T - Tax Haven & Shadow bank
+ *  Military : Advanced military
+ *  Culture: Festival / Dance
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.94
+
+
+
+
+Autrian Empire
+
+
+*  People : 90M
+ *  Size: 1 000 000 km2
+ *  Government : Empire
+ *  GDP : 
+ *  Economy : $14 T - Private Security & Heavy Industry
+ *  Military : Expansionist Army
+ *  Culture: Ancestor / minimalist
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.91
+
+
+Bobak Republic
+
+
+*  People : 6M
+ *  Size: 250 000 km2
+ *  Government : Republic
+ *  GDP : 
+ *  Economy : $25 T - Crypto (Bobakoins)
+ *  Military : Standard Army
+ *  Culture: Corporate
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.59
+
+
+Xonisia
+
+
+*  People : 40M
+ *  Size: 350 000 km2
+ *  Government : Constitutional Monarchy
+ *  GDP : 
+ *  Economy : $3T - Sub Sea Cable
+ *  Military : Large Army
+ *  Culture: Scientific
+ *  Geo-Political Status : Non-Aligned
+ *  Block : POF (Member)
+ *  HDI: 0.99
+
+
+Socialist Federation Of Calradia
+
+
+*  People : 500k
+ *  Size: 500 000 km2
+ *  Government : Communist State
+ *  GDP : 
+ *  Economy : $40 B - Corruption
+ *  Military : Standard Army
+ *  Culture: Fraternity
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.60
+
+
+Altergrad
+
+
+*  People : 30M
+ *  Size: 200 000 km2
+ *  Government : Federal Republic
+ *  GDP : 
+ *  Economy : $700 B - Publishing & Pure water
+ *  Military : Large Army
+ *  Culture: Rural & Agrarian
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.77
+
+
+
+
+Grand Norvarsk
+
+
+ *  People : 5M
+ *  Size: 350 000 km2
+ *  Government : Absolute Monarchy
+ *  GDP : 
+ *  Economy : $50 B - Agriculture
+ *  Military : Large Army
+ *  Culture: Humiliation
+ *  Geo-Political Status : Non-Aligned
+ *  Block : POF (Member)
+ *  HDI: 0.87
+
+
+
+
+Makara
+
+
+ *  People : 25M
+ *  Size: 800 000 km2
+ *  Government : Clan Council
+ *  GDP : 
+ *  Economy : $40 B - Caravane routes
+ *  Military : No Army
+ *  Culture: Reincarnation / being late
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.55
+
+
+Nervella
+
+
+ *  People : 550k
+ *  Size: 250 000 km2
+ *  Government : Military Dictatorship
+ *  GDP : 
+ *  Economy : $75 B - Tax Haven
+ *  Military : Large Army
+ *  Culture: Shamanism
+ *  Geo-Political Status : Non-Aligned
+ *  Block : SDA
+ *  HDI: 0.74
+ *  Stat Notes: Nervella began at 500k population and 0.79 HDI. | Hospitals, ports, and housing raised HDI to 0.84 before the recruitment action. | Recruiting Asteria's best soldiers and housing their families increased population by 10% to 550k, but caused a temporary -0.10 HDI settlement penalty. | Current HDI is 0.74 and recovers by +0.01 per day until it returns to 0.84 once the families have settled.
+ *  Actions: State of Nervella :: Economic + Human Development :: The State of Nervella announces the National Port, Housing, and Skilled Migration Program, centered on the expansion of Velkara and the construction of new urban districts, public housing, hospitals, technical schools, and port infrastructure. Alongside these developments, Nervella will introduce incentives for skilled migrants, laborers, engineers, and medical professionals to settle in the country, with priority given to sectors tied to maritime trade, logistics, healthcare, and national development. The government states that this initiative is intended to expand the population, strengthen the economy, and improve the long-term quality of life across the state. | Nervella :: Economic :: Under the protection of Sabrayana, the displaced State of Nervella establishes the World Restoration Bank as the first pillar of Project Restore. Open to all nations regardless of policy or alignment, the bank will provide reconstruction loans, anti-poverty development funding, emergency liquidity, and infrastructure finance to states damaged by war, disaster, or collapse. Structured through Nervella's tax haven and offshore financial model, the institution will also offer reserve storage, low-tax capital shelter, and international recovery funds, allowing Nervella to profit through fees, financial services, and capital inflows while positioning itself as a central force in rebuilding the world and reducing poverty. God bless the wheel. | Nervella :: Economic :: Nervella establishes the Velkara Radiological Stabilization Authority (VRSA), constructing secure coastal containment and research facilities to address hazardous remnants and environmental risks following recent events in Asteria. The authority will develop domestic expertise and implement strict internal safety protocols to ensure long-term stability and containment. | Nervella :: Military Expansion :: Nervella recruits the best soldiers in Asteria, offering free housing to the families of those that serve. This new regiment will be named 'The Asterian Special Elite Force'. This action aims to improve population and army size.
+
+
+Krakoslandia
+
+
+ *  People : 2M
+ *  Size: 50 000 km2
+ *  Government : Theocracy (Shaman)
+ *  GDP : 
+ *  Economy : $60B - Tourism
+ *  Military : Medium Army
+ *  Culture: Sky Symbols
+ *  Geo-Political Status : Non-Aligned
+ *  Block : None
+ *  HDI: 0.85
+
+
+Wurland
+
+
+ *  People : 15M
+ *  Size: 200 000 km2
+ *  Government : Guild State
+ *  GDP : 
+ *  Economy : $200B - Entertainment
+ *  Military : Standard Army
+ *  Culture: Technology
+ *  Geo-Political Status : Non-Aligned
+ *  Block : POF (Member)
+ *  HDI: 0.67
+
+
+Urium
+
+
+ *  People : 80M
+ *  Size: 600 000 km2
+ *  Government : Shamanic Council
+ *  GDP : 
+ *  Economy : $4,5 T - Drone Logistics / Agriculture
+ *  Military : Continental Power
+ *  Culture: Dog Sacralization / Stealth Culture
+ *  Geo-Political Status : None
+ *  Block : POF (Leader)
+ *  HDI: 0.83

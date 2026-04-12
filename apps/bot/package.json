@@ -1,0 +1,24 @@
+{
+  "name": "@nation-wheel/bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "register": "tsx src/register-commands.ts"
+  },
+  "dependencies": {
+    "@nation-wheel/shared": "workspace:*",
+    "discord.js": "^14.19.3",
+    "dotenv": "^16.6.1",
+    "tsx": "^4.20.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "typescript": "^5.9.3"
+  }
+}

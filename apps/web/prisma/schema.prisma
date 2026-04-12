@@ -1,0 +1,165 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  LEADER
+  LORE
+  ADMIN
+}
+
+enum RevisionFieldType {
+  STATS
+  WIKI
+  FLAG
+  ACTION
+}
+
+enum LoreActionStatus {
+  CURRENT
+  COMPLETED
+  REQUIRES_SPIN
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String?            @unique
+  discordId         String?            @unique
+  emailVerified     DateTime?
+  image             String?
+  passwordHash      String?
+  role              Role               @default(LEADER)
+  nationId          String?
+  nation            Nation?            @relation("UserNation", fields: [nationId], references: [id])
+  leaderOf          Nation[]           @relation("NationLeader")
+  wikiUpdates       NationWiki[]       @relation("WikiUpdatedBy")
+  revisions         NationRevision[]   @relation("RevisionChangedBy")
+  loreActions       LoreAction[]       @relation("LoreActionCreatedBy")
+  loreActionUpdates LoreActionUpdate[] @relation("LoreActionUpdateCreatedBy")
+  publicPageUpdates PublicLorePage[]    @relation("PublicPageUpdatedBy")
+  accounts          Account[]
+  sessions          Session[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+}
+
+model Nation {
+  id           String           @id @default(cuid())
+  name         String
+  slug         String           @unique
+  people       String
+  government   String
+  gdp          String
+  economy      String
+  military     String
+  flagImage    String?
+  leaderUserId String?
+  leaderUser   User?            @relation("NationLeader", fields: [leaderUserId], references: [id])
+  members      User[]           @relation("UserNation")
+  wiki         NationWiki?
+  revisions    NationRevision[]
+  loreActions  LoreAction[]
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+}
+
+model NationWiki {
+  id              String   @id @default(cuid())
+  nationId        String   @unique
+  nation          Nation   @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  content         String
+  updatedByUserId String?
+  updatedByUser   User?    @relation("WikiUpdatedBy", fields: [updatedByUserId], references: [id])
+  updatedAt       DateTime @updatedAt
+}
+
+model NationRevision {
+  id              String            @id @default(cuid())
+  nationId        String
+  nation          Nation            @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  fieldType       RevisionFieldType
+  previousValue   Json
+  newValue        Json
+  changedByUserId String?
+  changedByUser   User?             @relation("RevisionChangedBy", fields: [changedByUserId], references: [id])
+  createdAt       DateTime          @default(now())
+}
+
+model LoreAction {
+  id                 String             @id @default(cuid())
+  nationId           String
+  nation             Nation             @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  type               String
+  action             String
+  source             String?
+  timeframe          String
+  status             LoreActionStatus   @default(CURRENT)
+  requiresSpinReason String?
+  rygaaNotifiedAt    DateTime?
+  createdByUserId    String?
+  createdByUser      User?              @relation("LoreActionCreatedBy", fields: [createdByUserId], references: [id])
+  updates            LoreActionUpdate[]
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+}
+
+model LoreActionUpdate {
+  id              String     @id @default(cuid())
+  actionId        String
+  action          LoreAction @relation(fields: [actionId], references: [id], onDelete: Cascade)
+  content         String
+  createdByUserId String?
+  createdByUser   User?      @relation("LoreActionUpdateCreatedBy", fields: [createdByUserId], references: [id])
+  createdAt       DateTime   @default(now())
+}
+
+model PublicLorePage {
+  id              String   @id @default(cuid())
+  key             String   @unique
+  title           String
+  content         String
+  updatedByUserId String?
+  updatedByUser   User?    @relation("PublicPageUpdatedBy", fields: [updatedByUserId], references: [id])
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

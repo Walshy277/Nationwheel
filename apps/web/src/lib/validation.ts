@@ -1,0 +1,76 @@
+import { LoreActionStatus, Role } from "@prisma/client";
+import { z } from "zod";
+
+export const nationStatsSchema = z
+  .object({
+    name: z.string().min(1),
+    slug: z
+      .string()
+      .min(1)
+      .regex(/^[a-z0-9-]+$/),
+    people: z.string().min(1),
+    government: z.string().min(1),
+    gdp: z.string().min(1),
+    economy: z.string().min(1),
+    military: z.string().min(1),
+    leaderUserId: z.string().nullable().optional(),
+  })
+  .strict();
+
+export const wikiUpdateSchema = z
+  .object({
+    content: z.string().min(1),
+  })
+  .strict();
+
+export const roleUpdateSchema = z
+  .object({
+    role: z.nativeEnum(Role),
+  })
+  .strict();
+
+export const assignNationSchema = z
+  .object({
+    nationId: z.string().nullable(),
+  })
+  .strict();
+
+export const discordUserLinkSchema = z
+  .object({
+    discordId: z
+      .string()
+      .regex(/^\d{17,20}$/, "Discord user ID must be 17-20 digits."),
+  })
+  .strict();
+
+export const loreActionSchema = z
+  .object({
+    nationId: z.string().min(1),
+    type: z.string().min(1),
+    action: z.string().min(10),
+    source: z.string().nullable().optional(),
+    timeframe: z.string().min(1),
+    status: z.nativeEnum(LoreActionStatus),
+    requiresSpinReason: z.string().nullable().optional(),
+  })
+  .strict();
+
+export const loreActionUpdateSchema = z
+  .object({
+    content: z.string().min(1),
+  })
+  .strict();
+
+export const loreActionStatusSchema = z
+  .object({
+    status: z.nativeEnum(LoreActionStatus),
+    requiresSpinReason: z.string().nullable().optional(),
+  })
+  .strict();
+
+export const publicLorePageSchema = z
+  .object({
+    title: z.string().min(1),
+    content: z.string().min(1),
+  })
+  .strict();
