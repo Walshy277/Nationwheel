@@ -1,14 +1,33 @@
 import { canonNations, createNationWikiTemplate } from "@nation-wheel/shared";
 import { getPrisma } from "@/lib/prisma";
 import { withCanonMetadata } from "@/lib/nations";
-import { jsonError } from "@/lib/permissions";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const { slug } = await params;
+
+  if (!process.env.DATABASE_URL) {
+    const canonNation = canonNations.find(
+      (candidate) => candidate.slug === slug,
+    );
+
+    if (!canonNation) {
+      return Response.json({ error: "Nation not found" }, { status: 404 });
+    }
+
+    return Response.json({
+      nation: {
+        ...canonNation,
+        id: `canon-${canonNation.slug}`,
+        leaderUser: null,
+        wiki: { content: createNationWikiTemplate(canonNation) },
+      },
+    });
+  }
+
   try {
-    const { slug } = await params;
     const nation = await getPrisma().nation.findUnique({
       where: { slug },
       include: {
@@ -21,11 +40,16 @@ export async function GET(
       return Response.json({ error: "Nation not found" }, { status: 404 });
     return Response.json({ nation: withCanonMetadata(nation) });
   } catch (error) {
-    const { slug } = await params;
     const canonNation = canonNations.find(
       (candidate) => candidate.slug === slug,
     );
-    if (!canonNation) return jsonError(error);
+    if (!canonNation) {
+      console.error(error);
+      return Response.json(
+        { error: "Unexpected server error" },
+        { status: 500 },
+      );
+    }
 
     return Response.json({
       nation: {

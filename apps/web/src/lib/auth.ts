@@ -116,6 +116,10 @@ export const authOptions: NextAuthOptions = {
 };
 
 export async function getCurrentUser() {
+  if (!process.env.NEXTAUTH_SECRET) {
+    return null;
+  }
+
   try {
     const session = await getServerSession(authOptions);
     return session?.user ?? null;
