@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import {
   formatMoney,
+  formatGdpDisplay,
   formatNumber,
   getGdpTotal,
   parseArea,
@@ -183,8 +184,13 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
                       GDP
                     </span>
                     <strong className="mt-1 block text-zinc-100">
-                      {formatMoney(gdp)}
+                      {formatGdpDisplay(nation)}
                     </strong>
+                    {!nation.gdp.includes("$") ? (
+                      <span className="mt-1 block text-xs text-zinc-500">
+                        {formatMoney(gdp)} converted
+                      </span>
+                    ) : null}
                   </div>
                 </div>
                 {usesBobakoin ? (

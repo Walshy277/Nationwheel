@@ -1214,7 +1214,7 @@ export const canonNations: CanonNation[] = [
     slug: "nervella",
     people: "550k",
     government: "Military Dictatorship",
-    gdp: "$75B",
+    gdp: "7.5",
     economy: "Tax Haven",
     military: "Large Army",
     area: "250 000 km2",

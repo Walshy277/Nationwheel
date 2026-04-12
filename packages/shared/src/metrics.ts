@@ -84,6 +84,16 @@ export function getGdpTotal(nation: NationStats) {
   return nation.gdp.includes("$") ? gdp : gdp * GLOBAL_CURRENCY_TO_USD;
 }
 
+export function isGlobalCurrencyGdp(nation: NationStats) {
+  return Boolean(nation.gdp.trim() && !nation.gdp.includes("$"));
+}
+
+export function formatGdpDisplay(nation: NationStats) {
+  return isGlobalCurrencyGdp(nation)
+    ? nation.gdp
+    : formatMoney(getGdpTotal(nation));
+}
+
 export function getGdpPerCapita(nation: NationStats) {
   const population = parseCompactNumber(nation.people);
   const gdp = getGdpTotal(nation);
@@ -102,17 +112,21 @@ export function getPopulationDensity(nation: NationStats) {
 export function formatMoney(value: number | null) {
   if (value === null || !Number.isFinite(value)) return "Unknown";
 
-  const formatter = new Intl.NumberFormat("en-US", {
-    maximumFractionDigits: value >= 100 ? 0 : 1,
-  });
+  const formatCompactMoney = (amount: number, suffix = "") => {
+    const formatter = new Intl.NumberFormat("en-US", {
+      maximumFractionDigits: amount >= 100 ? 0 : 1,
+    });
+    return `$${formatter.format(amount)}${suffix}`;
+  };
 
   if (value >= 1_000_000_000_000)
-    return `$${formatter.format(value / 1_000_000_000_000)}T`;
+    return formatCompactMoney(value / 1_000_000_000_000, "T");
   if (value >= 1_000_000_000)
-    return `$${formatter.format(value / 1_000_000_000)}B`;
-  if (value >= 1_000_000) return `$${formatter.format(value / 1_000_000)}M`;
-  if (value >= 1_000) return `$${formatter.format(value / 1_000)}K`;
-  return `$${formatter.format(value)}`;
+    return formatCompactMoney(value / 1_000_000_000, "B");
+  if (value >= 1_000_000)
+    return formatCompactMoney(value / 1_000_000, "M");
+  if (value >= 1_000) return formatCompactMoney(value / 1_000, "K");
+  return formatCompactMoney(value);
 }
 
 export function formatNumber(value: number | null, suffix = "") {
@@ -129,7 +143,7 @@ export function getMetricValue(
 ): MetricValue {
   if (key === "gdp") {
     const value = getGdpTotal(nation);
-    return { value, label: formatMoney(value) };
+    return { value, label: formatGdpDisplay(nation) };
   }
 
   if (key === "military") {

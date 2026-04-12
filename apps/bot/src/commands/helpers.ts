@@ -7,6 +7,7 @@ import {
 } from "discord.js";
 import {
   canonNations,
+  formatGdpDisplay,
   formatMoney,
   formatNumber,
   getGdpPerCapita,
@@ -83,7 +84,7 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
     { name: "People", value: nation.people, inline: true },
     {
       name: "GDP",
-      value: `${formatMoney(gdpTotal)}\nCanon entry: ${nation.gdp}`,
+      value: `${formatGdpDisplay(nation)}\nConverted: ${formatMoney(gdpTotal)}`,
       inline: true,
     },
     { name: "GDP per Capita", value: formatMoney(gdpPerCapita), inline: true },

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useMemo, useState } from "react";
 import {
   formatMoney,
+  formatGdpDisplay,
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
@@ -32,7 +33,7 @@ const metricRows = [
     unit: "nominal USD",
     iconSrc: "/assets/currency.png",
     info: "Dollar-prefixed values are direct nominal USD. Bare canon currency values convert at 1 global currency = $1B. K, M, B, and T mean thousand, million, billion, and trillion.",
-    getValue: (nation: NationSummary) => formatMoney(getGdpTotal(nation)),
+    getValue: (nation: NationSummary) => formatGdpDisplay(nation),
   },
   {
     key: "gdpPerCapita",
