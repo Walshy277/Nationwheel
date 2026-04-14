@@ -3,6 +3,7 @@ import {
   rankNations,
   rankOverallNations,
   type LeaderboardKey,
+  type NationSummary,
   type RankedNation,
 } from "@nation-wheel/shared";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
@@ -33,18 +34,60 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
   { key: "hdi", title: "HDI", note: "Highest Human Development Index first." },
 ];
 
-function getBoardRows(
-  nations: Awaited<ReturnType<typeof listNationSummaries>>,
-  key: LeaderboardKey,
-) {
-  if (key === "overall") return rankOverallNations(nations);
-  return rankNations(nations, key);
+type BoardRow = RankedNation & {
+  ranked: boolean;
+};
+
+function getBoardRows(nations: NationSummary[], key: LeaderboardKey) {
+  const rankedRows =
+    key === "overall" ? rankOverallNations(nations) : rankNations(nations, key);
+  const rows: BoardRow[] = rankedRows.map((row) => ({
+    ...row,
+    ranked: true,
+  }));
+
+  if (key === "overall") return rows;
+
+  const rankedSlugs = new Set(rankedRows.map((entry) => entry.nation.slug));
+  const unrankedRows: BoardRow[] = nations
+    .filter((nation) => !rankedSlugs.has(nation.slug))
+    .sort((left, right) => left.name.localeCompare(right.name))
+    .map((nation) => ({
+      nation,
+      rank: 0,
+      value: null,
+      label: "Unknown",
+      ranked: false,
+    }));
+
+  return [...rows, ...unrankedRows];
 }
 
-function LeaderboardTable({ rows }: { rows: RankedNation[] }) {
+function LeaderboardTable({ rows }: { rows: BoardRow[] }) {
   return (
-    <div className="max-h-[560px] overflow-auto rounded-lg border border-white/10 bg-black/15">
-      <table className="w-full min-w-[520px] border-collapse text-left text-sm">
+    <div className="max-h-[640px] overflow-auto rounded-lg border border-white/10 bg-black/15">
+      <div className="grid gap-2 p-3 md:hidden">
+        {rows.map((entry) => (
+          <Link
+            key={entry.nation.slug}
+            href={`/nations/${entry.nation.slug}`}
+            className="grid gap-2 rounded-lg border border-white/10 bg-black/20 p-3 hover:border-emerald-300/70 hover:bg-emerald-300/5"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <span className="break-words font-bold text-zinc-50">
+                {entry.nation.name}
+              </span>
+              <span className="shrink-0 font-mono text-sm text-emerald-200">
+                {entry.ranked ? `#${entry.rank}` : "-"}
+              </span>
+            </div>
+            <span className="break-words font-mono text-sm text-zinc-300">
+              {entry.label}
+            </span>
+          </Link>
+        ))}
+      </div>
+      <table className="hidden w-full min-w-[520px] border-collapse text-left text-sm md:table">
         <thead className="sticky top-0 bg-[#10120f] text-xs uppercase text-zinc-400">
           <tr className="border-b border-white/10">
             <th className="w-16 py-3 pr-4">Rank</th>
@@ -59,7 +102,7 @@ function LeaderboardTable({ rows }: { rows: RankedNation[] }) {
               className="border-b border-white/5 hover:bg-emerald-300/5"
             >
               <td className="py-3 pr-4 font-mono text-emerald-200">
-                #{entry.rank}
+                {entry.ranked ? `#${entry.rank}` : "-"}
               </td>
               <td className="py-3 pr-4">
                 <Link
@@ -112,7 +155,8 @@ export default async function LeaderboardsPage() {
                   </p>
                 </div>
                 <div className="text-sm font-bold text-emerald-200">
-                  {rows.length} ranked
+                  {rows.filter((row) => row.ranked).length} ranked /{" "}
+                  {rows.length} listed
                 </div>
               </div>
               <LeaderboardTable rows={rows} />

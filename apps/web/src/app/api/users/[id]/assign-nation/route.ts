@@ -8,7 +8,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireRole([Role.ADMIN]);
+    await requireRole([Role.LORE, Role.ADMIN]);
     const { id } = await params;
     const payload = assignNationSchema.parse(await request.json());
     const prisma = getPrisma();

@@ -99,7 +99,10 @@ const radarMetrics = [
   { key: "hdi", label: "HDI" },
 ] as const;
 
-function getRadarValue(nation: NationSummary, key: (typeof radarMetrics)[number]["key"]) {
+function getRadarValue(
+  nation: NationSummary,
+  key: (typeof radarMetrics)[number]["key"],
+) {
   if (key === "population") return parseCompactNumber(nation.people);
   if (key === "military") return parseMilitaryScore(nation.military);
   if (key === "area") return parseArea(nation.area);
@@ -118,21 +121,32 @@ function getPoint(index: number, value: number, radius = 92) {
   };
 }
 
-function RadarChart({ nations }: { nations: NationSummary[] }) {
+function RadarChart({
+  nations,
+  allNations,
+}: {
+  nations: NationSummary[];
+  allNations: NationSummary[];
+}) {
   const maxima = new Map(
     radarMetrics.map((metric) => [
       metric.key,
       Math.max(
         1,
-        ...nations.map((nation) => getRadarValue(nation, metric.key) ?? 0),
+        ...allNations.map((nation) => getRadarValue(nation, metric.key) ?? 0),
       ),
     ]),
   );
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[280px_1fr]">
-      <div className="rounded-lg border border-white/10 bg-black/20 p-4">
-        <svg viewBox="0 0 240 240" role="img" aria-label="Radar chart">
+    <div className="grid gap-5 lg:grid-cols-[minmax(220px,300px)_minmax(0,1fr)] lg:items-center">
+      <div className="rounded-lg border border-white/10 bg-black/20 p-3 sm:p-4">
+        <svg
+          viewBox="0 0 240 240"
+          role="img"
+          aria-label="Radar chart"
+          className="mx-auto aspect-square w-full max-w-[300px]"
+        >
           {[0.25, 0.5, 0.75, 1].map((ring) => (
             <polygon
               key={ring}
@@ -148,7 +162,7 @@ function RadarChart({ nations }: { nations: NationSummary[] }) {
             />
           ))}
           {radarMetrics.map((metric, index) => {
-            const point = getPoint(index, 1.08);
+            const point = getPoint(index, 1.04);
             return (
               <text
                 key={metric.key}
@@ -157,7 +171,7 @@ function RadarChart({ nations }: { nations: NationSummary[] }) {
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fill="#d8dfd4"
-                fontSize="9"
+                fontSize="8"
                 fontWeight="700"
               >
                 {metric.label}
@@ -170,7 +184,7 @@ function RadarChart({ nations }: { nations: NationSummary[] }) {
                 const value = getRadarValue(nation, metric.key) ?? 0;
                 const normalized = Math.min(
                   1,
-                  value / (maxima.get(metric.key) ?? 1),
+                  Math.max(0, value / (maxima.get(metric.key) ?? 1)),
                 );
                 const point = getPoint(index, normalized);
                 return `${point.x},${point.y}`;
@@ -189,23 +203,23 @@ function RadarChart({ nations }: { nations: NationSummary[] }) {
           })}
         </svg>
       </div>
-      <div className="grid content-start gap-3">
+      <div className="grid min-w-0 content-start gap-3">
         <h2 className="text-2xl font-bold text-zinc-50">Radar Overview</h2>
         <p className="text-sm leading-7 text-zinc-300">
-          Each axis is normalized against the strongest selected nation for that
-          metric, so the chart compares relative strengths within this group.
+          Each axis is normalized against the strongest canon nation for that
+          metric, so selected nations keep a stable scale.
         </p>
         <div className="flex flex-wrap gap-2">
           {nations.map((nation, index) => (
             <span
               key={nation.slug}
-              className="rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-100"
+              className="max-w-full rounded-md border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-100"
             >
               <span
                 className="mr-2 inline-block h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: colors[index] }}
               />
-              {nation.name}
+              <span className="break-words">{nation.name}</span>
             </span>
           ))}
         </div>
@@ -257,7 +271,7 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
             type="button"
             onClick={addNation}
             disabled={selectedSlugs.length >= 4}
-            className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             Add Nation
           </button>
@@ -281,7 +295,7 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
               <select
                 value={slug}
                 onChange={(event) => updateSelection(index, event.target.value)}
-                className="min-h-11 px-3"
+                className="min-h-11 min-w-0 px-3"
               >
                 {nations.map((nation) => (
                   <option
@@ -301,7 +315,7 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
       </Panel>
 
       <Panel>
-        <RadarChart nations={selectedNations} />
+        <RadarChart nations={selectedNations} allNations={nations} />
       </Panel>
 
       <Panel>
@@ -311,7 +325,59 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
           </h2>
           <Badge tone="accent">{selectedNations.length} selected</Badge>
         </div>
-        <div className="overflow-x-auto rounded-lg border border-white/10 bg-black/20">
+        <div className="grid gap-3 md:hidden">
+          {metricRows.map((row) => (
+            <div
+              key={row.key}
+              className="rounded-lg border border-white/10 bg-black/20 p-4"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h3 className="font-semibold text-zinc-100">{row.label}</h3>
+                  <p className="mt-1 text-xs text-zinc-400">{row.unit}</p>
+                </div>
+                {"info" in row && row.info ? (
+                  <InfoTooltip label={`${row.label} details`}>
+                    {row.info}
+                  </InfoTooltip>
+                ) : null}
+              </div>
+              <div className="mt-4 grid gap-3">
+                {selectedNations.map((nation, index) => (
+                  <div
+                    key={`${row.key}-${nation.slug}`}
+                    className="grid gap-1 rounded-md border border-white/10 bg-black/20 p-3"
+                  >
+                    <Link
+                      href={`/nations/${nation.slug}`}
+                      className="flex min-w-0 items-center gap-2 font-bold text-zinc-50 hover:text-emerald-100"
+                    >
+                      <span
+                        className="h-2.5 w-2.5 shrink-0 rounded-full"
+                        style={{ backgroundColor: colors[index] }}
+                      />
+                      <span className="break-words">{nation.name}</span>
+                    </Link>
+                    <span className="break-words text-sm leading-6 text-zinc-300">
+                      {row.key === "economy" &&
+                      nation.economy.toLowerCase().includes("bobakoin") ? (
+                        <Image
+                          src="/assets/bobakoin_crypto.png"
+                          alt="Bobakoin crypto coin"
+                          width={22}
+                          height={22}
+                          className="mr-2 inline h-5 w-5 rounded-full object-cover"
+                        />
+                      ) : null}
+                      {row.getValue(nation)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="hidden overflow-x-auto rounded-lg border border-white/10 bg-black/20 md:block">
           <table className="w-full min-w-[760px] text-left text-sm">
             <thead className="bg-[#11140f] text-xs uppercase text-zinc-300">
               <tr className="border-b border-white/10">

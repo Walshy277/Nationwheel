@@ -1,23 +1,17 @@
 import Link from "next/link";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
+import { loreCpLinks } from "@/lib/control-panels";
 import { listNationSummaries } from "@/lib/nations";
 import { requirePageRole } from "@/lib/permissions";
 import { Role } from "@prisma/client";
-
-const links = [
-  { href: "/lorecp", label: "Nation Review" },
-  { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/pages/wars", label: "Wars Page" },
-  { href: "/lorecp/pages/lore", label: "World Lore" },
-];
 
 export default async function LoreCpPage() {
   await requirePageRole([Role.LORE, Role.ADMIN]);
   const nations = await listNationSummaries();
 
   return (
-    <ControlLayout title="LoreCP" links={links}>
+    <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-4">
         <h1 className="text-3xl font-black text-white">Lore Control Panel</h1>
         <div className="grid gap-3 md:grid-cols-3">
@@ -56,6 +50,18 @@ export default async function LoreCpPage() {
               className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
             >
               Edit Lore
+            </Link>
+          </Panel>
+          <Panel className="grid gap-3">
+            <h2 className="text-xl font-bold text-zinc-50">Members</h2>
+            <p className="text-sm leading-6 text-zinc-400">
+              Assign leader nations and link Discord IDs to member accounts.
+            </p>
+            <Link
+              href="/lorecp/members"
+              className="rounded-lg border border-sky-300/70 px-4 py-2 text-sm font-bold text-sky-100 hover:bg-sky-300/10"
+            >
+              Link Members
             </Link>
           </Panel>
         </div>

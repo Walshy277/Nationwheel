@@ -126,6 +126,21 @@ NATION_WHEEL_BOT_API_KEY="same-key-as-vercel-env"
 
 Do not host the Discord gateway bot as a Vercel Function. The bot keeps a persistent Discord Gateway connection, while Vercel Functions are request-scoped serverless functions. Use Vercel for the website/API and a worker service for the always-on bot process.
 
+## Discord Lore Team Access
+
+Members with the Discord lore team role can access LoreCP when they sign in with Discord. The web app checks the user's linked Discord account against the configured server role and treats matching members as `LORE` for web permissions.
+
+Set these variables on the web deployment:
+
+```bash
+DISCORD_GUILD_ID="your-discord-server-id"
+DISCORD_LORE_ROLE_ID="your-lore-team-role-id"
+DISCORD_ADMIN_USER_IDS="comma-separated-discord-user-ids"
+NATION_WHEEL_DISCORD_BOT_TOKEN="bot-token-that-can-read-guild-members"
+```
+
+`DISCORD_LORE_ROLE_IDS` can be used instead of `DISCORD_LORE_ROLE_ID` for a comma-separated list of role IDs. The bot must be in the Discord server and able to read guild members.
+
 ## Seed Users
 
 The seed script creates:

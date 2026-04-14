@@ -19,7 +19,7 @@ const featuredSlots = [
 
 const quickLinks = [
   ["Nation Directory", "/nations", "Search every nation profile."],
-  ["Compare Nations", "/compare", "Select 2-4 nations side by side."],
+  ["Compare Nations", "/nations#compare", "Select 2-4 nations side by side."],
   [
     "Leaderboards",
     "/leaderboards",
@@ -87,7 +87,7 @@ export async function LandingPage() {
 
   return (
     <PageShell>
-      <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-center">
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
         <div>
           <Badge tone="accent">{nationCount} canon nations</Badge>
           <div className="mt-5 flex flex-wrap items-center gap-4">
@@ -99,30 +99,30 @@ export async function LandingPage() {
               className="h-20 w-20 rounded-lg border border-emerald-300/35 object-cover shadow-xl shadow-black/30"
               priority
             />
-            <h1 className="max-w-3xl text-5xl font-black leading-tight text-zinc-50 md:text-6xl">
+            <h1 className="max-w-3xl text-4xl font-black leading-tight text-zinc-50 sm:text-5xl md:text-6xl">
               Nation Wheel
             </h1>
           </div>
-          <p className="mt-5 max-w-2xl text-lg leading-8 text-zinc-300">
+          <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
             Browse profiles, compare canon stats, check rankings, and open the
             season map from one command center.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
-              href="/compare"
-              className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+              href="/nations#compare"
+              className="w-full rounded-lg bg-emerald-300 px-5 py-3 text-center font-bold text-zinc-950 hover:bg-emerald-200 sm:w-auto"
             >
               Compare Nations
             </Link>
             <Link
               href="/leaderboards"
-              className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5"
+              className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
             >
               Leaderboards
             </Link>
             <Link
               href="/nations"
-              className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5"
+              className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
             >
               Browse Nations
             </Link>

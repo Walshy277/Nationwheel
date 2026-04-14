@@ -65,7 +65,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
 
   return (
     <div className="grid gap-5">
-      <Panel className="grid gap-4 lg:grid-cols-[1fr_220px_180px]">
+      <Panel className="grid gap-4 md:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_220px_180px]">
         <label className="grid gap-2">
           <span className="text-sm font-semibold text-zinc-300">
             Search nations
@@ -74,7 +74,8 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Name, government, economy, or military"
-            className="min-h-11 px-3"
+            suppressHydrationWarning
+            className="min-h-11 min-w-0 px-3"
           />
         </label>
         <label className="grid gap-2">
@@ -84,7 +85,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
           <select
             value={government}
             onChange={(event) => setGovernment(event.target.value)}
-            className="min-h-11 px-3"
+            className="min-h-11 min-w-0 px-3"
           >
             <option value="all">All governments</option>
             {governments.map((item) => (
@@ -99,7 +100,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortKey)}
-            className="min-h-11 px-3"
+            className="min-h-11 min-w-0 px-3"
           >
             <option value="name">Name</option>
             <option value="population">Population</option>
@@ -109,7 +110,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
         </label>
       </Panel>
 
-      <div className="flex items-center justify-between gap-3 text-sm text-zinc-400">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-400">
         <span>
           Showing{" "}
           <strong className="text-zinc-100">{visibleNations.length}</strong> of{" "}
@@ -130,7 +131,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
         ) : null}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2">
         {visibleNations.map((nation) => {
           const area = parseArea(nation.area);
           const gdp = getGdpTotal(nation);
@@ -145,8 +146,8 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
             >
               <Panel className="h-full transition group-hover:-translate-y-0.5 group-hover:border-emerald-300/70 group-hover:bg-[color:var(--panel-strong)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h2 className="text-2xl font-bold text-zinc-50">
+                  <div className="min-w-0">
+                    <h2 className="text-xl font-bold leading-7 text-zinc-50 sm:text-2xl">
                       {nation.name}
                     </h2>
                     <p className="mt-2 text-sm text-zinc-400">
@@ -161,19 +162,19 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
                 <div className="mt-5 grid gap-3 text-sm sm:grid-cols-3">
                   <div className="rounded-lg border border-white/10 bg-black/20 p-3">
                     <span className="block text-zinc-500">Population</span>
-                    <strong className="mt-1 block text-zinc-100">
+                    <strong className="mt-1 block break-words text-zinc-100">
                       {nation.people}
                     </strong>
                   </div>
                   <div className="rounded-lg border border-white/10 bg-black/20 p-3">
                     <span className="block text-zinc-500">Area</span>
-                    <strong className="mt-1 block text-zinc-100">
+                    <strong className="mt-1 block break-words text-zinc-100">
                       {area === null ? "Unknown" : `${formatNumber(area)} km2`}
                     </strong>
                   </div>
                   <div className="rounded-lg border border-white/10 bg-black/20 p-3">
                     <span className="block text-zinc-500">GDP</span>
-                    <strong className="mt-1 block text-zinc-100">
+                    <strong className="mt-1 block break-words text-zinc-100">
                       {formatMoney(gdp)}
                     </strong>
                   </div>

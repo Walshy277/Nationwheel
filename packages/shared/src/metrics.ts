@@ -170,7 +170,13 @@ export function rankNations(
     })
     .filter((entry) => entry.value !== null)
     .sort((left, right) => right.value! - left.value!)
-    .map((entry, index) => ({ ...entry, rank: index + 1 }));
+    .map((entry, index, entries) => {
+      const previous = entries[index - 1];
+      const rank =
+        previous && previous.value === entry.value ? previous.rank : index + 1;
+      entry.rank = rank;
+      return entry;
+    });
 }
 
 export function rankOverallNations(nations: NationStats[]): RankedNation[] {
@@ -211,5 +217,11 @@ export function rankOverallNations(nations: NationStats[]): RankedNation[] {
     })
     .filter((entry) => entry.value !== null)
     .sort((left, right) => left.value! - right.value!)
-    .map((entry, index) => ({ ...entry, rank: index + 1 }));
+    .map((entry, index, entries) => {
+      const previous = entries[index - 1];
+      const rank =
+        previous && previous.value === entry.value ? previous.rank : index + 1;
+      entry.rank = rank;
+      return entry;
+    });
 }

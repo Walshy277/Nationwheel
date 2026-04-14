@@ -4,17 +4,12 @@ import {
   createLoreActionAction,
   updateLoreActionStatusAction,
 } from "@/app/actions";
+import { DatabaseRequired } from "@/components/control/database-required";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
+import { hasDatabase, loreCpLinks } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
-
-const links = [
-  { href: "/lorecp", label: "Nation Review" },
-  { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/pages/wars", label: "Wars Page" },
-  { href: "/lorecp/pages/lore", label: "World Lore" },
-];
 
 const columns = [
   {
@@ -36,6 +31,26 @@ const columns = [
 
 export default async function LoreActionsPage() {
   await requirePageRole([Role.LORE, Role.ADMIN]);
+  if (!hasDatabase()) {
+    return (
+      <ControlLayout title="LoreCP" links={loreCpLinks}>
+        <div className="grid gap-5">
+          <Panel>
+            <Badge tone="warning">Daily lore loop</Badge>
+            <h1 className="mt-4 text-3xl font-black text-zinc-50">
+              Action Tracker
+            </h1>
+            <p className="mt-3 max-w-3xl text-zinc-300">
+              Track canon TikTok actions, daily updates, timeframes, and spin
+              requirements.
+            </p>
+          </Panel>
+          <DatabaseRequired title="Action Storage Required" />
+        </div>
+      </ControlLayout>
+    );
+  }
+
   const [nations, actions] = await Promise.all([
     getPrisma().nation.findMany({
       orderBy: { name: "asc" },
@@ -55,7 +70,7 @@ export default async function LoreActionsPage() {
   ]);
 
   return (
-    <ControlLayout title="LoreCP" links={links}>
+    <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-5">
         <Panel>
           <Badge tone="warning">Daily lore loop</Badge>

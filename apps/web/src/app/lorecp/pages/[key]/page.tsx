@@ -9,6 +9,7 @@ import { requirePageRole } from "@/lib/permissions";
 const links = [
   { href: "/lorecp", label: "Nation Review" },
   { href: "/lorecp/actions", label: "Action Tracker" },
+  { href: "/lorecp/members", label: "Members" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
 ];

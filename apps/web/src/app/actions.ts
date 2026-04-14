@@ -356,7 +356,7 @@ export async function assignUserNationAction(
   userId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.ADMIN]);
+  await requireRole([Role.LORE, Role.ADMIN]);
   const payload = assignNationSchema.parse({
     nationId: readNullableText(formData, "nationId"),
   });
@@ -394,6 +394,7 @@ export async function assignUserNationAction(
   });
 
   revalidatePath("/admincp/users");
+  revalidatePath("/lorecp/members");
   revalidatePath("/admincp/nations");
   revalidatePath("/nations");
 }
@@ -402,7 +403,7 @@ export async function updateUserDiscordAction(
   userId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.ADMIN]);
+  await requireRole([Role.LORE, Role.ADMIN]);
   const payload = discordUserLinkSchema.parse({
     discordId: readText(formData, "discordId"),
   });
@@ -413,4 +414,5 @@ export async function updateUserDiscordAction(
   });
 
   revalidatePath("/admincp/users");
+  revalidatePath("/lorecp/members");
 }

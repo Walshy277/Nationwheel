@@ -25,5 +25,6 @@ declare module "next-auth/jwt" {
     role?: Role;
     nationId?: string | null;
     discordId?: string | null;
+    discordAccessToken?: string | null;
   }
 }
