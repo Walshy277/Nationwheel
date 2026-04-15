@@ -1,25 +1,28 @@
 import { Role } from "@prisma/client";
 import { getPrisma } from "@/lib/prisma";
 import { jsonError, requireRole } from "@/lib/permissions";
-import { roleUpdateSchema } from "@/lib/validation";
 
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireRole([Role.ADMIN]);
+    await requireRole([Role.ADMIN, Role.OWNER]);
     const { id } = await params;
-    const payload = roleUpdateSchema.parse(await request.json());
+    const body = (await request.json()) as { role?: Role };
+    if (!body.role) {
+      return Response.json({ error: "role is required" }, { status: 400 });
+    }
+
     const user = await getPrisma().user.update({
       where: { id },
-      data: { role: payload.role },
+      data: { role: body.role },
       select: {
         id: true,
+        name: true,
         email: true,
         discordId: true,
         role: true,
-        nationId: true,
       },
     });
 

@@ -65,28 +65,21 @@ async function main() {
     });
   }
 
-  const primis = await prisma.nation.findUniqueOrThrow({
-    where: { slug: "primis" },
-  });
+  const primis = await prisma.nation.findUniqueOrThrow({ where: { slug: "primis" } });
   const leader = await prisma.user.upsert({
     where: { email: "primis.leader@nationwheel.local" },
-    update: {
-      role: Role.LEADER,
-      nationId: primis.id,
-      passwordHash,
-    },
+    update: { role: Role.LEADER, passwordHash },
     create: {
-      name: "Primis Leader",
+      name: "Primis Controller",
       email: "primis.leader@nationwheel.local",
       role: Role.LEADER,
-      nationId: primis.id,
       passwordHash,
     },
   });
 
   await prisma.nation.update({
     where: { id: primis.id },
-    data: { leaderUserId: leader.id },
+    data: { leaderUserId: leader.id, leaderName: "Primis Leader" },
   });
 
   console.log(`Seeded Nation Wheel data. Admin user: ${admin.email}`);

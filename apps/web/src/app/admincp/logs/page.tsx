@@ -12,7 +12,7 @@ const links = [
 ];
 
 export default async function AdminLogsPage() {
-  await requirePageRole([Role.ADMIN]);
+  await requirePageRole([Role.ADMIN, Role.OWNER]);
   const revisions = await getPrisma().nationRevision.findMany({
     orderBy: { createdAt: "desc" },
     take: 50,

@@ -9,7 +9,6 @@ import { requirePageRole } from "@/lib/permissions";
 const links = [
   { href: "/lorecp", label: "Nation Review" },
   { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/members", label: "Members" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
 ];
@@ -19,7 +18,7 @@ export default async function PublicPageEditor({
 }: {
   params: Promise<{ key: string }>;
 }) {
-  await requirePageRole([Role.LORE, Role.ADMIN]);
+  await requirePageRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const { key } = await params;
   if (!isPublicContentKey(key)) notFound();
   const page = await getPublicContentPage(key);

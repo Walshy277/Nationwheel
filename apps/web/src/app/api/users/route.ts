@@ -4,7 +4,7 @@ import { jsonError, requireRole } from "@/lib/permissions";
 
 export async function GET() {
   try {
-    await requireRole([Role.ADMIN]);
+    await requireRole([Role.ADMIN, Role.OWNER]);
     const users = await getPrisma().user.findMany({
       orderBy: { email: "asc" },
       select: {
@@ -13,8 +13,7 @@ export async function GET() {
         email: true,
         discordId: true,
         role: true,
-        nationId: true,
-        nation: { select: { id: true, name: true, slug: true } },
+        leaderOf: { select: { id: true, name: true, slug: true } },
       },
     });
 

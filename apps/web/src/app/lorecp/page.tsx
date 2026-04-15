@@ -7,7 +7,7 @@ import { requirePageRole } from "@/lib/permissions";
 import { Role } from "@prisma/client";
 
 export default async function LoreCpPage() {
-  await requirePageRole([Role.LORE, Role.ADMIN]);
+  await requirePageRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const nations = await listNationSummaries();
 
   return (
@@ -21,48 +21,21 @@ export default async function LoreCpPage() {
               Track canon TikTok actions, daily updates, timeframes, and spin
               requirements.
             </p>
-            <Link
-              href="/lorecp/actions"
-              className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
-            >
-              Edit Actions
-            </Link>
+            <Link href="/lorecp/actions" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">Edit Actions</Link>
           </Panel>
           <Panel className="grid gap-3">
             <h2 className="text-xl font-bold text-zinc-50">Wars Page</h2>
             <p className="text-sm leading-6 text-zinc-400">
               Publish active wars, frozen conflicts, and peace outcomes.
             </p>
-            <Link
-              href="/lorecp/pages/wars"
-              className="rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10"
-            >
-              Edit Wars
-            </Link>
+            <Link href="/lorecp/pages/wars" className="rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10">Edit Wars</Link>
           </Panel>
           <Panel className="grid gap-3">
             <h2 className="text-xl font-bold text-zinc-50">World Lore</h2>
             <p className="text-sm leading-6 text-zinc-400">
               Maintain the public canon hub, timeline, and world rules.
             </p>
-            <Link
-              href="/lorecp/pages/lore"
-              className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
-            >
-              Edit Lore
-            </Link>
-          </Panel>
-          <Panel className="grid gap-3">
-            <h2 className="text-xl font-bold text-zinc-50">Members</h2>
-            <p className="text-sm leading-6 text-zinc-400">
-              Assign leader nations and link Discord IDs to member accounts.
-            </p>
-            <Link
-              href="/lorecp/members"
-              className="rounded-lg border border-sky-300/70 px-4 py-2 text-sm font-bold text-sky-100 hover:bg-sky-300/10"
-            >
-              Link Members
-            </Link>
+            <Link href="/lorecp/pages/lore" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">Edit Lore</Link>
           </Panel>
         </div>
         {nations.map((nation) => (
@@ -73,12 +46,7 @@ export default async function LoreCpPage() {
                 Stats, wiki moderation, and revision capture.
               </p>
             </div>
-            <Link
-              href={`/lorecp/nations/${nation.id}`}
-              className="self-center rounded-lg border border-yellow-300/60 px-4 py-2 text-sm font-bold text-yellow-100"
-            >
-              Review
-            </Link>
+            <Link href={`/lorecp/nations/${nation.id}`} className="self-center rounded-lg border border-yellow-300/60 px-4 py-2 text-sm font-bold text-yellow-100">Review</Link>
           </Panel>
         ))}
       </div>

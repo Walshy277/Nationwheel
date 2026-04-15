@@ -17,6 +17,12 @@ export const nationStatsSchema = z
   })
   .strict();
 
+export const leaderNameSchema = z
+  .object({
+    leaderName: z.string().min(1).max(120),
+  })
+  .strict();
+
 export const wikiUpdateSchema = z
   .object({
     content: z.string().min(1),

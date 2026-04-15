@@ -4,10 +4,11 @@ import { revalidatePath } from "next/cache";
 import { LoreActionStatus, Role } from "@prisma/client";
 import { createNationWikiTemplate } from "@nation-wheel/shared";
 import { getPrisma } from "@/lib/prisma";
-import { requireRole, requireWikiEditAccess } from "@/lib/permissions";
+import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissions";
 import {
   assignNationSchema,
   discordUserLinkSchema,
+  leaderNameSchema,
   loreActionSchema,
   loreActionStatusSchema,
   loreActionUpdateSchema,
@@ -68,7 +69,7 @@ function nationPayloadFromForm(formData: FormData) {
 }
 
 export async function createNationAction(formData: FormData) {
-  const user = await requireRole([Role.ADMIN]);
+  const user = await requireRole([Role.ADMIN, Role.OWNER]);
   const payload = nationPayloadFromForm(formData);
 
   await getPrisma().nation.create({
@@ -102,7 +103,7 @@ export async function updateNationStatsAction(
   nationId: string,
   formData: FormData,
 ) {
-  const user = await requireRole([Role.LORE, Role.ADMIN]);
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = nationPayloadFromForm(formData);
   const prisma = getPrisma();
   const current = await prisma.nation.findUniqueOrThrow({
@@ -139,10 +140,54 @@ export async function updateNationStatsAction(
   revalidatePath(`/lorecp/nations/${nationId}`);
   revalidatePath("/nations");
   revalidatePath(`/nations/${payload.slug}`);
+  revalidatePath("/dashboard/wiki");
+}
+
+export async function updateLeaderNameAction(
+  nationId: string,
+  formData: FormData,
+) {
+  const user = await requireUser();
+  const payload = leaderNameSchema.parse({
+    leaderName: readText(formData, "leaderName"),
+  });
+  const prisma = getPrisma();
+  const nation = await prisma.nation.findUniqueOrThrow({
+    where: { id: nationId },
+    select: { id: true, slug: true, leaderName: true, leaderUserId: true },
+  });
+
+  const canEdit =
+    [Role.ADMIN, Role.OWNER].includes(user.role) ||
+    (user.role === Role.LEADER && nation.leaderUserId === user.id);
+
+  if (!canEdit) {
+    throw new Error("You do not have permission to update this leader name.");
+  }
+
+  await prisma.nation.update({
+    where: { id: nationId },
+    data: {
+      leaderName: payload.leaderName,
+      revisions: {
+        create: {
+          fieldType: "LEADER_NAME",
+          previousValue: { leaderName: nation.leaderName ?? null },
+          newValue: { leaderName: payload.leaderName },
+          changedByUserId: user.id,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/dashboard/wiki");
+  revalidatePath(`/nations/${nation.slug}`);
+  revalidatePath(`/lorecp/nations/${nationId}`);
+  revalidatePath("/admincp/nations");
 }
 
 export async function deleteNationAction(nationId: string) {
-  await requireRole([Role.ADMIN]);
+  await requireRole([Role.ADMIN, Role.OWNER]);
   await getPrisma().nation.delete({ where: { id: nationId } });
 
   revalidatePath("/");
@@ -158,6 +203,7 @@ export async function updateWikiAction(nationId: string, formData: FormData) {
   });
   const prisma = getPrisma();
   const previous = await prisma.nationWiki.findUnique({ where: { nationId } });
+  const nation = await prisma.nation.findUnique({ where: { id: nationId }, select: { slug: true } });
 
   await prisma.nationWiki.upsert({
     where: { nationId },
@@ -186,6 +232,7 @@ export async function updateWikiAction(nationId: string, formData: FormData) {
   revalidatePath(`/lorecp/nations/${nationId}`);
   revalidatePath("/admincp/logs");
   revalidatePath("/nations");
+  if (nation?.slug) revalidatePath(`/nations/${nation.slug}`);
 }
 
 export async function updateNationFlagAction(
@@ -223,7 +270,7 @@ export async function updateNationFlagAction(
 }
 
 export async function createLoreActionAction(formData: FormData) {
-  const user = await requireRole([Role.LORE, Role.ADMIN]);
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = loreActionSchema.parse({
     nationId: readText(formData, "nationId"),
     type: readText(formData, "type"),
@@ -252,7 +299,7 @@ export async function updateLoreActionStatusAction(
   actionId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.LORE, Role.ADMIN]);
+  await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = loreActionStatusSchema.parse({
     status: readText(formData, "status"),
     requiresSpinReason: readNullableText(formData, "requiresSpinReason"),
@@ -284,7 +331,7 @@ export async function addLoreActionUpdateAction(
   actionId: string,
   formData: FormData,
 ) {
-  const user = await requireRole([Role.LORE, Role.ADMIN]);
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = loreActionUpdateSchema.parse({
     content: readText(formData, "content"),
   });
@@ -311,7 +358,7 @@ export async function updatePublicLorePageAction(
   key: string,
   formData: FormData,
 ) {
-  const user = await requireRole([Role.LORE, Role.ADMIN]);
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   if (!isPublicContentKey(key)) {
     throw new Error("Unknown public lore page.");
   }
@@ -341,7 +388,7 @@ export async function updatePublicLorePageAction(
 }
 
 export async function updateUserRoleAction(userId: string, formData: FormData) {
-  await requireRole([Role.ADMIN]);
+  await requireRole([Role.ADMIN, Role.OWNER]);
   const payload = roleUpdateSchema.parse({ role: readText(formData, "role") });
 
   await getPrisma().user.update({
@@ -356,7 +403,7 @@ export async function assignUserNationAction(
   userId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.LORE, Role.ADMIN]);
+  await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = assignNationSchema.parse({
     nationId: readNullableText(formData, "nationId"),
   });
@@ -373,19 +420,12 @@ export async function assignUserNationAction(
         where: { id: payload.nationId },
         select: { id: true },
       });
-    }
 
-    await tx.nation.updateMany({
-      where: { leaderUserId: userId },
-      data: { leaderUserId: null },
-    });
+      await tx.user.update({
+        where: { id: userId },
+        data: { role: Role.LEADER },
+      });
 
-    await tx.user.update({
-      where: { id: userId },
-      data: { nationId: payload.nationId },
-    });
-
-    if (payload.nationId) {
       await tx.nation.update({
         where: { id: payload.nationId },
         data: { leaderUserId: userId },
@@ -394,16 +434,16 @@ export async function assignUserNationAction(
   });
 
   revalidatePath("/admincp/users");
-  revalidatePath("/lorecp/members");
   revalidatePath("/admincp/nations");
   revalidatePath("/nations");
+  revalidatePath("/dashboard/wiki");
 }
 
 export async function updateUserDiscordAction(
   userId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.LORE, Role.ADMIN]);
+  await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = discordUserLinkSchema.parse({
     discordId: readText(formData, "discordId"),
   });
@@ -414,5 +454,4 @@ export async function updateUserDiscordAction(
   });
 
   revalidatePath("/admincp/users");
-  revalidatePath("/lorecp/members");
 }

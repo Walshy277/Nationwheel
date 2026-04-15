@@ -16,7 +16,6 @@ import { LoreActionStatus, Role } from "@prisma/client";
 const links = [
   { href: "/lorecp", label: "Nation Review" },
   { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/members", label: "Members" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
 ];
@@ -26,7 +25,7 @@ export default async function LoreNationPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  await requirePageRole([Role.LORE, Role.ADMIN]);
+  await requirePageRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const { id } = await params;
   const [nation, leaders] = await Promise.all([
     getPrisma().nation.findUnique({
@@ -65,7 +64,7 @@ export default async function LoreNationPage({
           </div>
           <h1 className="mt-3 text-3xl font-black text-white">{nation.name}</h1>
           <p className="mt-3 text-slate-300">
-            Review stats, leader assignment, and wiki content before publishing
+            Review canon stats, linked controller account, and wiki content before publishing
             changes.
           </p>
         </Panel>
@@ -251,7 +250,7 @@ export default async function LoreNationPage({
               defaultValue={nation.leaderUserId ?? ""}
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             >
-              <option value="">No leader assigned</option>
+              <option value="">No controller linked</option>
               {leaders.map((leader) => (
                 <option key={leader.id} value={leader.id}>
                   {leader.name ?? leader.email ?? leader.id}

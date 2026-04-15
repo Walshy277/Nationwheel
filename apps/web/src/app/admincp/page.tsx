@@ -12,7 +12,7 @@ const links = [
 ];
 
 export default async function AdminCpPage() {
-  await requirePageRole([Role.ADMIN]);
+  await requirePageRole([Role.ADMIN, Role.OWNER]);
   const [nationCount, userCount, revisionCount] = await Promise.all([
     getPrisma().nation.count(),
     getPrisma().user.count(),

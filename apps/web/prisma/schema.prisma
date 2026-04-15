@@ -8,9 +8,11 @@ datasource db {
 }
 
 enum Role {
+  USER
   LEADER
   LORE
   ADMIN
+  OWNER
 }
 
 enum RevisionFieldType {
@@ -18,6 +20,7 @@ enum RevisionFieldType {
   WIKI
   FLAG
   ACTION
+  LEADER_NAME
 }
 
 enum LoreActionStatus {
@@ -34,15 +37,13 @@ model User {
   emailVerified     DateTime?
   image             String?
   passwordHash      String?
-  role              Role               @default(LEADER)
-  nationId          String?
-  nation            Nation?            @relation("UserNation", fields: [nationId], references: [id])
+  role              Role               @default(USER)
   leaderOf          Nation[]           @relation("NationLeader")
   wikiUpdates       NationWiki[]       @relation("WikiUpdatedBy")
   revisions         NationRevision[]   @relation("RevisionChangedBy")
   loreActions       LoreAction[]       @relation("LoreActionCreatedBy")
   loreActionUpdates LoreActionUpdate[] @relation("LoreActionUpdateCreatedBy")
-  publicPageUpdates PublicLorePage[]    @relation("PublicPageUpdatedBy")
+  publicPageUpdates PublicLorePage[]   @relation("PublicPageUpdatedBy")
   accounts          Account[]
   sessions          Session[]
   createdAt         DateTime           @default(now())
@@ -59,9 +60,9 @@ model Nation {
   economy      String
   military     String
   flagImage    String?
+  leaderName   String?
   leaderUserId String?
   leaderUser   User?            @relation("NationLeader", fields: [leaderUserId], references: [id])
-  members      User[]           @relation("UserNation")
   wiki         NationWiki?
   revisions    NationRevision[]
   loreActions  LoreAction[]

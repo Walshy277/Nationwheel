@@ -1,8 +1,8 @@
 import { Prisma, Role } from "@prisma/client";
-import { canEditWikiForNation } from "@nation-wheel/shared";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
+import { getPrisma } from "@/lib/prisma";
 
 export class HttpError extends Error {
   constructor(
@@ -36,7 +36,7 @@ function hasValidBotKey(request: Request) {
 
 export async function requireRoleOrBot(request: Request, roles: Role[]) {
   if (hasValidBotKey(request)) {
-    return { id: undefined, role: roles[0], nationId: null };
+    return { id: undefined, role: roles[0] };
   }
 
   return requireRole(roles);
@@ -44,13 +44,24 @@ export async function requireRoleOrBot(request: Request, roles: Role[]) {
 
 export async function requireWikiEditAccess(nationId: string) {
   const user = await requireUser();
-  const allowed = canEditWikiForNation({
-    role: user.role,
-    userNationId: user.nationId,
-    nationId,
+
+  if ([Role.LORE, Role.ADMIN, Role.OWNER].includes(user.role)) {
+    return user;
+  }
+
+  if (user.role !== Role.LEADER) {
+    throw new HttpError(403, "Cannot edit this nation wiki");
+  }
+
+  const nation = await getPrisma().nation.findUnique({
+    where: { id: nationId },
+    select: { leaderUserId: true },
   });
 
-  if (!allowed) throw new HttpError(403, "Cannot edit this nation wiki");
+  if (!nation || nation.leaderUserId !== user.id) {
+    throw new HttpError(403, "Cannot edit this nation wiki");
+  }
+
   return user;
 }
 
@@ -59,7 +70,7 @@ export async function requireWikiEditAccessOrBot(
   nationId: string,
 ) {
   if (hasValidBotKey(request)) {
-    return { id: undefined, role: Role.LORE, nationId: null };
+    return { id: undefined, role: Role.LORE };
   }
 
   return requireWikiEditAccess(nationId);

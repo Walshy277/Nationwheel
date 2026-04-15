@@ -7,6 +7,7 @@ export async function GET() {
         ...nation,
         id: `canon-${nation.slug}`,
         leaderUser: null,
+        leaderName: null,
       })),
     });
   }
@@ -24,7 +25,7 @@ export async function GET() {
     });
 
     return Response.json({
-      nations: nations.map((nation) => withCanonMetadata(nation)),
+      nations: nations.map((nation) => withCanonMetadata({ ...nation, leaderName: nation.leaderName ?? null })),
     });
   } catch {
     return Response.json({
@@ -32,6 +33,7 @@ export async function GET() {
         ...nation,
         id: `canon-${nation.slug}`,
         leaderUser: null,
+        leaderName: null,
       })),
     });
   }
@@ -46,7 +48,7 @@ export async function POST(request: Request) {
         import("@/lib/permissions"),
         import("@/lib/validation"),
       ]);
-    const user = await requireRoleOrBot(request, [Role.ADMIN]);
+    const user = await requireRoleOrBot(request, [Role.ADMIN, Role.OWNER]);
     const payload = nationStatsSchema.parse(await request.json());
     const nation = await getPrisma().nation.create({
       data: {

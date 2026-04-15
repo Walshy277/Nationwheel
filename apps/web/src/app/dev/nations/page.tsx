@@ -5,7 +5,7 @@ import { Badge, PageShell } from "@/components/ui/shell";
 import { requirePageRole } from "@/lib/permissions";
 
 export default async function DevNationsPage() {
-  await requirePageRole([Role.ADMIN]);
+  await requirePageRole([Role.ADMIN, Role.OWNER]);
 
   return (
     <PageShell className="grid gap-5">

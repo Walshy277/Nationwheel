@@ -20,7 +20,7 @@ export async function GET(
 
     if (!nation)
       return Response.json({ error: "Nation not found" }, { status: 404 });
-    return Response.json({ nation: withCanonMetadata(nation) });
+    return Response.json({ nation: withCanonMetadata({ ...nation, leaderName: nation.leaderName ?? null }) });
   } catch (error) {
     return jsonError(error);
   }
@@ -31,7 +31,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const user = await requireRoleOrBot(request, [Role.LORE, Role.ADMIN]);
+    const user = await requireRoleOrBot(request, [Role.LORE, Role.ADMIN, Role.OWNER]);
     const { id } = await params;
     const payload = nationStatsSchema
       .partial()
@@ -77,7 +77,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireRoleOrBot(request, [Role.ADMIN]);
+    await requireRoleOrBot(request, [Role.ADMIN, Role.OWNER]);
     const { id } = await params;
     await getPrisma().nation.delete({ where: { id } });
     return Response.json({ ok: true });

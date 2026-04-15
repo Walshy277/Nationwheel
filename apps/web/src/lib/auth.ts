@@ -39,13 +39,23 @@ function getAdminDiscordIds() {
     .filter(Boolean);
 }
 
+function getOwnerDiscordIds() {
+  return process.env.DISCORD_OWNER_USER_IDS?.split(",")
+    .map((discordId) => discordId.trim())
+    .filter(Boolean);
+}
+
 async function getEffectiveRole(params: {
   role: Role;
   discordId: string | null;
   discordAccessToken?: string | null;
 }) {
-  if (params.role === Role.ADMIN) {
+  if (params.role === Role.OWNER || params.role === Role.ADMIN) {
     return params.role;
+  }
+
+  if (params.discordId && getOwnerDiscordIds()?.includes(params.discordId)) {
+    return Role.OWNER;
   }
 
   if (params.discordId && getAdminDiscordIds()?.includes(params.discordId)) {
@@ -125,7 +135,7 @@ export const authOptions: NextAuthOptions = {
             clientId: process.env.DISCORD_CLIENT_ID,
             clientSecret: process.env.DISCORD_CLIENT_SECRET,
             authorization: {
-              params: { scope: "identify email guilds.members.read" },
+              params: { scope: "identify email" },
             },
             allowDangerousEmailAccountLinking: allowEmailAccountLinking,
           }),
@@ -158,7 +168,6 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
-          nationId: user.nationId,
           discordId: user.discordId,
         };
       },
@@ -178,13 +187,13 @@ export const authOptions: NextAuthOptions = {
             where: { id: token.sub },
             data: { discordId: account.providerAccountId },
           });
-        }
-      }
+  } catch (error) {
+    console.error("Failed to persist Discord ID on login", error);
+  }
+}
 
       if (user) {
-        token.role = (user as { role?: Role }).role ?? Role.LEADER;
-        token.nationId =
-          (user as { nationId?: string | null }).nationId ?? null;
+        token.role = (user as { role?: Role }).role ?? Role.USER;
         token.discordId =
           accountDiscordId ??
           (user as { discordId?: string | null }).discordId ??
@@ -195,7 +204,7 @@ export const authOptions: NextAuthOptions = {
       if (token.sub && process.env.DATABASE_URL) {
         const dbUser = await getPrisma().user.findUnique({
           where: { id: token.sub },
-          select: { role: true, nationId: true, discordId: true },
+          select: { role: true, discordId: true },
         });
 
         if (dbUser) {
@@ -205,7 +214,6 @@ export const authOptions: NextAuthOptions = {
             discordAccessToken:
               (token.discordAccessToken as string | null | undefined) ?? null,
           });
-          token.nationId = dbUser.nationId;
           token.discordId =
             dbUser.discordId ??
             accountDiscordId ??
@@ -219,7 +227,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       token.role = await getEffectiveRole({
-        role: (token.role as Role | undefined) ?? Role.LEADER,
+        role: (token.role as Role | undefined) ?? Role.USER,
         discordId: (token.discordId as string | null | undefined) ?? null,
         discordAccessToken:
           (token.discordAccessToken as string | null | undefined) ?? null,
@@ -230,9 +238,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub ?? "";
-        session.user.role = (token.role as Role | undefined) ?? Role.LEADER;
-        session.user.nationId =
-          (token.nationId as string | null | undefined) ?? null;
+        session.user.role = (token.role as Role | undefined) ?? Role.USER;
         session.user.discordId =
           (token.discordId as string | null | undefined) ?? null;
       }

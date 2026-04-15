@@ -30,7 +30,7 @@ const columns = [
 ];
 
 export default async function LoreActionsPage() {
-  await requirePageRole([Role.LORE, Role.ADMIN]);
+  await requirePageRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   if (!hasDatabase()) {
     return (
       <ControlLayout title="LoreCP" links={loreCpLinks}>

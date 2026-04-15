@@ -1,56 +1,32 @@
 import { Role } from "@prisma/client";
 import { getPrisma } from "@/lib/prisma";
-import { jsonError, requireRole } from "@/lib/permissions";
 import { assignNationSchema } from "@/lib/validation";
+import { jsonError, requireRole } from "@/lib/permissions";
 
-export async function PATCH(
+export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await requireRole([Role.LORE, Role.ADMIN]);
+    await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
     const { id } = await params;
     const payload = assignNationSchema.parse(await request.json());
     const prisma = getPrisma();
 
-    const user = await prisma.$transaction(async (tx) => {
-      await tx.user.findUniqueOrThrow({ where: { id }, select: { id: true } });
+    await prisma.user.findUniqueOrThrow({ where: { id }, select: { id: true } });
 
-      if (payload.nationId) {
-        await tx.nation.findUniqueOrThrow({
-          where: { id: payload.nationId },
-          select: { id: true },
-        });
-      }
+    if (!payload.nationId) {
+      return Response.json({ error: "nationId is required" }, { status: 400 });
+    }
 
-      await tx.nation.updateMany({
-        where: { leaderUserId: id },
-        data: { leaderUserId: null },
-      });
+    await prisma.nation.findUniqueOrThrow({ where: { id: payload.nationId } });
 
-      const updatedUser = await tx.user.update({
-        where: { id },
-        data: { nationId: payload.nationId },
-        select: {
-          id: true,
-          email: true,
-          discordId: true,
-          role: true,
-          nationId: true,
-        },
-      });
-
-      if (payload.nationId) {
-        await tx.nation.update({
-          where: { id: payload.nationId },
-          data: { leaderUserId: id },
-        });
-      }
-
-      return updatedUser;
+    await prisma.$transaction(async (tx) => {
+      await tx.user.update({ where: { id }, data: { role: Role.LEADER } });
+      await tx.nation.update({ where: { id: payload.nationId! }, data: { leaderUserId: id } });
     });
 
-    return Response.json({ user });
+    return Response.json({ ok: true });
   } catch (error) {
     return jsonError(error);
   }

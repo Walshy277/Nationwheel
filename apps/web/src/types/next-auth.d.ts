@@ -8,14 +8,12 @@ declare module "next-auth" {
       email?: string | null;
       image?: string | null;
       role: Role;
-      nationId: string | null;
       discordId?: string | null;
     };
   }
 
   interface User {
     role?: Role;
-    nationId?: string | null;
     discordId?: string | null;
   }
 }
@@ -23,7 +21,6 @@ declare module "next-auth" {
 declare module "next-auth/jwt" {
   interface JWT {
     role?: Role;
-    nationId?: string | null;
     discordId?: string | null;
     discordAccessToken?: string | null;
   }

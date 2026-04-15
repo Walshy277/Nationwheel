@@ -43,7 +43,7 @@ export function NationProfile({
             {nation.name}
           </h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-300">
-            {nation.government} with {nation.people} people.
+            {nation.government} with a size of {nation.people}.
           </p>
         </div>
       </Panel>

@@ -17,7 +17,7 @@ const links = [
 ];
 
 export default async function AdminNationsPage() {
-  await requirePageRole([Role.ADMIN]);
+  await requirePageRole([Role.ADMIN, Role.OWNER]);
   const [nations, leaders] = await Promise.all([
     getPrisma().nation.findMany({
       orderBy: { name: "asc" },
@@ -37,7 +37,7 @@ export default async function AdminNationsPage() {
         <Panel>
           <h1 className="text-3xl font-black text-white">Nation Management</h1>
           <p className="mt-3 text-slate-300">
-            Create nations, update stats, assign leaders, and remove retired
+            Create nations, update canon stats, link controller accounts, and remove retired
             records.
           </p>
         </Panel>
@@ -57,13 +57,13 @@ export default async function AdminNationsPage() {
             <input
               name="people"
               required
-              placeholder="People"
+              placeholder="Nation Size"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <input
               name="government"
               required
-              placeholder="Government"
+              placeholder="Government Type"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <input
@@ -75,20 +75,20 @@ export default async function AdminNationsPage() {
             <input
               name="economy"
               required
-              placeholder="Economy"
+              placeholder="Economy Type"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <input
               name="military"
               required
-              placeholder="Military"
+              placeholder="Military Size"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <select
               name="leaderUserId"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             >
-              <option value="">No leader assigned</option>
+              <option value="">No controller linked</option>
               {leaders.map((leader) => (
                 <option key={leader.id} value={leader.id}>
                   {leader.name ?? leader.email ?? leader.id}
@@ -111,9 +111,7 @@ export default async function AdminNationsPage() {
                   </h2>
                   <p className="text-sm text-slate-400">
                     Leader:{" "}
-                    {nation.leaderUser?.name ??
-                      nation.leaderUser?.email ??
-                      "Unassigned"}
+                    {nation.leaderName ?? "Unset"}
                   </p>
                 </div>
                 <form action={deleteNationAction.bind(null, nation.id)}>
@@ -168,7 +166,7 @@ export default async function AdminNationsPage() {
                   defaultValue={nation.leaderUserId ?? ""}
                   className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
                 >
-                  <option value="">No leader assigned</option>
+                  <option value="">No controller linked</option>
                   {leaders.map((leader) => (
                     <option key={leader.id} value={leader.id}>
                       {leader.name ?? leader.email ?? leader.id}
@@ -176,7 +174,7 @@ export default async function AdminNationsPage() {
                   ))}
                 </select>
                 <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 md:col-span-2">
-                  Save Stats
+                  Save Nation
                 </button>
               </form>
             </Panel>

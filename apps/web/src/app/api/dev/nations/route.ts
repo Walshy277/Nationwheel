@@ -259,7 +259,7 @@ function canWrite() {
 
 export async function GET() {
   try {
-    await requireRole([Role.ADMIN]);
+    await requireRole([Role.ADMIN, Role.OWNER]);
     const workspaceRoot = await findWorkspaceRoot();
     const nations = await readNationsFromSource(workspaceRoot);
 
@@ -275,7 +275,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    await requireRole([Role.ADMIN]);
+    await requireRole([Role.ADMIN, Role.OWNER]);
 
     if (!canWrite()) {
       return Response.json(

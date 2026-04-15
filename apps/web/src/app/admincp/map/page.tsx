@@ -11,7 +11,7 @@ const links = [
 ];
 
 export default async function AdminMapPage() {
-  await requirePageRole([Role.ADMIN]);
+  await requirePageRole([Role.ADMIN, Role.OWNER]);
 
   return (
     <ControlLayout title="AdminCP" links={links}>
