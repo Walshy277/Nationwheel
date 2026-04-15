@@ -183,14 +183,16 @@ export const authOptions: NextAuthOptions = {
         token.discordAccessToken = account.access_token;
 
         if (process.env.DATABASE_URL) {
-          await getPrisma().user.update({
-            where: { id: token.sub },
-            data: { discordId: account.providerAccountId },
-          });
-  } catch (error) {
-    console.error("Failed to persist Discord ID on login", error);
-  }
-}
+          try {
+            await getPrisma().user.update({
+              where: { id: token.sub },
+              data: { discordId: account.providerAccountId },
+            });
+          } catch (error) {
+            console.error("Failed to persist Discord ID on login", error);
+          }
+        }
+      }
 
       if (user) {
         token.role = (user as { role?: Role }).role ?? Role.USER;
