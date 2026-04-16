@@ -157,9 +157,10 @@ export async function updateLeaderNameAction(
     select: { id: true, slug: true, leaderName: true, leaderUserId: true },
   });
 
-  const canEdit =
-    [Role.ADMIN, Role.OWNER].includes(user.role) ||
-    (user.role === Role.LEADER && nation.leaderUserId === user.id);
+const canEdit =
+  user.role === Role.ADMIN ||
+  user.role === Role.OWNER ||
+  (user.role === Role.LEADER && nation.leaderUserId === user.id);
 
   if (!canEdit) {
     throw new Error("You do not have permission to update this leader name.");
