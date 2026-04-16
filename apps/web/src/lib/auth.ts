@@ -1,4 +1,4 @@
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
+
 import { Role } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import type { NextAuthOptions } from "next-auth";
@@ -19,8 +19,7 @@ const allowEmailAccountLinking =
   process.env.ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING === "true";
 
 export const authOptions: NextAuthOptions = {
-  adapter: process.env.DATABASE_URL ? PrismaAdapter(getPrisma()) : undefined,
-  session: { strategy: "jwt" },
+    session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
   },
