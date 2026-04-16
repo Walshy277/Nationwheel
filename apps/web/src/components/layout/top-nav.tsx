@@ -11,6 +11,7 @@ const primaryLinks = [
 ];
 
 const secondaryLinks = [
+  { href: "/news", label: "News" },
   { href: "/lore", label: "Lore" },
   { href: "/wars", label: "Wars" },
   { href: "/actions", label: "Actions" },
@@ -20,7 +21,7 @@ const secondaryLinks = [
 const toolsMenuClassName =
   "mt-2 grid max-h-[70vh] gap-1 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-52 lg:shadow-black/40";
 
-function hasPanelAccess(roles: Role[], panel: "LORECP" | "ADMINCP") {
+function hasPanelAccess(roles: Role[], panel: "LORECP" | "ADMINCP" | "NEWSCP") {
   return roles.some((role) => canAccessControlPanel(role, panel));
 }
 
@@ -33,6 +34,9 @@ export async function TopNav() {
     ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     ...(hasPanelAccess(userRoles, "LORECP")
       ? [{ href: "/lorecp", label: "LoreCP" }]
+      : []),
+    ...(hasPanelAccess(userRoles, "NEWSCP")
+      ? [{ href: "/newscp", label: "NewsCP" }]
       : []),
     ...(hasPanelAccess(userRoles, "ADMINCP")
       ? [{ href: "/admincp", label: "AdminCP" }]

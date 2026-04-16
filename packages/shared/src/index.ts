@@ -18,7 +18,14 @@ export {
   type RankedNation,
 } from "./metrics";
 
-export const roles = ["USER", "LEADER", "LORE", "ADMIN", "OWNER"] as const;
+export const roles = [
+  "USER",
+  "LEADER",
+  "JOURNALIST",
+  "LORE",
+  "ADMIN",
+  "OWNER",
+] as const;
 export type Role = (typeof roles)[number];
 
 export const revisionFieldTypes = ["STATS", "WIKI"] as const;
@@ -146,8 +153,19 @@ ${nation.statNotes?.length ? nation.statNotes.map((note) => `- ${note}`).join("\
 ${actionLines}`;
 }
 
-export function canAccessControlPanel(role: Role, panel: "LORECP" | "ADMINCP") {
+export function canAccessControlPanel(
+  role: Role,
+  panel: "LORECP" | "ADMINCP" | "NEWSCP",
+) {
   if (panel === "ADMINCP") return role === "ADMIN" || role === "OWNER";
+  if (panel === "NEWSCP") {
+    return (
+      role === "JOURNALIST" ||
+      role === "LORE" ||
+      role === "ADMIN" ||
+      role === "OWNER"
+    );
+  }
   return role === "LORE" || role === "ADMIN" || role === "OWNER";
 }
 

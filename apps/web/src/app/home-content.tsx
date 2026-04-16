@@ -25,6 +25,7 @@ const quickLinks = [
     "/leaderboards",
     "Rank land, GDP, military, population, and HDI.",
   ],
+  ["World News", "/news", "Read the latest reports from journalists."],
   ["Season Map", "/map", "Open the world reference map."],
 ] as const;
 

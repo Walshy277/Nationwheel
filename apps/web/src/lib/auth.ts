@@ -57,9 +57,10 @@ function highestRole(left: Role, right: Role) {
   const rank: Record<Role, number> = {
     USER: 0,
     LEADER: 1,
-    LORE: 2,
-    ADMIN: 3,
-    OWNER: 4,
+    JOURNALIST: 2,
+    LORE: 3,
+    ADMIN: 4,
+    OWNER: 5,
   };
 
   return rank[right] > rank[left] ? right : left;

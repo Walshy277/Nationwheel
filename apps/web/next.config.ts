@@ -7,7 +7,7 @@ const appDir = dirname(fileURLToPath(import.meta.url));
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      bodySizeLimit: "4mb",
+      bodySizeLimit: "8mb",
     },
   },
   transpilePackages: ["@nation-wheel/shared"],

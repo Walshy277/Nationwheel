@@ -10,6 +10,7 @@ datasource db {
 enum Role {
   USER
   LEADER
+  JOURNALIST
   LORE
   ADMIN
   OWNER
@@ -45,6 +46,7 @@ model User {
   loreActions       LoreAction[]       @relation("LoreActionCreatedBy")
   loreActionUpdates LoreActionUpdate[] @relation("LoreActionUpdateCreatedBy")
   publicPageUpdates PublicLorePage[]   @relation("PublicPageUpdatedBy")
+  newsPosts         WorldNewsPost[]    @relation("WorldNewsPostAuthor")
   accounts          Account[]
   sessions          Session[]
   createdAt         DateTime           @default(now())
@@ -135,6 +137,22 @@ model PublicLorePage {
   updatedByUser   User?    @relation("PublicPageUpdatedBy", fields: [updatedByUserId], references: [id])
   updatedAt       DateTime @updatedAt
   createdAt       DateTime @default(now())
+}
+
+model WorldNewsPost {
+  id          String    @id @default(cuid())
+  title       String
+  summary     String
+  content     String
+  sourceLabel String?
+  sourceUrl   String?
+  authorId    String?
+  author      User?     @relation("WorldNewsPostAuthor", fields: [authorId], references: [id])
+  publishedAt DateTime  @default(now())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([publishedAt])
 }
 
 model Account {

@@ -7,7 +7,7 @@ export function FlagUploadField({
   currentImage,
   nationName,
   label = "Profile Picture",
-  description = "PNG, JPG, GIF, or WebP. Maximum 2 MB.",
+  description = "PNG, JPG, GIF, or WebP. Maximum 5 MB.",
   className,
 }: {
   currentImage?: string | null;
@@ -30,7 +30,7 @@ export function FlagUploadField({
       <span className="font-semibold text-zinc-200">{label}</span>
       <span className="text-xs leading-5 text-zinc-500">{description}</span>
       <div className="flex flex-wrap items-center gap-4">
-        <div className="relative grid h-20 w-20 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-black/30 text-lg font-black text-emerald-100">
+        <div className="relative grid aspect-[3/2] w-32 max-w-[45vw] shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-black/30 p-1 text-lg font-black text-emerald-100">
           {imageSrc ? (
             <Image
               src={imageSrc}
@@ -38,7 +38,7 @@ export function FlagUploadField({
               fill
               unoptimized
               sizes="80px"
-              className="object-cover"
+              className="object-contain"
             />
           ) : (
             nationName.slice(0, 2).toUpperCase()

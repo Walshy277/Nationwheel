@@ -15,18 +15,20 @@ export function NationProfile({
 }) {
   return (
     <div className="grid gap-6">
-      <Panel className="grid gap-6 lg:grid-cols-[180px_1fr]">
+      <Panel className="grid gap-6 lg:grid-cols-[minmax(160px,220px)_1fr] lg:items-center">
         {nation.flagImage ? (
-          <Image
-            src={nation.flagImage}
-            alt={`${nation.name} profile picture`}
-            width={144}
-            height={144}
-            unoptimized
-            className="h-36 w-36 rounded-lg border border-white/10 object-cover"
-          />
+          <div className="relative aspect-[3/2] w-full max-w-[240px] overflow-hidden rounded-lg border border-white/10 bg-black/30 p-2">
+            <Image
+              src={nation.flagImage}
+              alt={`${nation.name} flag`}
+              fill
+              unoptimized
+              sizes="(min-width: 1024px) 220px, 70vw"
+              className="object-contain"
+            />
+          </div>
         ) : (
-          <div className="grid h-36 w-36 place-items-center rounded-lg border border-emerald-300/35 bg-emerald-300/10 text-4xl font-black text-emerald-100">
+          <div className="grid aspect-[3/2] w-full max-w-[240px] place-items-center rounded-lg border border-emerald-300/35 bg-emerald-300/10 text-4xl font-black text-emerald-100">
             {nation.name.slice(0, 2).toUpperCase()}
           </div>
         )}

@@ -8,6 +8,7 @@ const publicRoutes = [
   "/nations",
   "/leaderboards",
   "/map",
+  "/news",
   "/lore",
   "/wars",
   "/actions",

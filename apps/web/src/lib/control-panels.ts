@@ -13,6 +13,11 @@ export const adminCpLinks = [
   { href: "/admincp/logs", label: "Logs" },
 ];
 
+export const newsCpLinks = [
+  { href: "/newscp", label: "Publish News" },
+  { href: "/news", label: "Public News" },
+];
+
 export function hasDatabase() {
   return Boolean(process.env.DATABASE_URL);
 }

@@ -17,6 +17,7 @@ import {
   publicLorePageSchema,
   roleUpdateSchema,
   wikiUpdateSchema,
+  worldNewsPostSchema,
 } from "@/lib/validation";
 import {
   isPublicContentKey,
@@ -39,8 +40,8 @@ async function readFlagDataUrl(formData: FormData) {
   if (!file.type.startsWith("image/")) {
     throw new Error("Flag upload must be an image.");
   }
-  if (file.size > 2_000_000) {
-    throw new Error("Profile picture must be under 2 MB.");
+  if (file.size > 5_000_000) {
+    throw new Error("Profile picture must be under 5 MB.");
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
@@ -59,9 +60,10 @@ function highestRole(roles: Role[]) {
   const rank: Record<Role, number> = {
     USER: 0,
     LEADER: 1,
-    LORE: 2,
-    ADMIN: 3,
-    OWNER: 4,
+    JOURNALIST: 2,
+    LORE: 3,
+    ADMIN: 4,
+    OWNER: 5,
   };
 
   return roles.reduce(
@@ -425,6 +427,33 @@ export async function updatePublicLorePageAction(
 
   revalidatePath(`/${key}`);
   revalidatePath(`/lorecp/pages/${key}`);
+}
+
+export async function createWorldNewsPostAction(formData: FormData) {
+  const user = await requireRole([
+    Role.JOURNALIST,
+    Role.LORE,
+    Role.ADMIN,
+    Role.OWNER,
+  ]);
+  const payload = worldNewsPostSchema.parse({
+    title: readText(formData, "title"),
+    summary: readText(formData, "summary"),
+    content: readText(formData, "content"),
+    sourceLabel: readNullableText(formData, "sourceLabel"),
+    sourceUrl: readNullableText(formData, "sourceUrl"),
+  });
+
+  await getPrisma().worldNewsPost.create({
+    data: {
+      ...payload,
+      authorId: user.id,
+    },
+  });
+
+  revalidatePath("/news");
+  revalidatePath("/newscp");
+  redirect("/newscp");
 }
 
 export async function updateUserRoleAction(userId: string, formData: FormData) {

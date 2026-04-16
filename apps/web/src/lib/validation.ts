@@ -85,3 +85,18 @@ export const publicLorePageSchema = z
     content: z.string().min(1),
   })
   .strict();
+
+export const worldNewsPostSchema = z
+  .object({
+    title: z.string().min(1).max(160),
+    summary: z.string().min(1).max(280),
+    content: z.string().min(1),
+    sourceLabel: z.string().nullable().optional(),
+    sourceUrl: z
+      .string()
+      .url()
+      .nullable()
+      .optional()
+      .or(z.literal("").transform(() => null)),
+  })
+  .strict();
