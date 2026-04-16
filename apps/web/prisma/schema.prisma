@@ -38,6 +38,7 @@ model User {
   image             String?
   passwordHash      String?
   role              Role               @default(USER)
+  roles             Role[]             @default([USER])
   leaderOf          Nation[]           @relation("NationLeader")
   wikiUpdates       NationWiki[]       @relation("WikiUpdatedBy")
   revisions         NationRevision[]   @relation("RevisionChangedBy")

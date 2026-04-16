@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import {
   rankNations,
@@ -33,6 +34,13 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
   { key: "population", title: "Population", note: "Total population." },
   { key: "hdi", title: "HDI", note: "Highest Human Development Index first." },
 ];
+
+export const metadata: Metadata = {
+  title: "Leaderboards",
+  description:
+    "Rank Nation Wheel nations by GDP, military strength, land area, population, HDI, and overall standing.",
+  alternates: { canonical: "/leaderboards" },
+};
 
 type BoardRow = RankedNation & {
   ranked: boolean;

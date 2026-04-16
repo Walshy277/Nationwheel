@@ -21,9 +21,9 @@ export async function POST(
 
     await prisma.nation.findUniqueOrThrow({ where: { id: payload.nationId } });
 
-    await prisma.$transaction(async (tx) => {
-      await tx.user.update({ where: { id }, data: { role: Role.LEADER } });
-      await tx.nation.update({ where: { id: payload.nationId! }, data: { leaderUserId: id } });
+    await prisma.nation.update({
+      where: { id: payload.nationId },
+      data: { leaderUserId: id },
     });
 
     return Response.json({ ok: true });

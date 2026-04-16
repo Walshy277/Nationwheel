@@ -32,7 +32,7 @@ export function Panel({
   return (
     <section
       className={cn(
-        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-lg shadow-black/20 ring-1 ring-white/[0.04] sm:p-6",
+        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-xl shadow-black/22 ring-1 ring-white/[0.05] sm:p-6",
         "max-[420px]:p-4",
         className,
       )}
@@ -58,7 +58,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "rounded-md border px-2.5 py-1 text-xs font-semibold uppercase",
+        "inline-flex items-center rounded-md border px-2.5 py-1 text-xs font-semibold uppercase leading-none",
         tones[tone],
       )}
     >
@@ -106,7 +106,7 @@ export function MetricCard({
   iconAlt?: string;
 }) {
   return (
-    <div className="rounded-lg border border-white/12 bg-black/25 p-4">
+    <div className="rounded-lg border border-white/12 bg-black/25 p-4 shadow-inner shadow-white/[0.02]">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase text-zinc-300">
           <span>{label}</span>

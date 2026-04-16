@@ -13,6 +13,7 @@ export async function GET() {
         email: true,
         discordId: true,
         role: true,
+        roles: true,
         leaderOf: { select: { id: true, name: true, slug: true } },
       },
     });

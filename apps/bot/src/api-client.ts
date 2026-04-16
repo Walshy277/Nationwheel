@@ -10,11 +10,11 @@ export type ApiNation = {
   gdp: string;
   economy: string;
   military: string;
-  area?: string;
-  geoPoliticalStatus?: string;
-  block?: string;
-  culture?: string;
-  hdi?: string;
+  area?: string | null;
+  geoPoliticalStatus?: string | null;
+  block?: string | null;
+  culture?: string | null;
+  hdi?: string | null;
   statNotes?: string[];
   actions?: Array<{
     nation: string;

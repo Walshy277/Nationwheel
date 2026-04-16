@@ -95,6 +95,15 @@ export default async function AdminNationsPage() {
                 </option>
               ))}
             </select>
+            <label className="grid gap-2 text-sm text-slate-300">
+              Profile Picture
+              <input
+                name="flag"
+                type="file"
+                accept="image/*"
+                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+              />
+            </label>
             <button className="rounded-lg bg-emerald-300 px-4 py-2 font-bold text-slate-950 md:col-span-2">
               Create Nation
             </button>
@@ -131,6 +140,7 @@ export default async function AdminNationsPage() {
                   className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
                 />
                 <input type="hidden" name="slug" value={nation.slug} />
+                <input type="hidden" name="returnPath" value="/admincp/nations" />
                 <input
                   name="people"
                   required
@@ -173,6 +183,15 @@ export default async function AdminNationsPage() {
                     </option>
                   ))}
                 </select>
+                <label className="grid gap-2 text-sm text-slate-300">
+                  Profile Picture
+                  <input
+                    name="flag"
+                    type="file"
+                    accept="image/*"
+                    className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+                  />
+                </label>
                 <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 md:col-span-2">
                   Save Nation
                 </button>

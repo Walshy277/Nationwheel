@@ -13,6 +13,21 @@ const credentialsSchema = z.object({
   password: z.string().min(1),
 });
 
+function cleanEnv(value: string | undefined) {
+  return value?.replace(/(?:\\r|\\n|\r|\n)+$/g, "").trim();
+}
+
+const discordClientId = cleanEnv(process.env.DISCORD_CLIENT_ID);
+const discordClientSecret = cleanEnv(process.env.DISCORD_CLIENT_SECRET);
+const discordGuildId = cleanEnv(process.env.DISCORD_GUILD_ID);
+const discordBotToken = cleanEnv(process.env.NATION_WHEEL_DISCORD_BOT_TOKEN);
+const nextAuthSecret = cleanEnv(process.env.NEXTAUTH_SECRET);
+const discordAdminUserIds = parseCsvEnv(process.env.DISCORD_ADMIN_USER_IDS);
+const discordLoreRoleIds = [
+  ...parseCsvEnv(process.env.DISCORD_LORE_ROLE_ID),
+  ...parseCsvEnv(process.env.DISCORD_LORE_ROLE_IDS),
+];
+
 const allowEmailAccountLinking =
   process.env.NODE_ENV === "development" ||
   process.env.ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING === "true";
@@ -25,26 +40,137 @@ type DiscordProfile = {
   avatar?: string | null;
 };
 
+type DiscordGuildMember = {
+  roles?: string[];
+};
+
+function parseCsvEnv(value: string | undefined) {
+  return (
+    cleanEnv(value)
+      ?.split(",")
+      .map((entry) => entry.trim())
+      .filter(Boolean) ?? []
+  );
+}
+
+function highestRole(left: Role, right: Role) {
+  const rank: Record<Role, number> = {
+    USER: 0,
+    LEADER: 1,
+    LORE: 2,
+    ADMIN: 3,
+    OWNER: 4,
+  };
+
+  return rank[right] > rank[left] ? right : left;
+}
+
+function getPrimaryRole(roles: Role[]) {
+  return roles.reduce((primary, role) => highestRole(primary, role), Role.USER);
+}
+
+function mergeRoles(...roleGroups: Array<Role[] | Role | null | undefined>) {
+  const roles = new Set<Role>();
+
+  for (const group of roleGroups) {
+    if (!group) continue;
+    const values = Array.isArray(group) ? group : [group];
+    for (const role of values) roles.add(role);
+  }
+
+  if (roles.size === 0) roles.add(Role.USER);
+  return Array.from(roles);
+}
+
+async function getDiscordMemberRole(discordId: string) {
+  if (discordAdminUserIds.includes(discordId)) {
+    return Role.ADMIN;
+  }
+
+  if (!discordGuildId || !discordBotToken || discordLoreRoleIds.length === 0) {
+    return Role.USER;
+  }
+
+  try {
+    const response = await fetch(
+      `https://discord.com/api/v10/guilds/${discordGuildId}/members/${discordId}`,
+      {
+        headers: {
+          Authorization: `Bot ${discordBotToken}`,
+        },
+      },
+    );
+
+    if (response.status === 404) {
+      return Role.USER;
+    }
+
+    if (!response.ok) {
+      console.error("Unable to resolve Discord guild member role", {
+        status: response.status,
+        discordId,
+      });
+      return Role.USER;
+    }
+
+    const member = (await response.json()) as DiscordGuildMember;
+    const memberRoles = new Set(member.roles ?? []);
+    return discordLoreRoleIds.some((roleId) => memberRoles.has(roleId))
+      ? Role.LORE
+      : Role.USER;
+  } catch (error) {
+    console.error("Unable to fetch Discord guild member role", error);
+    return Role.USER;
+  }
+}
+
 async function resolveDiscordUser(profile: DiscordProfile) {
   if (!profile.id) return null;
 
   const prisma = getPrisma();
   const email = profile.email?.toLowerCase() ?? null;
   const displayName = profile.global_name ?? profile.username ?? null;
+  const discordRole = await getDiscordMemberRole(profile.id);
 
   const existingByDiscord = await prisma.user.findUnique({
     where: { discordId: profile.id },
   });
 
-  if (existingByDiscord) return existingByDiscord;
+  if (existingByDiscord) {
+    const roles = mergeRoles(existingByDiscord.roles, existingByDiscord.role, discordRole);
+    const role = getPrimaryRole(roles);
+    if (
+      existingByDiscord.role !== role ||
+      existingByDiscord.roles.length !== roles.length ||
+      !roles.every((candidate) => existingByDiscord.roles.includes(candidate)) ||
+      (!existingByDiscord.name && displayName) ||
+      (!existingByDiscord.image && profile.avatar)
+    ) {
+      return prisma.user.update({
+        where: { id: existingByDiscord.id },
+        data: {
+          role,
+          roles,
+          name: existingByDiscord.name ?? displayName,
+          image: existingByDiscord.image ?? profile.avatar,
+        },
+      });
+    }
+
+    return existingByDiscord;
+  }
 
   if (email) {
     const existingByEmail = await prisma.user.findUnique({ where: { email } });
     if (existingByEmail) {
+      const roles = mergeRoles(existingByEmail.roles, existingByEmail.role, discordRole);
+      const role = getPrimaryRole(roles);
       return prisma.user.update({
         where: { id: existingByEmail.id },
         data: {
           discordId: profile.id,
+          role,
+          roles,
           name: existingByEmail.name ?? displayName,
           image: existingByEmail.image ?? profile.avatar,
         },
@@ -58,14 +184,15 @@ async function resolveDiscordUser(profile: DiscordProfile) {
       email,
       discordId: profile.id,
       image: profile.avatar,
-      role: Role.USER,
+      role: discordRole,
+      roles: mergeRoles(discordRole),
     },
   });
 }
 
 export const authOptions: NextAuthOptions = {
   secret:
-    process.env.NEXTAUTH_SECRET ??
+    nextAuthSecret ??
     (process.env.NODE_ENV === "development"
       ? "nation-wheel-development-secret"
       : undefined),
@@ -75,11 +202,11 @@ export const authOptions: NextAuthOptions = {
     error: "/login",
   },
   providers: [
-    ...(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
+    ...(discordClientId && discordClientSecret
       ? [
           DiscordProvider({
-            clientId: process.env.DISCORD_CLIENT_ID,
-            clientSecret: process.env.DISCORD_CLIENT_SECRET,
+            clientId: discordClientId,
+            clientSecret: discordClientSecret,
             authorization: {
               params: { scope: "identify email" },
             },
@@ -114,6 +241,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           email: user.email,
           role: user.role,
+          roles: user.roles,
           discordId: user.discordId,
         };
       },
@@ -133,10 +261,12 @@ export const authOptions: NextAuthOptions = {
           token.email = dbUser.email;
           token.picture = dbUser.image;
           token.role = dbUser.role;
+          token.roles = dbUser.roles;
           token.discordId = dbUser.discordId;
         }
       } else if (user) {
         token.role = (user as { role?: Role }).role ?? Role.USER;
+        token.roles = (user as { roles?: Role[] }).roles ?? [token.role as Role];
         token.discordId =
           (user as { discordId?: string | null }).discordId ?? null;
       }
@@ -148,6 +278,8 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.sub ?? "";
         session.user.role = (token.role as Role | undefined) ?? Role.USER;
+        session.user.roles =
+          (token.roles as Role[] | undefined) ?? [session.user.role];
         session.user.discordId =
           (token.discordId as string | null | undefined) ?? null;
       }

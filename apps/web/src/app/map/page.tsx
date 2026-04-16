@@ -1,6 +1,13 @@
+import type { Metadata } from "next";
 import { NationMap } from "@/components/map/nation-map";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { listNationSummaries } from "@/lib/nations";
+
+export const metadata: Metadata = {
+  title: "World Map",
+  description: "Open the Nation Wheel world reference map and nation index.",
+  alternates: { canonical: "/map" },
+};
 
 export default async function MapPage() {
   const nations = await listNationSummaries();

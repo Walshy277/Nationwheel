@@ -36,7 +36,7 @@ export const wikiUpdateSchema = z
 
 export const roleUpdateSchema = z
   .object({
-    role: z.nativeEnum(Role),
+    roles: z.array(z.nativeEnum(Role)).min(1),
   })
   .strict();
 

@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { Badge, PageShell } from "@/components/ui/shell";
 import { NationCompare } from "@/components/compare/nation-compare";
 import { listNationSummaries } from "@/lib/nations";
 import { NationDirectory } from "./nation-directory";
+
+export const metadata: Metadata = {
+  title: "Nation Profiles",
+  description:
+    "Search, filter, compare, and open every Nation Wheel canon nation profile.",
+  alternates: { canonical: "/nations" },
+};
 
 export default async function NationsPage() {
   const nations = await listNationSummaries();

@@ -63,6 +63,7 @@ export default async function DashboardWikiPage() {
             action={updateLeaderNameAction.bind(null, nation.id)}
             className="rounded-lg border border-white/10 bg-black/20 p-4"
           >
+            <input type="hidden" name="returnPath" value="/dashboard/wiki" />
             <h2 className="text-lg font-bold text-zinc-50">Leader Name</h2>
             <p className="mt-1 text-sm text-zinc-400">
               This is the fictional name shown publicly on the nation page. It
@@ -86,9 +87,10 @@ export default async function DashboardWikiPage() {
             action={updateNationFlagAction.bind(null, nation.id)}
             className="rounded-lg border border-white/10 bg-black/20 p-4"
           >
-            <h2 className="text-lg font-bold text-zinc-50">Flag</h2>
+            <input type="hidden" name="returnPath" value="/dashboard/wiki" />
+            <h2 className="text-lg font-bold text-zinc-50">Profile Picture</h2>
             <p className="mt-1 text-sm text-zinc-400">
-              Upload a small image for your nation profile.
+              Upload a small image to show as your nation profile picture.
             </p>
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <input
@@ -98,7 +100,7 @@ export default async function DashboardWikiPage() {
                 className="px-3 py-2 text-sm text-zinc-100"
               />
               <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10">
-                Save Flag
+                Save Profile Picture
               </button>
             </div>
           </form>

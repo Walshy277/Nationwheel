@@ -19,7 +19,7 @@ export function NationProfile({
         {nation.flagImage ? (
           <Image
             src={nation.flagImage}
-            alt={`${nation.name} flag`}
+            alt={`${nation.name} profile picture`}
             width={144}
             height={144}
             unoptimized

@@ -175,7 +175,7 @@ export function canEditWikiForNation(params: {
   ) {
     return true;
   }
-  return params.role === "LEADER" && params.userNationId === params.nationId;
+  return params.userNationId === params.nationId;
 }
 
 export const sampleNations: NationStats[] = [

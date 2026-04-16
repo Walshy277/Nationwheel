@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { listActivityFeed } from "@/lib/activity";
+
+export const metadata: Metadata = {
+  title: "Activity",
+  description:
+    "Review Nation Wheel canon actions, active modifiers, and live lore tracker updates.",
+  alternates: { canonical: "/activity" },
+};
 
 export default async function ActivityPage() {
   const feed = await listActivityFeed();

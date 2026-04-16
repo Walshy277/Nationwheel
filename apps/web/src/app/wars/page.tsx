@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { getPublicContentPage } from "@/lib/public-content";
+
+export const metadata: Metadata = {
+  title: "Wars",
+  description:
+    "Read active wars, frozen conflicts, outcomes, occupations, and peace terms in Nation Wheel.",
+  alternates: { canonical: "/wars" },
+};
 
 export default async function WarsPage() {
   const page = await getPublicContentPage("wars");

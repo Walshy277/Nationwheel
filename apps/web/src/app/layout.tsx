@@ -14,9 +14,27 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nation Wheel",
+  metadataBase: new URL(process.env.NEXTAUTH_URL ?? "https://nation-wheel.vercel.app"),
+  title: {
+    default: "Nation Wheel",
+    template: "%s | Nation Wheel",
+  },
   description:
     "A map-first strategy world platform for nation profiles, lore, and Discord governance.",
+  openGraph: {
+    title: "Nation Wheel",
+    description:
+      "A map-first strategy world platform for nation profiles, lore, and Discord governance.",
+    url: "/",
+    siteName: "Nation Wheel",
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Nation Wheel",
+    description:
+      "A map-first strategy world platform for nation profiles, lore, and Discord governance.",
+  },
 };
 
 export default function RootLayout({

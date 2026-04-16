@@ -21,7 +21,8 @@ export async function requireUser() {
 
 export async function requireRole(roles: Role[]) {
   const user = await requireUser();
-  if (!roles.includes(user.role)) {
+  const userRoles = new Set([user.role, ...(user.roles ?? [])]);
+  if (!roles.some((role) => userRoles.has(role))) {
     throw new HttpError(403, "Insufficient permissions");
   }
 
@@ -45,13 +46,10 @@ export async function requireRoleOrBot(request: Request, roles: Role[]) {
 export async function requireWikiEditAccess(nationId: string) {
   const user = await requireUser();
 
+  const userRoles = new Set([user.role, ...(user.roles ?? [])]);
   const wikiStaffRoles: Role[] = [Role.LORE, Role.ADMIN, Role.OWNER];
-  if (wikiStaffRoles.includes(user.role)) {
+  if (wikiStaffRoles.some((role) => userRoles.has(role))) {
     return user;
-  }
-
-  if (user.role !== Role.LEADER) {
-    throw new HttpError(403, "Cannot edit this nation wiki");
   }
 
   const nation = await getPrisma().nation.findUnique({
@@ -114,6 +112,7 @@ export async function requirePageUser() {
 
 export async function requirePageRole(roles: Role[]) {
   const user = await requirePageUser();
-  if (!roles.includes(user.role)) redirect("/dashboard");
+  const userRoles = new Set([user.role, ...(user.roles ?? [])]);
+  if (!roles.some((role) => userRoles.has(role))) redirect("/dashboard");
   return user;
 }

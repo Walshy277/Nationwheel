@@ -215,6 +215,7 @@ export default async function LoreNationPage({
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <input type="hidden" name="slug" value={nation.slug} />
+            <input type="hidden" name="returnPath" value={`/lorecp/nations/${nation.id}`} />
             <input
               name="people"
               required
@@ -257,6 +258,15 @@ export default async function LoreNationPage({
                 </option>
               ))}
             </select>
+            <label className="grid gap-2 text-sm text-slate-300">
+              Profile Picture
+              <input
+                name="flag"
+                type="file"
+                accept="image/*"
+                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+              />
+            </label>
             <button className="rounded-lg bg-yellow-300 px-4 py-2 font-bold text-slate-950 md:col-span-2">
               Save Stats
             </button>

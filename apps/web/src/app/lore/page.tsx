@@ -1,6 +1,14 @@
+import type { Metadata } from "next";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { getPublicContentPage } from "@/lib/public-content";
+
+export const metadata: Metadata = {
+  title: "Lore",
+  description:
+    "Read public Nation Wheel canon, world rules, timeline notes, and current season context.",
+  alternates: { canonical: "/lore" },
+};
 
 export default async function LorePage() {
   const page = await getPublicContentPage("lore");

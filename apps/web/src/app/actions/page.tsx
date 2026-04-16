@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
 import { LoreActionStatus } from "@prisma/client";
 import Link from "next/link";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getPrisma } from "@/lib/prisma";
+
+export const metadata: Metadata = {
+  title: "Actions",
+  description:
+    "Track current Nation Wheel canon actions, completion windows, spin requirements, and lore team updates.",
+  alternates: { canonical: "/actions" },
+};
 
 async function getPublicActions() {
   try {

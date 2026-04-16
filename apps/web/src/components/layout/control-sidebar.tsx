@@ -12,16 +12,16 @@ export function ControlLayout({
 }) {
   return (
     <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">
-      <aside className="rounded-lg border border-white/10 bg-[color:var(--panel)]/90 p-4">
+      <aside className="rounded-lg border border-white/10 bg-[color:var(--panel)]/94 p-4 shadow-lg shadow-black/20 lg:sticky lg:top-24 lg:self-start">
         <div className="mb-4 text-xs font-bold uppercase text-emerald-200">
           {title}
         </div>
-        <nav className="grid gap-2">
+        <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-1">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-md px-3 py-2 text-sm font-semibold text-zinc-300 hover:bg-white/5 hover:text-white"
+              className="rounded-md border border-white/8 bg-white/[0.02] px-3 py-2 text-sm font-semibold text-zinc-300 hover:border-emerald-300/40 hover:bg-white/5 hover:text-white"
             >
               {link.label}
             </Link>

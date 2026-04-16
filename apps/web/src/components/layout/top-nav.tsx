@@ -1,9 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
-import { canAccessControlPanel } from "@nation-wheel/shared";
+import { canAccessControlPanel, type Role } from "@nation-wheel/shared";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { getCurrentUser } from "@/lib/auth";
-import { listNationSummaries } from "@/lib/nations";
 
 const primaryLinks = [
   { href: "/nations", label: "Nations" },
@@ -18,31 +17,31 @@ const secondaryLinks = [
   { href: "/activity", label: "Activity" },
 ];
 
-const nationMenuClassName =
-  "invisible absolute left-1/2 top-9 z-50 hidden max-h-[70vh] w-80 -translate-x-1/2 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 opacity-0 shadow-2xl shadow-black/40 transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 lg:block";
-
 const toolsMenuClassName =
-  "absolute right-0 top-10 z-50 w-48 rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/40";
+  "mt-2 grid max-h-[70vh] gap-1 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-52 lg:shadow-black/40";
+
+function hasPanelAccess(roles: Role[], panel: "LORECP" | "ADMINCP") {
+  return roles.some((role) => canAccessControlPanel(role, panel));
+}
 
 export async function TopNav() {
-  const [user, nations] = await Promise.all([
-    getCurrentUser(),
-    listNationSummaries(),
-  ]);
-  const toolLinks = [
-    ...secondaryLinks,
+  const user = await getCurrentUser();
+  const userRoles = user
+    ? Array.from(new Set([user.role, ...(user.roles ?? [])]))
+    : [];
+  const controlLinks = [
     ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : []),
-    ...(user && canAccessControlPanel(user.role, "LORECP")
+    ...(hasPanelAccess(userRoles, "LORECP")
       ? [{ href: "/lorecp", label: "LoreCP" }]
       : []),
-    ...(user && canAccessControlPanel(user.role, "ADMINCP")
+    ...(hasPanelAccess(userRoles, "ADMINCP")
       ? [{ href: "/admincp", label: "AdminCP" }]
       : []),
   ];
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080907]/94 backdrop-blur-xl">
-      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:gap-4 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080907]/95 shadow-lg shadow-black/20 backdrop-blur-xl">
+      <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:gap-5 lg:px-8">
         <Link href="/" className="flex items-center gap-3">
           <Image
             src="/assets/nationwheel_logo.jpg"
@@ -56,53 +55,52 @@ export async function TopNav() {
             Nation Wheel
           </span>
         </Link>
-        <nav className="order-3 flex w-full items-center gap-1 overflow-x-auto pb-1 text-sm text-zinc-300 lg:order-none lg:w-auto lg:overflow-visible lg:pb-0">
-          <div className="group relative">
+        <nav className="order-3 grid w-full gap-2 text-sm text-zinc-300 lg:order-none lg:flex lg:w-auto lg:items-center lg:gap-1">
+          <div className="-mx-1 flex items-center gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
             <Link
               href="/nations"
-              className="block rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
+              className="shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
             >
               Nations
             </Link>
-            <div className={nationMenuClassName}>
-              <div className="px-3 py-2 text-xs font-bold uppercase text-emerald-200">
-                Canon Nations
-              </div>
-              <div className="grid gap-1">
-                {nations.map((nation) => (
-                  <Link
-                    key={nation.slug}
-                    href={`/nations/${nation.slug}`}
-                    className="rounded-md px-3 py-2 hover:bg-white/5"
-                  >
-                    <span className="block text-sm font-semibold text-zinc-100">
-                      {nation.name}
-                    </span>
-                    <span className="block text-xs text-zinc-500">
-                      {nation.government}
-                    </span>
-                  </Link>
-                ))}
-              </div>
-            </div>
+            {primaryLinks
+              .filter((link) => link.href !== "/nations")
+              .map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              ))}
           </div>
-          {primaryLinks
-            .filter((link) => link.href !== "/nations")
-            .map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="whitespace-nowrap rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
-              >
-                {link.label}
-              </Link>
-            ))}
-          <details className="group relative">
-            <summary className="cursor-pointer list-none rounded-lg px-3 py-2 font-semibold text-zinc-300 hover:bg-white/5 hover:text-white [&::-webkit-details-marker]:hidden">
-              More
+          <details className="group w-full lg:relative lg:w-auto">
+            <summary className="flex cursor-pointer list-none items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 font-semibold text-zinc-200 hover:bg-white/5 hover:text-white lg:border-transparent lg:bg-transparent [&::-webkit-details-marker]:hidden">
+              <span>More</span>
+              <span className="text-xs text-emerald-200 transition group-open:rotate-180 lg:ml-2">
+                v
+              </span>
             </summary>
             <div className={toolsMenuClassName}>
-              {toolLinks.map((link) => (
+              {controlLinks.length ? (
+                <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-emerald-200">
+                  Control Panels
+                </div>
+              ) : null}
+              {controlLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="block rounded-md px-3 py-2 font-semibold text-zinc-100 hover:bg-white/5 hover:text-white"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
+                Explore
+              </div>
+              {secondaryLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}

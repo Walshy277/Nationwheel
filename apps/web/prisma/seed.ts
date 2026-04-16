@@ -24,22 +24,24 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@nationwheel.local" },
-    update: { role: Role.ADMIN, passwordHash },
+    update: { role: Role.ADMIN, roles: [Role.ADMIN], passwordHash },
     create: {
       name: "Admin Command",
       email: "admin@nationwheel.local",
       role: Role.ADMIN,
+      roles: [Role.ADMIN],
       passwordHash,
     },
   });
 
   const lore = await prisma.user.upsert({
     where: { email: "lore@nationwheel.local" },
-    update: { role: Role.LORE, passwordHash },
+    update: { role: Role.LORE, roles: [Role.LORE], passwordHash },
     create: {
       name: "Lore Directorate",
       email: "lore@nationwheel.local",
       role: Role.LORE,
+      roles: [Role.LORE],
       passwordHash,
     },
   });
@@ -97,11 +99,12 @@ async function main() {
   const primis = await prisma.nation.findUniqueOrThrow({ where: { slug: "primis" } });
   const leader = await prisma.user.upsert({
     where: { email: "primis.leader@nationwheel.local" },
-    update: { role: Role.LEADER, passwordHash },
+    update: { role: Role.LEADER, roles: [Role.LEADER], passwordHash },
     create: {
       name: "Primis Controller",
       email: "primis.leader@nationwheel.local",
       role: Role.LEADER,
+      roles: [Role.LEADER],
       passwordHash,
     },
   });

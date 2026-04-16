@@ -1,5 +1,5 @@
 import { Role } from "@prisma/client";
-import { assignUserNationAction, updateUserDiscordAction } from "@/app/actions";
+import { assignUserNationAction } from "@/app/actions";
 import { DatabaseRequired } from "@/components/control/database-required";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
@@ -42,8 +42,8 @@ export default async function LoreMembersPage() {
         <Panel>
           <h1 className="text-3xl font-black text-white">Nation Links</h1>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-300">
-            Link a Discord user to the nation they control. Once linked, that
-            account should be given the LEADER role.
+            Link any existing user to a nation they control. Staff members can
+            also control nations; linking does not change their roles.
           </p>
         </Panel>
 
