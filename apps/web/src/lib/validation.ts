@@ -34,6 +34,12 @@ export const wikiUpdateSchema = z
   })
   .strict();
 
+export const overviewUpdateSchema = z
+  .object({
+    overview: z.string().min(80).max(2500),
+  })
+  .strict();
+
 export const roleUpdateSchema = z
   .object({
     roles: z.array(z.nativeEnum(Role)).min(1),

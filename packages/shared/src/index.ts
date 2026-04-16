@@ -39,6 +39,7 @@ export type NationStats = {
   gdp: string;
   economy: string;
   military: string;
+  overview?: string | null;
   leaderName?: string | null;
   flagImage?: string | null;
   area?: string | null;

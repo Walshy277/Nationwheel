@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NationProfile } from "@/components/nation/nation-profile";
 import { PageShell } from "@/components/ui/shell";
+import { getCurrentUser } from "@/lib/auth";
 import { getNationProfile } from "@/lib/nations";
+import { Role } from "@prisma/client";
 
 export async function generateMetadata({
   params,
@@ -39,13 +41,22 @@ export default async function NationPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const nation = await getNationProfile(slug);
+  const [nation, user] = await Promise.all([getNationProfile(slug), getCurrentUser()]);
 
   if (!nation) notFound();
+  const roles = new Set(user ? [user.role, ...(user.roles ?? [])] : []);
+  const canEditStats =
+    roles.has(Role.LORE) || roles.has(Role.ADMIN) || roles.has(Role.OWNER);
+  const isAdmin = roles.has(Role.ADMIN) || roles.has(Role.OWNER);
 
   return (
     <PageShell>
-      <NationProfile nation={nation} wiki={nation.wiki} />
+      <NationProfile
+        nation={nation}
+        wiki={nation.wiki}
+        canEditStats={canEditStats}
+        isAdmin={isAdmin}
+      />
     </PageShell>
   );
 }

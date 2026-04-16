@@ -62,6 +62,7 @@ model Nation {
   gdp          String
   economy      String
   military     String
+  overview     String?
   area         String?
   geoPoliticalStatus String?
   block        String?

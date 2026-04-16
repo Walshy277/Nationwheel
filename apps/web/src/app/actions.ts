@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { LoreActionStatus, Role } from "@prisma/client";
+import { LoreActionStatus, Prisma, Role } from "@prisma/client";
 import { createNationWikiTemplate } from "@nation-wheel/shared";
 import { getPrisma } from "@/lib/prisma";
 import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissions";
@@ -14,6 +14,7 @@ import {
   loreActionStatusSchema,
   loreActionUpdateSchema,
   nationStatsSchema,
+  overviewUpdateSchema,
   publicLorePageSchema,
   roleUpdateSchema,
   wikiUpdateSchema,
@@ -32,6 +33,10 @@ function readText(formData: FormData, key: string) {
 function readNullableText(formData: FormData, key: string) {
   const value = readText(formData, key);
   return value.length > 0 ? value : null;
+}
+
+function readOptionalNullableText(formData: FormData, key: string) {
+  return formData.has(key) ? readNullableText(formData, key) : undefined;
 }
 
 async function readFlagDataUrl(formData: FormData) {
@@ -62,6 +67,12 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function withoutUndefinedValues<T extends Record<string, unknown>>(value: T) {
+  return Object.fromEntries(
+    Object.entries(value).filter(([, item]) => item !== undefined),
+  ) as Prisma.InputJsonObject;
+}
+
 function highestRole(roles: Role[]) {
   const rank: Record<Role, number> = {
     USER: 0,
@@ -88,7 +99,15 @@ function nationPayloadFromForm(formData: FormData) {
     gdp: readText(formData, "gdp"),
     economy: readText(formData, "economy"),
     military: readText(formData, "military"),
-    leaderUserId: readNullableText(formData, "leaderUserId"),
+    area: readOptionalNullableText(formData, "area"),
+    geoPoliticalStatus: readOptionalNullableText(
+      formData,
+      "geoPoliticalStatus",
+    ),
+    block: readOptionalNullableText(formData, "block"),
+    culture: readOptionalNullableText(formData, "culture"),
+    hdi: readOptionalNullableText(formData, "hdi"),
+    leaderUserId: readOptionalNullableText(formData, "leaderUserId"),
   });
 }
 
@@ -100,6 +119,7 @@ async function readOptionalFlagRevision(formData: FormData) {
 export async function createNationAction(formData: FormData) {
   const user = await requireRole([Role.ADMIN, Role.OWNER]);
   const payload = nationPayloadFromForm(formData);
+  const revisionPayload = withoutUndefinedValues(payload);
   const flagData = await readOptionalFlagRevision(formData);
 
   await getPrisma().nation.create({
@@ -118,7 +138,7 @@ export async function createNationAction(formData: FormData) {
           fieldType: "STATS",
           previousValue: {},
           newValue: {
-            ...payload,
+            ...revisionPayload,
             ...(flagData.flagImage ? { flagImage: "uploaded" } : {}),
           },
           changedByUserId: user.id,
@@ -139,6 +159,7 @@ export async function updateNationStatsAction(
 ) {
   const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = nationPayloadFromForm(formData);
+  const revisionPayload = withoutUndefinedValues(payload);
   const flagData = await readOptionalFlagRevision(formData);
   const prisma = getPrisma();
   const current = await prisma.nation.findUniqueOrThrow({
@@ -165,7 +186,7 @@ export async function updateNationStatsAction(
             leaderUserId: current.leaderUserId,
             flagImage: current.flagImage ? "uploaded" : null,
           },
-          newValue: payload,
+          newValue: revisionPayload,
           changedByUserId: user.id,
         },
       },
@@ -315,6 +336,41 @@ export async function updateNationFlagAction(
 
   const returnPath = readText(formData, "returnPath");
   if (returnPath.startsWith("/")) redirect(returnPath);
+}
+
+export async function updateNationOverviewAction(
+  nationId: string,
+  formData: FormData,
+) {
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+  const payload = overviewUpdateSchema.parse({
+    overview: readText(formData, "overview"),
+  });
+  const prisma = getPrisma();
+  const current = await prisma.nation.findUniqueOrThrow({
+    where: { id: nationId },
+    select: { overview: true, slug: true },
+  });
+
+  await prisma.nation.update({
+    where: { id: nationId },
+    data: {
+      overview: payload.overview,
+      revisions: {
+        create: {
+          fieldType: "STATS",
+          previousValue: { overview: current.overview ?? null },
+          newValue: { overview: payload.overview },
+          changedByUserId: user.id,
+        },
+      },
+    },
+  });
+
+  revalidatePath("/nations");
+  revalidatePath(`/nations/${current.slug}`);
+  revalidatePath(`/lorecp/nations/${nationId}`);
+  revalidatePath("/admincp/logs");
 }
 
 export async function createLoreActionAction(formData: FormData) {
