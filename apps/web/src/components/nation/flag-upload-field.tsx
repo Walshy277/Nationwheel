@@ -47,7 +47,7 @@ export function FlagUploadField({
         <input
           name="flag"
           type="file"
-          accept="image/png,image/jpeg,image/gif,image/webp,image/*"
+          accept=".png,.jpg,.jpeg,.gif,.webp,image/png,image/jpeg,image/gif,image/webp"
           className="min-w-0 flex-1 px-3 py-2 text-sm text-zinc-100"
           onChange={(event) => {
             const file = event.target.files?.[0];

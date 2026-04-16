@@ -37,8 +37,14 @@ function readNullableText(formData: FormData, key: string) {
 async function readFlagDataUrl(formData: FormData) {
   const file = formData.get("flag");
   if (!(file instanceof File) || file.size === 0) return null;
-  if (!file.type.startsWith("image/")) {
-    throw new Error("Flag upload must be an image.");
+  const supportedImageTypes = new Set([
+    "image/png",
+    "image/jpeg",
+    "image/gif",
+    "image/webp",
+  ]);
+  if (!supportedImageTypes.has(file.type)) {
+    throw new Error("Flag upload must be a PNG, JPG, GIF, or WebP image.");
   }
   if (file.size > 5_000_000) {
     throw new Error("Profile picture must be under 5 MB.");

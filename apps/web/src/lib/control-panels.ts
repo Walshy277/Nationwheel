@@ -7,10 +7,10 @@ export const loreCpLinks = [
 
 export const adminCpLinks = [
   { href: "/admincp", label: "Overview" },
+  { href: "/admincp/users", label: "Users & Roles" },
   { href: "/admincp/nations", label: "Nations" },
-  { href: "/admincp/users", label: "Users" },
-  { href: "/admincp/map", label: "Map" },
   { href: "/admincp/logs", label: "Logs" },
+  { href: "/admincp/map", label: "Map" },
 ];
 
 export const newsCpLinks = [
