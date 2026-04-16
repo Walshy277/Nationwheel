@@ -1,0 +1,5 @@
+ALTER TABLE "Nation" ADD COLUMN "area" TEXT;
+ALTER TABLE "Nation" ADD COLUMN "geoPoliticalStatus" TEXT;
+ALTER TABLE "Nation" ADD COLUMN "block" TEXT;
+ALTER TABLE "Nation" ADD COLUMN "culture" TEXT;
+ALTER TABLE "Nation" ADD COLUMN "hdi" TEXT;

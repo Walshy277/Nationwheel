@@ -18,7 +18,7 @@ export {
   type RankedNation,
 } from "./metrics";
 
-export const roles = ["LEADER", "LORE", "ADMIN"] as const;
+export const roles = ["USER", "LEADER", "LORE", "ADMIN", "OWNER"] as const;
 export type Role = (typeof roles)[number];
 
 export const revisionFieldTypes = ["STATS", "WIKI"] as const;
@@ -32,12 +32,13 @@ export type NationStats = {
   gdp: string;
   economy: string;
   military: string;
+  leaderName?: string | null;
   flagImage?: string | null;
-  area?: string;
-  geoPoliticalStatus?: string;
-  block?: string;
-  culture?: string;
-  hdi?: string;
+  area?: string | null;
+  geoPoliticalStatus?: string | null;
+  block?: string | null;
+  culture?: string | null;
+  hdi?: string | null;
   statNotes?: string[];
   actions?: NationAction[];
 };
@@ -72,7 +73,7 @@ export type NationSummary = NationStats & {
 };
 
 export function createNationWikiTemplate(
-  nation: NationStats & { spin?: string; area?: string },
+  nation: NationStats & { spin?: string; area?: string | null },
 ) {
   const referenceLines = [
     nation.spin ? `- Spin: ${nation.spin}` : null,
@@ -146,20 +147,20 @@ ${actionLines}`;
 }
 
 export function canAccessControlPanel(role: Role, panel: "LORECP" | "ADMINCP") {
-  if (panel === "ADMINCP") return role === "ADMIN";
-  return role === "LORE" || role === "ADMIN";
+  if (panel === "ADMINCP") return role === "ADMIN" || role === "OWNER";
+  return role === "LORE" || role === "ADMIN" || role === "OWNER";
 }
 
 export function canEditStats(role: Role) {
-  return role === "LORE" || role === "ADMIN";
+  return role === "LORE" || role === "ADMIN" || role === "OWNER";
 }
 
 export function canManageNations(role: Role) {
-  return role === "ADMIN";
+  return role === "ADMIN" || role === "OWNER";
 }
 
 export function canManageUsers(role: Role) {
-  return role === "ADMIN";
+  return role === "ADMIN" || role === "OWNER";
 }
 
 export function canEditWikiForNation(params: {
@@ -167,7 +168,13 @@ export function canEditWikiForNation(params: {
   userNationId: string | null;
   nationId: string;
 }) {
-  if (params.role === "ADMIN" || params.role === "LORE") return true;
+  if (
+    params.role === "ADMIN" ||
+    params.role === "OWNER" ||
+    params.role === "LORE"
+  ) {
+    return true;
+  }
   return params.role === "LEADER" && params.userNationId === params.nationId;
 }
 

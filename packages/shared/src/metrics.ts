@@ -43,7 +43,7 @@ export function parseCompactNumber(input: string | undefined) {
   return value * (suffix ? suffixMultipliers[suffix] : 1);
 }
 
-export function parseArea(input: string | undefined) {
+export function parseArea(input: string | null | undefined) {
   if (!input) return null;
   const match = input
     .replace(/,/g, ".")
@@ -59,12 +59,19 @@ export function parseMilitaryScore(input: string | undefined) {
   const fraction = input.match(/(\d+(?:\.\d+)?)\s*\/\s*11/);
   if (fraction) return Number(fraction[1]);
 
+  const tenPointFraction = input.match(/(\d+(?:\.\d+)?)\s*\/\s*10/);
+  if (tenPointFraction) return Number(tenPointFraction[1]) * 1.1;
+
   const value = input.toLowerCase();
   if (value.includes("world")) return 11;
+  if (value.includes("global")) return 9;
   if (value.includes("expansionist")) return 10;
   if (value.includes("continental")) return 9;
   if (value.includes("regional")) return 8;
   if (value.includes("superpower") || value.includes("alliances")) return 7;
+  if (value.includes("elite")) return 7;
+  if (value.includes("organized")) return 6;
+  if (value.includes("basic")) return 5;
   if (value.includes("advanced")) return 6;
   if (value.includes("large")) return 5;
   if (value.includes("medium")) return 4;

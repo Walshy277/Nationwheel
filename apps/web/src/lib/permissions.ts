@@ -45,7 +45,8 @@ export async function requireRoleOrBot(request: Request, roles: Role[]) {
 export async function requireWikiEditAccess(nationId: string) {
   const user = await requireUser();
 
-  if ([Role.LORE, Role.ADMIN, Role.OWNER].includes(user.role)) {
+  const wikiStaffRoles: Role[] = [Role.LORE, Role.ADMIN, Role.OWNER];
+  if (wikiStaffRoles.includes(user.role)) {
     return user;
   }
 

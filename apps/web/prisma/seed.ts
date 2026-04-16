@@ -3,6 +3,21 @@ import { canonNations, createNationWikiTemplate } from "@nation-wheel/shared";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+const retiredCanonSlugs = [
+  "altergrad",
+  "autrian-empire",
+  "bobak-republic",
+  "grand-norvarsk",
+  "krakoslandia",
+  "makara",
+  "nervella",
+  "new-eldia",
+  "republic-of-the-sun",
+  "socialist-federation-of-calradia",
+  "urium",
+  "wurland",
+  "xonisia",
+];
 
 async function main() {
   const passwordHash = await bcrypt.hash("nationwheel-dev", 12);
@@ -39,6 +54,11 @@ async function main() {
         gdp: nation.gdp,
         economy: nation.economy,
         military: nation.military,
+        area: nation.area,
+        geoPoliticalStatus: nation.geoPoliticalStatus,
+        block: nation.block,
+        culture: nation.culture,
+        hdi: nation.hdi,
       },
       create: {
         name: nation.name,
@@ -48,6 +68,11 @@ async function main() {
         gdp: nation.gdp,
         economy: nation.economy,
         military: nation.military,
+        area: nation.area,
+        geoPoliticalStatus: nation.geoPoliticalStatus,
+        block: nation.block,
+        culture: nation.culture,
+        hdi: nation.hdi,
       },
     });
     const content = createNationWikiTemplate(nation);
@@ -64,6 +89,10 @@ async function main() {
       },
     });
   }
+
+  await prisma.nation.deleteMany({
+    where: { slug: { in: retiredCanonSlugs } },
+  });
 
   const primis = await prisma.nation.findUniqueOrThrow({ where: { slug: "primis" } });
   const leader = await prisma.user.upsert({

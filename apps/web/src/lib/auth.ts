@@ -17,23 +17,62 @@ const allowEmailAccountLinking =
   process.env.NODE_ENV === "development" ||
   process.env.ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING === "true";
 
+type DiscordProfile = {
+  id?: string;
+  username?: string;
+  global_name?: string | null;
+  email?: string | null;
+  avatar?: string | null;
+};
+
+async function resolveDiscordUser(profile: DiscordProfile) {
+  if (!profile.id) return null;
+
+  const prisma = getPrisma();
+  const email = profile.email?.toLowerCase() ?? null;
+  const displayName = profile.global_name ?? profile.username ?? null;
+
+  const existingByDiscord = await prisma.user.findUnique({
+    where: { discordId: profile.id },
+  });
+
+  if (existingByDiscord) return existingByDiscord;
+
+  if (email) {
+    const existingByEmail = await prisma.user.findUnique({ where: { email } });
+    if (existingByEmail) {
+      return prisma.user.update({
+        where: { id: existingByEmail.id },
+        data: {
+          discordId: profile.id,
+          name: existingByEmail.name ?? displayName,
+          image: existingByEmail.image ?? profile.avatar,
+        },
+      });
+    }
+  }
+
+  return prisma.user.create({
+    data: {
+      name: displayName,
+      email,
+      discordId: profile.id,
+      image: profile.avatar,
+      role: Role.USER,
+    },
+  });
+}
+
 export const authOptions: NextAuthOptions = {
-  debug: true,
+  secret:
+    process.env.NEXTAUTH_SECRET ??
+    (process.env.NODE_ENV === "development"
+      ? "nation-wheel-development-secret"
+      : undefined),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/login",
     error: "/login",
-  },
-  logger: {
-    error(code, metadata) {
-      console.error("NEXTAUTH LOGGER ERROR", code, metadata);
-    },
-    warn(code) {
-      console.warn("NEXTAUTH LOGGER WARN", code);
-    },
-    debug(code, metadata) {
-      console.log("NEXTAUTH LOGGER DEBUG", code, metadata);
-    },
   },
   providers: [
     ...(process.env.DISCORD_CLIENT_ID && process.env.DISCORD_CLIENT_SECRET
@@ -82,41 +121,30 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async jwt({ token, user, account, profile }) {
-      console.error("JWT CALLBACK START", {
-        hasTokenSub: !!token.sub,
-        provider: account?.provider ?? null,
-        providerAccountId: account?.providerAccountId ?? null,
-        hasUser: !!user,
-        hasProfile: !!profile,
-      });
+      if (account?.provider === "discord") {
+        const dbUser = await resolveDiscordUser({
+          ...(profile as DiscordProfile | undefined),
+          id: account.providerAccountId,
+        });
 
-      const accountDiscordId =
-        account?.provider === "discord" ? account.providerAccountId : null;
-
-      if (user) {
+        if (dbUser) {
+          token.sub = dbUser.id;
+          token.name = dbUser.name;
+          token.email = dbUser.email;
+          token.picture = dbUser.image;
+          token.role = dbUser.role;
+          token.discordId = dbUser.discordId;
+        }
+      } else if (user) {
         token.role = (user as { role?: Role }).role ?? Role.USER;
         token.discordId =
-          accountDiscordId ??
-          (user as { discordId?: string | null }).discordId ??
-          null;
+          (user as { discordId?: string | null }).discordId ?? null;
       }
-
-      console.error("JWT CALLBACK END", {
-        tokenSub: token.sub ?? null,
-        role: token.role ?? null,
-        discordId: token.discordId ?? null,
-      });
 
       return token;
     },
 
     async session({ session, token }) {
-      console.error("SESSION CALLBACK START", {
-        tokenSub: token.sub ?? null,
-        role: token.role ?? null,
-        discordId: token.discordId ?? null,
-      });
-
       if (session.user) {
         session.user.id = token.sub ?? "";
         session.user.role = (token.role as Role | undefined) ?? Role.USER;
@@ -124,22 +152,12 @@ export const authOptions: NextAuthOptions = {
           (token.discordId as string | null | undefined) ?? null;
       }
 
-      console.error("SESSION CALLBACK END", {
-        sessionUserId: session.user?.id ?? null,
-        sessionRole: session.user?.role ?? null,
-        sessionDiscordId: session.user?.discordId ?? null,
-      });
-
       return session;
     },
   },
 };
 
 export async function getCurrentUser() {
-  if (!process.env.NEXTAUTH_SECRET) {
-    return null;
-  }
-
   try {
     const session = await getServerSession(authOptions);
     return session?.user ?? null;

@@ -13,6 +13,11 @@ export const nationStatsSchema = z
     gdp: z.string().min(1),
     economy: z.string().min(1),
     military: z.string().min(1),
+    area: z.string().nullable().optional(),
+    geoPoliticalStatus: z.string().nullable().optional(),
+    block: z.string().nullable().optional(),
+    culture: z.string().nullable().optional(),
+    hdi: z.string().nullable().optional(),
     leaderUserId: z.string().nullable().optional(),
   })
   .strict();
