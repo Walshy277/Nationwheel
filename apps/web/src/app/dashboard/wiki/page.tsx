@@ -85,6 +85,7 @@ export default async function DashboardWikiPage() {
 
           <form
             action={updateNationFlagAction.bind(null, nation.id)}
+            encType="multipart/form-data"
             className="rounded-lg border border-white/10 bg-black/20 p-4"
           >
             <input type="hidden" name="returnPath" value="/dashboard/wiki" />

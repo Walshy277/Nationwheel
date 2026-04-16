@@ -39,8 +39,8 @@ async function readFlagDataUrl(formData: FormData) {
   if (!file.type.startsWith("image/")) {
     throw new Error("Flag upload must be an image.");
   }
-  if (file.size > 750_000) {
-    throw new Error("Flag image must be under 750 KB.");
+  if (file.size > 2_000_000) {
+    throw new Error("Profile picture must be under 2 MB.");
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());

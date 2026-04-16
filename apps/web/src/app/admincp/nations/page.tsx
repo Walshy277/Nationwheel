@@ -46,6 +46,7 @@ export default async function AdminNationsPage() {
           <h2 className="text-xl font-bold text-white">Create Nation</h2>
           <form
             action={createNationAction}
+            encType="multipart/form-data"
             className="mt-5 grid gap-3 md:grid-cols-2"
           >
             <input
@@ -131,6 +132,7 @@ export default async function AdminNationsPage() {
               </div>
               <form
                 action={updateNationStatsAction.bind(null, nation.id)}
+                encType="multipart/form-data"
                 className="grid gap-3 md:grid-cols-2"
               >
                 <input

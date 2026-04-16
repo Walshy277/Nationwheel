@@ -206,6 +206,7 @@ export default async function LoreNationPage({
           <h2 className="text-xl font-bold text-white">Structured Stats</h2>
           <form
             action={updateNationStatsAction.bind(null, nation.id)}
+            encType="multipart/form-data"
             className="mt-5 grid gap-3 md:grid-cols-2"
           >
             <input
