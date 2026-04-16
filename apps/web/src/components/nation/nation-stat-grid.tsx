@@ -3,7 +3,8 @@ import {
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
-  getPopulationDensity,
+  getMilitarySizeLabel,
+  parseMilitaryScore,
   type NationStats,
 } from "@nation-wheel/shared";
 import { MetricCard } from "@/components/ui/shell";
@@ -11,14 +12,10 @@ import { MetricCard } from "@/components/ui/shell";
 export function NationStatGrid({ nation }: { nation: NationStats }) {
   const gdpTotal = getGdpTotal(nation);
   const gdpPerCapita = getGdpPerCapita(nation);
-  const populationDensity = getPopulationDensity(nation);
+  const militaryScore = parseMilitaryScore(nation.military);
   const usesBobakoin = nation.economy.toLowerCase().includes("bobakoin");
   const optionalStats = [
     ["GDP per Capita", formatMoney(gdpPerCapita)],
-    [
-      "Population per km2",
-      populationDensity === null ? "Unknown" : formatNumber(populationDensity),
-    ],
     ["Area", nation.area],
     ["Geo-political Status", nation.geoPoliticalStatus],
     ["Block", nation.block],
@@ -48,10 +45,17 @@ export function NationStatGrid({ nation }: { nation: NationStats }) {
         iconAlt={usesBobakoin ? "Bobakoin crypto coin" : undefined}
       />
       <MetricCard
-        label="Military"
-        value={nation.military}
-        unit="Normalized to a 0-11 military score for rankings."
-        info="The score is a canon power index, not a direct personnel count. Text labels such as regional, continental, superpower, and world are mapped onto the 0-11 scale."
+        label="Army Size"
+        value={getMilitarySizeLabel(nation.military)}
+        unit="Canon army-size or force-posture label."
+      />
+      <MetricCard
+        label="Army Ranking"
+        value={
+          militaryScore === null ? "Unknown" : `${formatNumber(militaryScore)} / 11`
+        }
+        unit="Normalized 0-11 ranking score."
+        info="This is a canon power index used for rankings, separate from the army-size label."
       />
       {optionalStats.map(([label, value]) =>
         value ? (

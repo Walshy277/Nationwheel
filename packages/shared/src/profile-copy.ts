@@ -4,7 +4,6 @@ import {
   formatNumber,
   getGdpTotal,
   getGdpPerCapita,
-  getPopulationDensity,
   parseArea,
   parseCompactNumber,
   parseMilitaryScore,
@@ -18,7 +17,6 @@ export function createNationOverview(nation: NationStats) {
   if (nation.overview?.trim()) return nation.overview.trim();
 
   const gdpPerCapita = getGdpPerCapita(nation);
-  const density = getPopulationDensity(nation);
   const population = parseCompactNumber(nation.people);
   const area = parseArea(nation.area);
   const gdp = getGdpTotal(nation);
@@ -60,15 +58,10 @@ export function createNationOverview(nation: NationStats) {
     gdpPerCapita !== null
       ? `with estimated output near ${formatMoney(gdpPerCapita)} per person`
       : "with incomplete per-person output records";
-  const densityContext =
-    density !== null
-      ? `a population density of about ${formatNumber(density)} people per km2`
-      : null;
-
   return sentence([
     `${nation.name} reads as ${scale}: a ${government} with ${nation.people} people and ${landShape}.`,
     nation.area
-      ? `Its territory covers ${nation.area}${densityContext ? `, leaving ${densityContext}` : ""}.`
+      ? `Its territory covers ${nation.area}, giving its population and government a clear geographic frame.`
       : null,
     `The economy leans on ${economy}, ${economicContext}; that suggests ${prosperity}.`,
     gdp !== null ? `Total output is tracked near ${formatMoney(gdp)}.` : null,

@@ -13,7 +13,7 @@ const featuredSlots = [
   { key: "area", label: "Most Land", detail: "Land area" },
   { key: "population", label: "Highest Population", detail: "Population" },
   { key: "gdp", label: "Largest GDP", detail: "GDP" },
-  { key: "military", label: "Largest Military", detail: "Military score" },
+  { key: "military", label: "Highest Army Ranking", detail: "Army ranking" },
   { key: "hdi", label: "Highest HDI", detail: "HDI" },
 ] as const;
 
@@ -23,7 +23,7 @@ const quickLinks = [
   [
     "Leaderboards",
     "/leaderboards",
-    "Rank land, GDP, military, population, and HDI.",
+    "Rank land, GDP, army ranking, population, and HDI.",
   ],
   ["World News", "/news", "Read the latest reports from journalists."],
   ["Season Map", "/map", "Open the world reference map."],

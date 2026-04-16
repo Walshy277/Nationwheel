@@ -14,7 +14,7 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
   {
     key: "overall",
     title: "Overall Ranking",
-    note: "Average rank across GDP, military, land area, population, and HDI.",
+    note: "Average rank across GDP, army ranking, land area, population, and HDI.",
   },
   {
     key: "gdp",
@@ -23,8 +23,8 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
   },
   {
     key: "military",
-    title: "Military Size",
-    note: "Military score normalized onto the 0-11 scale.",
+    title: "Army Ranking",
+    note: "Normalized 0-11 army ranking score, separate from army size.",
   },
   {
     key: "area",
@@ -38,7 +38,7 @@ const boards: Array<{ key: LeaderboardKey; title: string; note: string }> = [
 export const metadata: Metadata = {
   title: "Leaderboards",
   description:
-    "Rank Nation Wheel nations by GDP, military strength, land area, population, HDI, and overall standing.",
+    "Rank Nation Wheel nations by GDP, army ranking, land area, population, HDI, and overall standing.",
   alternates: { canonical: "/leaderboards" },
 };
 
@@ -143,7 +143,7 @@ export default async function LeaderboardsPage() {
         <Badge tone="accent">World Rankings</Badge>
         <h1 className="mt-4 text-4xl font-black text-zinc-50">Leaderboards</h1>
         <p className="mt-3 max-w-3xl text-zinc-300">
-          Compare nations by economy, military strength, land area, population,
+          Compare nations by economy, army ranking, land area, population,
           HDI, and combined standing.
         </p>
       </div>

@@ -8,7 +8,7 @@ import {
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
-  getPopulationDensity,
+  getMilitarySizeLabel,
   parseArea,
   parseCompactNumber,
   parseMilitaryScore,
@@ -45,12 +45,19 @@ const metricRows = [
   },
   {
     key: "military",
-    label: "Military",
+    label: "Army Size",
+    unit: "canon force label",
+    info: "The army-size or force-posture label exactly reflects canon source data with the ranking score removed.",
+    getValue: (nation: NationSummary) => getMilitarySizeLabel(nation.military),
+  },
+  {
+    key: "armyRanking",
+    label: "Army Ranking",
     unit: "0-11 power index",
-    info: "Canon military labels are normalized onto a 0-11 power index. This is not a personnel count.",
+    info: "This normalized ranking score is separate from the army-size label.",
     getValue: (nation: NationSummary) => {
       const score = parseMilitaryScore(nation.military);
-      return score === null ? nation.military : `${formatNumber(score)} / 11`;
+      return score === null ? "Unknown" : `${formatNumber(score)} / 11`;
     },
     getComparableValue: (nation: NationSummary) =>
       parseMilitaryScore(nation.military),
@@ -65,17 +72,6 @@ const metricRows = [
       return area === null ? "Unknown" : `${formatNumber(area)} km2`;
     },
     getComparableValue: (nation: NationSummary) => parseArea(nation.area),
-  },
-  {
-    key: "density",
-    label: "Population Density",
-    unit: "people per km2",
-    info: "Derived from population divided by land area.",
-    getValue: (nation: NationSummary) => {
-      const density = getPopulationDensity(nation);
-      return density === null ? "Unknown" : formatNumber(density);
-    },
-    getComparableValue: (nation: NationSummary) => getPopulationDensity(nation),
   },
   {
     key: "hdi",
@@ -119,7 +115,7 @@ function isBestComparableValue(
 const radarMetrics = [
   { key: "population", label: "Population" },
   { key: "gdp", label: "GDP" },
-  { key: "military", label: "Military" },
+  { key: "military", label: "Army" },
   { key: "area", label: "Land" },
   { key: "hdi", label: "HDI" },
 ] as const;

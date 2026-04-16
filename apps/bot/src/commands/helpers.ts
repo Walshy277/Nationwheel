@@ -11,7 +11,8 @@ import {
   formatNumber,
   getGdpPerCapita,
   getGdpTotal,
-  getPopulationDensity,
+  getMilitarySizeLabel,
+  parseMilitaryScore,
 } from "@nation-wheel/shared";
 import type { ApiNation } from "../api-client";
 import { config } from "../config";
@@ -77,7 +78,7 @@ export function miniAppActionRow() {
 export function nationProfileEmbed(nation: ApiNation): APIEmbed {
   const gdpTotal = getGdpTotal(nation);
   const gdpPerCapita = getGdpPerCapita(nation);
-  const populationDensity = getPopulationDensity(nation);
+  const militaryScore = parseMilitaryScore(nation.military);
   const usesBobakoin = nation.economy.toLowerCase().includes("bobakoin");
   const fields: NonNullable<APIEmbed["fields"]> = [
     { name: "People", value: nation.people, inline: true },
@@ -88,14 +89,18 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
     },
     { name: "GDP per Capita", value: formatMoney(gdpPerCapita), inline: true },
     {
-      name: "Population per km2",
-      value:
-        populationDensity === null
-          ? "Unknown"
-          : formatNumber(populationDensity),
+      name: "Army Size",
+      value: getMilitarySizeLabel(nation.military),
       inline: true,
     },
-    { name: "Military", value: nation.military, inline: false },
+    {
+      name: "Army Ranking",
+      value:
+        militaryScore === null
+          ? "Unknown"
+          : `${formatNumber(militaryScore)} / 11`,
+      inline: true,
+    },
   ];
 
   if (nation.geoPoliticalStatus)

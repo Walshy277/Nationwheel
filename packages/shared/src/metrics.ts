@@ -82,6 +82,12 @@ export function parseMilitaryScore(input: string | undefined) {
   return null;
 }
 
+export function getMilitarySizeLabel(input: string | undefined) {
+  if (!input) return "Unknown";
+  const label = input.replace(/\s*\d+(?:\.\d+)?\s*\/\s*(?:10|11)\s*/g, " ");
+  return label.replace(/\s+/g, " ").trim() || input;
+}
+
 export function getGdpTotal(nation: NationStats) {
   const gdp = parseCompactNumber(nation.gdp);
   return gdp;

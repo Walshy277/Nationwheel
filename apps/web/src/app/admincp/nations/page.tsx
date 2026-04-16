@@ -83,7 +83,7 @@ export default async function AdminNationsPage() {
             <input
               name="military"
               required
-              placeholder="Military Size"
+              placeholder="Army size and ranking"
               className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
             />
             <select

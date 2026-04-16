@@ -7,6 +7,7 @@ export {
   getGdpPerCapita,
   getGdpTotal,
   getMetricValue,
+  getMilitarySizeLabel,
   getPopulationDensity,
   parseArea,
   parseCompactNumber,
