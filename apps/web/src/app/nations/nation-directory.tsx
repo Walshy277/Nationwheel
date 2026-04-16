@@ -42,6 +42,8 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
         const matchesQuery =
           normalizedQuery.length === 0 ||
           nation.name.toLowerCase().includes(normalizedQuery) ||
+          (nation.leaderName?.toLowerCase().includes(normalizedQuery) ??
+            false) ||
           nation.government.toLowerCase().includes(normalizedQuery) ||
           nation.economy.toLowerCase().includes(normalizedQuery) ||
           nation.military.toLowerCase().includes(normalizedQuery);
@@ -146,13 +148,34 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
             >
               <Panel className="h-full transition group-hover:-translate-y-0.5 group-hover:border-emerald-300/70 group-hover:bg-[color:var(--panel-strong)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <h2 className="text-xl font-bold leading-7 text-zinc-50 sm:text-2xl">
-                      {nation.name}
-                    </h2>
-                    <p className="mt-2 text-sm text-zinc-400">
-                      {nation.government}
-                    </p>
+                  <div className="flex min-w-0 items-start gap-3">
+                    <div className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-emerald-300/10 text-sm font-black text-emerald-100">
+                      {nation.flagImage ? (
+                        <Image
+                          src={nation.flagImage}
+                          alt={`${nation.name} profile picture`}
+                          fill
+                          unoptimized
+                          sizes="56px"
+                          className="object-cover"
+                        />
+                      ) : (
+                        nation.name.slice(0, 2).toUpperCase()
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <h2 className="text-xl font-bold leading-7 text-zinc-50 sm:text-2xl">
+                        {nation.name}
+                      </h2>
+                      <p className="mt-2 text-sm text-zinc-400">
+                        {nation.government}
+                      </p>
+                      <p className="mt-1 text-xs font-semibold uppercase text-zinc-500">
+                        {nation.leaderName
+                          ? `Leader: ${nation.leaderName}`
+                          : "Leader unassigned"}
+                      </p>
+                    </div>
                   </div>
                   <Badge tone="accent">Profile</Badge>
                 </div>

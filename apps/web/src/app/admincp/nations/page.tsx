@@ -1,4 +1,5 @@
 import { ControlLayout } from "@/components/layout/control-sidebar";
+import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { Panel } from "@/components/ui/shell";
 import {
   createNationAction,
@@ -96,15 +97,10 @@ export default async function AdminNationsPage() {
                 </option>
               ))}
             </select>
-            <label className="grid gap-2 text-sm text-slate-300">
-              Profile Picture
-              <input
-                name="flag"
-                type="file"
-                accept="image/*"
-                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-              />
-            </label>
+            <FlagUploadField
+              nationName="New nation"
+              className="grid gap-2 text-sm text-slate-300"
+            />
             <button className="rounded-lg bg-emerald-300 px-4 py-2 font-bold text-slate-950 md:col-span-2">
               Create Nation
             </button>
@@ -185,15 +181,11 @@ export default async function AdminNationsPage() {
                     </option>
                   ))}
                 </select>
-                <label className="grid gap-2 text-sm text-slate-300">
-                  Profile Picture
-                  <input
-                    name="flag"
-                    type="file"
-                    accept="image/*"
-                    className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-                  />
-                </label>
+                <FlagUploadField
+                  currentImage={nation.flagImage}
+                  nationName={nation.name}
+                  className="grid gap-2 text-sm text-slate-300"
+                />
                 <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 md:col-span-2">
                   Save Nation
                 </button>

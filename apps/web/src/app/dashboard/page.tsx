@@ -18,16 +18,16 @@ export default async function DashboardPage() {
       </div>
       <div className="grid gap-4 md:grid-cols-2">
         <Panel>
-          <h2 className="text-xl font-bold text-zinc-50">Lore Drafting</h2>
+          <h2 className="text-xl font-bold text-zinc-50">Nation Control</h2>
           <p className="mt-3 text-zinc-300">
-            Leaders can maintain their own nation lore and upload a flag without
-            changing structured stats.
+            Leaders can maintain their own wiki, set the public leader name,
+            and upload a profile picture without changing structured stats.
           </p>
           <Link
-            href="/dashboard/lore"
+            href="/dashboard/wiki"
             className="mt-5 inline-flex rounded-lg bg-emerald-300 px-4 py-2 font-bold text-zinc-950 hover:bg-emerald-200"
           >
-            Edit Lore
+            Manage Nation
           </Link>
         </Panel>
         <Panel>

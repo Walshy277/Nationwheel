@@ -25,6 +25,7 @@ const metricRows = [
     unit: "people",
     info: "Compact entries use K for thousands, M for millions, and B for billions.",
     getValue: (nation: NationSummary) => nation.people,
+    getComparableValue: (nation: NationSummary) => parseCompactNumber(nation.people),
   },
   {
     key: "gdp",
@@ -32,6 +33,7 @@ const metricRows = [
     unit: "normalized dollars",
     info: "Dollar-prefixed and compact values are treated as total nominal GDP. K, M, B, and T mean thousand, million, billion, and trillion.",
     getValue: (nation: NationSummary) => formatMoney(getGdpTotal(nation)),
+    getComparableValue: (nation: NationSummary) => getGdpTotal(nation),
   },
   {
     key: "gdpPerCapita",
@@ -39,6 +41,7 @@ const metricRows = [
     unit: "dollars per person",
     info: "Derived by dividing total nominal GDP by population. Unknown means one of those inputs cannot be normalized.",
     getValue: (nation: NationSummary) => formatMoney(getGdpPerCapita(nation)),
+    getComparableValue: (nation: NationSummary) => getGdpPerCapita(nation),
   },
   {
     key: "military",
@@ -49,6 +52,8 @@ const metricRows = [
       const score = parseMilitaryScore(nation.military);
       return score === null ? nation.military : `${formatNumber(score)} / 11`;
     },
+    getComparableValue: (nation: NationSummary) =>
+      parseMilitaryScore(nation.military),
   },
   {
     key: "area",
@@ -59,6 +64,7 @@ const metricRows = [
       const area = parseArea(nation.area);
       return area === null ? "Unknown" : `${formatNumber(area)} km2`;
     },
+    getComparableValue: (nation: NationSummary) => parseArea(nation.area),
   },
   {
     key: "density",
@@ -69,6 +75,7 @@ const metricRows = [
       const density = getPopulationDensity(nation);
       return density === null ? "Unknown" : formatNumber(density);
     },
+    getComparableValue: (nation: NationSummary) => getPopulationDensity(nation),
   },
   {
     key: "hdi",
@@ -76,6 +83,10 @@ const metricRows = [
     unit: "0-1 index",
     info: "Human Development Index where canon data provides it.",
     getValue: (nation: NationSummary) => nation.hdi ?? "Unknown",
+    getComparableValue: (nation: NationSummary) => {
+      const value = nation.hdi ? Number(nation.hdi) : null;
+      return Number.isFinite(value) ? value : null;
+    },
   },
   {
     key: "government",
@@ -90,6 +101,20 @@ const metricRows = [
     getValue: (nation: NationSummary) => nation.economy,
   },
 ] as const;
+
+function isBestComparableValue(
+  row: (typeof metricRows)[number],
+  nation: NationSummary,
+  selectedNations: NationSummary[],
+) {
+  if (!("getComparableValue" in row)) return false;
+  const value = row.getComparableValue(nation);
+  if (value === null) return false;
+  const values = selectedNations
+    .map((selectedNation) => row.getComparableValue(selectedNation))
+    .filter((item): item is number => item !== null);
+  return values.length > 1 && value === Math.max(...values);
+}
 
 const radarMetrics = [
   { key: "population", label: "Population" },
@@ -343,36 +368,52 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
                 ) : null}
               </div>
               <div className="mt-4 grid gap-3">
-                {selectedNations.map((nation, index) => (
-                  <div
-                    key={`${row.key}-${nation.slug}`}
-                    className="grid gap-1 rounded-md border border-white/10 bg-black/20 p-3"
-                  >
-                    <Link
-                      href={`/nations/${nation.slug}`}
-                      className="flex min-w-0 items-center gap-2 font-bold text-zinc-50 hover:text-emerald-100"
+                {selectedNations.map((nation, index) => {
+                  const isBest = isBestComparableValue(
+                    row,
+                    nation,
+                    selectedNations,
+                  );
+                  return (
+                    <div
+                      key={`${row.key}-${nation.slug}`}
+                      className={`grid gap-1 rounded-md border p-3 ${
+                        isBest
+                          ? "border-emerald-300/50 bg-emerald-300/10"
+                          : "border-white/10 bg-black/20"
+                      }`}
                     >
-                      <span
-                        className="h-2.5 w-2.5 shrink-0 rounded-full"
-                        style={{ backgroundColor: colors[index] }}
-                      />
-                      <span className="break-words">{nation.name}</span>
-                    </Link>
-                    <span className="break-words text-sm leading-6 text-zinc-300">
-                      {row.key === "economy" &&
-                      nation.economy.toLowerCase().includes("bobakoin") ? (
-                        <Image
-                          src="/assets/bobakoin_crypto.png"
-                          alt="Bobakoin crypto coin"
-                          width={22}
-                          height={22}
-                          className="mr-2 inline h-5 w-5 rounded-full object-cover"
+                      <Link
+                        href={`/nations/${nation.slug}`}
+                        className="flex min-w-0 items-center gap-2 font-bold text-zinc-50 hover:text-emerald-100"
+                      >
+                        <span
+                          className="h-2.5 w-2.5 shrink-0 rounded-full"
+                          style={{ backgroundColor: colors[index] }}
                         />
-                      ) : null}
-                      {row.getValue(nation)}
-                    </span>
-                  </div>
-                ))}
+                        <span className="break-words">{nation.name}</span>
+                      </Link>
+                      <span className="break-words text-sm leading-6 text-zinc-300">
+                        {isBest ? (
+                          <span className="mb-1 block text-xs font-bold uppercase text-emerald-100">
+                            Strongest selected
+                          </span>
+                        ) : null}
+                        {row.key === "economy" &&
+                        nation.economy.toLowerCase().includes("bobakoin") ? (
+                          <Image
+                            src="/assets/bobakoin_crypto.png"
+                            alt="Bobakoin crypto coin"
+                            width={22}
+                            height={22}
+                            className="mr-2 inline h-5 w-5 rounded-full object-cover"
+                          />
+                        ) : null}
+                        {row.getValue(nation)}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ))}
@@ -410,12 +451,25 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
                       {row.unit}
                     </span>
                   </th>
-                  {selectedNations.map((nation) => (
+                  {selectedNations.map((nation) => {
+                    const isBest = isBestComparableValue(
+                      row,
+                      nation,
+                      selectedNations,
+                    );
+                    return (
                     <td
                       key={`${row.key}-${nation.slug}`}
-                      className="px-4 py-4 leading-6 text-zinc-200"
+                      className={`px-4 py-4 leading-6 text-zinc-200 ${
+                        isBest ? "bg-emerald-300/10" : ""
+                      }`}
                     >
-                      <span className="inline-flex items-center gap-2">
+                      <span className="inline-flex flex-wrap items-center gap-2">
+                        {isBest ? (
+                          <span className="rounded-md border border-emerald-300/50 bg-emerald-300/10 px-2 py-1 text-xs font-bold uppercase text-emerald-100">
+                            Best
+                          </span>
+                        ) : null}
                         {row.key === "economy" &&
                         nation.economy.toLowerCase().includes("bobakoin") ? (
                           <Image
@@ -429,7 +483,8 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
                         {row.getValue(nation)}
                       </span>
                     </td>
-                  ))}
+                    );
+                  })}
                 </tr>
               ))}
               <tr>

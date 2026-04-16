@@ -5,6 +5,7 @@ import {
   updateNationFlagAction,
   updateWikiAction,
 } from "@/app/actions";
+import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { PageShell, Panel } from "@/components/ui/shell";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageUser } from "@/lib/permissions";
@@ -75,7 +76,7 @@ export default async function DashboardWikiPage() {
                 required
                 defaultValue={nation.leaderName ?? ""}
                 placeholder="Enter the current leader name"
-                className="min-w-[320px] rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-zinc-100"
+                className="min-h-11 min-w-0 flex-1 rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-zinc-100 sm:min-w-[320px]"
               />
               <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10">
                 Save Leader Name
@@ -91,14 +92,12 @@ export default async function DashboardWikiPage() {
             <input type="hidden" name="returnPath" value="/dashboard/wiki" />
             <h2 className="text-lg font-bold text-zinc-50">Profile Picture</h2>
             <p className="mt-1 text-sm text-zinc-400">
-              Upload a small image to show as your nation profile picture.
+              Upload a small image and check the preview before saving.
             </p>
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <input
-                name="flag"
-                type="file"
-                accept="image/*"
-                className="px-3 py-2 text-sm text-zinc-100"
+            <div className="mt-4 grid gap-4">
+              <FlagUploadField
+                currentImage={nation.flagImage}
+                nationName={nation.name}
               />
               <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10">
                 Save Profile Picture

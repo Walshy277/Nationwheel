@@ -8,6 +8,7 @@ import {
   updateWikiAction,
 } from "@/app/actions";
 import { ControlLayout } from "@/components/layout/control-sidebar";
+import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { Panel } from "@/components/ui/shell";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
@@ -259,15 +260,11 @@ export default async function LoreNationPage({
                 </option>
               ))}
             </select>
-            <label className="grid gap-2 text-sm text-slate-300">
-              Profile Picture
-              <input
-                name="flag"
-                type="file"
-                accept="image/*"
-                className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
-              />
-            </label>
+            <FlagUploadField
+              currentImage={nation.flagImage}
+              nationName={nation.name}
+              className="grid gap-2 text-sm text-slate-300"
+            />
             <button className="rounded-lg bg-yellow-300 px-4 py-2 font-bold text-slate-950 md:col-span-2">
               Save Stats
             </button>
