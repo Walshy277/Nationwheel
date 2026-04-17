@@ -139,6 +139,8 @@ model LeaderNotification {
   id              String   @id @default(cuid())
   nationId        String
   nation          Nation   @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  messageId       String?
+  message         NationMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
   title           String
   body            String
   href            String?
@@ -148,6 +150,7 @@ model LeaderNotification {
   createdAt       DateTime @default(now())
 
   @@index([nationId, readAt, createdAt])
+  @@index([messageId])
 }
 
 model NationMessage {
@@ -159,6 +162,7 @@ model NationMessage {
   subject      String
   body         String
   readAt       DateTime?
+  notifications LeaderNotification[]
   createdAt    DateTime @default(now())
 
   @@index([fromNationId, createdAt])

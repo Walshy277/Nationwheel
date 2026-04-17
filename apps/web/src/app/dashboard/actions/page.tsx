@@ -85,7 +85,7 @@ export default async function DashboardActionsPage() {
               </h2>
             </div>
             <Link
-              href="/dashboard/notifications"
+              href="/dashboard/inbox"
               className="rounded-lg border border-amber-200/50 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
             >
               View all

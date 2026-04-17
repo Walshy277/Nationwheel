@@ -132,6 +132,7 @@ async function notifyNationLeader({
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/actions");
   revalidatePath("/dashboard/notifications");
+  revalidatePath("/dashboard/inbox");
 }
 
 function nationPayloadFromForm(formData: FormData) {
@@ -755,26 +756,6 @@ export async function addLoreActionUpdateAction(
   });
 }
 
-export async function markLeaderNotificationReadAction(notificationId: string) {
-  const user = await requireUser();
-  const notification = await getPrisma().leaderNotification.findUniqueOrThrow({
-    where: { id: notificationId },
-    select: { nation: { select: { leaderUserId: true } } },
-  });
-
-  if (notification.nation.leaderUserId !== user.id) {
-    throw new Error("You do not have permission to update this notification.");
-  }
-
-  await getPrisma().leaderNotification.update({
-    where: { id: notificationId },
-    data: { readAt: new Date() },
-  });
-
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/notifications");
-}
-
 export async function createNationMessageAction(formData: FormData) {
   const user = await requireUser();
   const payload = nationMessageSchema.parse({
@@ -802,19 +783,24 @@ export async function createNationMessageAction(formData: FormData) {
     throw new Error("You can only send messages from your own nation.");
   }
 
-  await prisma.nationMessage.create({
+  const message = await prisma.nationMessage.create({
     data: payload,
   });
 
-  await notifyNationLeader({
-    nationId: toNation.id,
-    actorUserId: user.id,
-    title: `Message from ${fromNation.name}`,
-    body: payload.subject,
-    href: "/dashboard/messages",
+  await prisma.leaderNotification.create({
+    data: {
+      nationId: toNation.id,
+      messageId: message.id,
+      title: `Message from ${fromNation.name}`,
+      body: payload.subject,
+      href: "/dashboard/inbox",
+      createdByUserId: user.id,
+    },
   });
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/inbox");
+  revalidatePath("/dashboard/notifications");
   revalidatePath("/dashboard/messages");
 }
 
@@ -846,19 +832,122 @@ export async function markNationMessageReadAction(messageId: string) {
   const user = await requireUser();
   const message = await getPrisma().nationMessage.findUniqueOrThrow({
     where: { id: messageId },
-    select: { toNation: { select: { leaderUserId: true } } },
+    select: {
+      id: true,
+      subject: true,
+      fromNation: { select: { name: true } },
+      toNation: { select: { id: true, leaderUserId: true } },
+    },
   });
 
   if (message.toNation.leaderUserId !== user.id) {
     throw new Error("You do not have permission to update this message.");
   }
 
-  await getPrisma().nationMessage.update({
-    where: { id: messageId },
-    data: { readAt: new Date() },
-  });
+  const readAt = new Date();
+  await getPrisma().$transaction([
+    getPrisma().nationMessage.update({
+      where: { id: messageId },
+      data: { readAt },
+    }),
+    getPrisma().leaderNotification.updateMany({
+      where: {
+        readAt: null,
+        OR: [
+          { messageId },
+          {
+            nationId: message.toNation.id,
+            title: `Message from ${message.fromNation.name}`,
+            body: message.subject,
+          },
+        ],
+      },
+      data: { readAt },
+    }),
+  ]);
 
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/inbox");
+  revalidatePath("/dashboard/notifications");
+  revalidatePath("/dashboard/messages");
+}
+
+export async function markInboxReadAction(formData: FormData) {
+  const user = await requireUser();
+  const notificationIds = formData
+    .getAll("notificationId")
+    .filter((value): value is string => typeof value === "string");
+  const messageIds = formData
+    .getAll("messageId")
+    .filter((value): value is string => typeof value === "string");
+  const readAt = new Date();
+
+  await getPrisma().$transaction([
+    getPrisma().leaderNotification.updateMany({
+      where: {
+        id: { in: notificationIds },
+        nation: { leaderUserId: user.id },
+        readAt: null,
+      },
+      data: { readAt },
+    }),
+    getPrisma().nationMessage.updateMany({
+      where: {
+        id: { in: messageIds },
+        toNation: { leaderUserId: user.id },
+        readAt: null,
+      },
+      data: { readAt },
+    }),
+    getPrisma().leaderNotification.updateMany({
+      where: {
+        messageId: { in: messageIds },
+        nation: { leaderUserId: user.id },
+        readAt: null,
+      },
+      data: { readAt },
+    }),
+  ]);
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/inbox");
+  revalidatePath("/dashboard/notifications");
+  revalidatePath("/dashboard/messages");
+}
+
+export async function markLeaderNotificationReadAction(notificationId: string) {
+  const user = await requireUser();
+  const notification = await getPrisma().leaderNotification.findUniqueOrThrow({
+    where: { id: notificationId },
+    select: {
+      messageId: true,
+      nation: { select: { leaderUserId: true } },
+    },
+  });
+
+  if (notification.nation.leaderUserId !== user.id) {
+    throw new Error("You do not have permission to update this notification.");
+  }
+
+  const readAt = new Date();
+  await getPrisma().$transaction([
+    getPrisma().leaderNotification.update({
+      where: { id: notificationId },
+      data: { readAt },
+    }),
+    ...(notification.messageId
+      ? [
+          getPrisma().nationMessage.update({
+            where: { id: notification.messageId },
+            data: { readAt },
+          }),
+        ]
+      : []),
+  ]);
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/inbox");
+  revalidatePath("/dashboard/notifications");
   revalidatePath("/dashboard/messages");
 }
 

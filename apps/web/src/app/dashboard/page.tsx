@@ -329,10 +329,10 @@ export default async function DashboardPage() {
               My Actions
             </Link>
             <Link
-              href="/dashboard/messages"
+              href="/dashboard/inbox"
               className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:bg-white/5"
             >
-              Messages
+              Inbox
             </Link>
             {uniqueStaffLinks.length ? (
               <a
@@ -481,19 +481,18 @@ export default async function DashboardPage() {
             tone: "accent",
           },
           {
-            href: "/dashboard/notifications",
-            title: "Notifications",
+            href: "/dashboard/inbox",
+            title: "Inbox",
             detail:
-              "See staff edits and action updates affecting your linked nation.",
-            badge: leaderCounts?.[0] ? `${leaderCounts[0]} New` : "Updates",
-            tone: leaderCounts?.[0] ? "warning" : "neutral",
-          },
-          {
-            href: "/dashboard/messages",
-            title: "Nation Messages",
-            detail: "Send and receive private diplomatic messages.",
-            badge: leaderCounts?.[1] ? `${leaderCounts[1]} New` : "Private",
-            tone: leaderCounts?.[1] ? "warning" : "neutral",
+              "Read private messages, staff edits, and action notifications.",
+            badge:
+              (leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)
+                ? `${(leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)} New`
+                : "Inbox",
+            tone:
+              (leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)
+                ? "warning"
+                : "neutral",
           },
           ...(myNation
             ? [

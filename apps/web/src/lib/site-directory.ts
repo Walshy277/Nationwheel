@@ -98,14 +98,9 @@ export const dashboardDirectoryLinks: SiteDirectoryLink[] = [
     detail: "Track actions and outcomes for your linked nation.",
   },
   {
-    href: "/dashboard/messages",
-    label: "Messages",
-    detail: "Private nation-to-nation messages.",
-  },
-  {
-    href: "/dashboard/notifications",
-    label: "Notifications",
-    detail: "Staff edits and action updates affecting your nation.",
+    href: "/dashboard/inbox",
+    label: "Inbox",
+    detail: "Private messages, staff edits, and action notifications.",
   },
 ];
 
