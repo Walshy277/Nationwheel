@@ -4,9 +4,9 @@
   --background: #050706;
   --foreground: #fbfaf4;
   --muted: #c7cfc4;
-  --panel: #11140f;
-  --panel-strong: #191d16;
-  --line: #4b554b;
+  --panel: #10120f;
+  --panel-strong: #181b15;
+  --line: #50534a;
   --accent: #5de6bd;
   --accent-2: #ffd764;
   --danger: #ff7d91;
@@ -28,12 +28,14 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(rgba(255, 215, 100, 0.026) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(93, 230, 189, 0.022) 1px, transparent 1px),
+    linear-gradient(135deg, rgba(255, 125, 145, 0.08), transparent 34%),
     linear-gradient(180deg, #0a0c09 0%, #070806 46%, #050604 100%);
   background-size:
     48px 48px,
     48px 48px,
+    auto,
     auto;
   color: var(--foreground);
   font-feature-settings:

@@ -1,13 +1,18 @@
 import Link from "next/link";
 import Image from "next/image";
 import {
+  formatMoney,
   formatNumber,
+  getGdpTotal,
+  parseArea,
+  parseCompactNumber,
   rankNations,
   rankOverallNations,
   type NationSummary,
 } from "@nation-wheel/shared";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { listNationSummaries } from "@/lib/nations";
+import mapImage from "../../../../assets/Final_map_S1.jpg";
 
 const featuredSlots = [
   { key: "area", label: "Most Land", detail: "Land area" },
@@ -26,8 +31,18 @@ const quickLinks = [
     "Rank land, GDP, army ranking, population, and HDI.",
   ],
   ["World News", "/news", "Read the latest reports from journalists."],
+  ["Universe Lore", "/universe-lore", "Read the wider setting and canon."],
   ["Season Map", "/map", "Open the world reference map."],
 ] as const;
+
+function StatPill({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/30 px-4 py-3">
+      <p className="text-xs font-semibold uppercase text-zinc-500">{label}</p>
+      <p className="mt-1 text-lg font-black text-zinc-50">{value}</p>
+    </div>
+  );
+}
 
 function FeaturedCard({
   label,
@@ -85,11 +100,33 @@ export async function LandingPage() {
     overall?.value !== null && overall?.value !== undefined
       ? `Average rank ${formatNumber(overall.value)}`
       : "Best all-round profile";
+  const totalPopulation = nations.reduce(
+    (sum, nation) => sum + (parseCompactNumber(nation.people) ?? 0),
+    0,
+  );
+  const totalArea = nations.reduce(
+    (sum, nation) => sum + (parseArea(nation.area) ?? 0),
+    0,
+  );
+  const totalGdp = nations.reduce(
+    (sum, nation) => sum + (getGdpTotal(nation) ?? 0),
+    0,
+  );
 
   return (
     <PageShell>
-      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
-        <div>
+      <section className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center">
+        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-[#0b0e0b] p-5 shadow-2xl shadow-black/25 sm:p-7">
+          <Image
+            src={mapImage}
+            alt=""
+            fill
+            priority
+            sizes="(min-width: 1024px) 58vw, 100vw"
+            className="object-cover opacity-24"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,6,0.94),rgba(5,7,6,0.76)_52%,rgba(5,7,6,0.42))]" />
+          <div className="relative">
           <Badge tone="accent">{nationCount} canon nations</Badge>
           <div className="mt-5 flex flex-wrap items-center gap-4">
             <Image
@@ -105,9 +142,14 @@ export async function LandingPage() {
             </h1>
           </div>
           <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
-            Browse profiles, compare canon stats, check rankings, and open the
-            season map from one command center.
+            Browse the canon, compare rival powers, track rankings, and jump
+            from the world map into each nation profile.
           </p>
+          <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            <StatPill label="Population" value={formatNumber(totalPopulation)} />
+            <StatPill label="Land" value={`${formatNumber(totalArea)} km2`} />
+            <StatPill label="GDP" value={formatMoney(totalGdp)} />
+          </div>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               href="/nations#compare"
@@ -129,17 +171,20 @@ export async function LandingPage() {
             </Link>
           </div>
         </div>
+        </div>
         <Panel className="grid gap-4">
           <Badge tone="neutral">World Index</Badge>
           <h2 className="text-2xl font-bold text-zinc-50">Start Here</h2>
-          <div className="grid gap-3">
+          <div className="grid divide-y divide-white/10">
             {quickLinks.map(([label, href, text]) => (
               <Link
                 key={href}
                 href={href}
-                className="rounded-lg border border-white/10 bg-black/20 p-4 hover:border-emerald-300/70 hover:bg-white/5"
+                className="group grid gap-1 py-4 first:pt-0 last:pb-0"
               >
-                <span className="block font-bold text-zinc-50">{label}</span>
+                <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
+                  {label}
+                </span>
                 <span className="mt-1 block text-sm leading-6 text-zinc-300">
                   {text}
                 </span>

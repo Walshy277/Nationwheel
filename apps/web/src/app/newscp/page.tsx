@@ -1,5 +1,8 @@
 import { Role } from "@prisma/client";
-import { createWorldNewsPostAction } from "@/app/actions";
+import {
+  createWorldNewsPostAction,
+  updateWorldNewsPostAction,
+} from "@/app/actions";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
 import { hasDatabase, newsCpLinks } from "@/lib/control-panels";
@@ -89,16 +92,72 @@ export default async function NewsControlPage() {
                 key={post.id}
                 className="rounded-lg border border-white/10 bg-black/20 p-4"
               >
-                <h3 className="text-lg font-bold text-zinc-50">
-                  {post.title}
-                </h3>
-                <p className="mt-2 text-sm leading-6 text-zinc-300">
-                  {post.summary}
-                </p>
-                <p className="mt-3 text-xs text-zinc-500">
-                  {post.publishedAt.toLocaleString("en-GB")} by{" "}
-                  {post.author?.name ?? post.author?.email ?? "World News"}
-                </p>
+                <details>
+                  <summary className="list-none">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-bold text-zinc-50">
+                          {post.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-6 text-zinc-300">
+                          {post.summary}
+                        </p>
+                        <p className="mt-3 text-xs text-zinc-500">
+                          {post.publishedAt.toLocaleString("en-GB")} by{" "}
+                          {post.author?.name ??
+                            post.author?.email ??
+                            "World News"}
+                        </p>
+                      </div>
+                      <span className="rounded-lg border border-amber-300/70 px-3 py-2 text-sm font-bold text-amber-100">
+                        Edit
+                      </span>
+                    </div>
+                  </summary>
+                  <form
+                    action={updateWorldNewsPostAction.bind(null, post.id)}
+                    className="mt-5 grid gap-3 border-t border-white/10 pt-5"
+                  >
+                    <input
+                      name="title"
+                      required
+                      maxLength={160}
+                      defaultValue={post.title}
+                      className="px-3 py-2"
+                    />
+                    <textarea
+                      name="summary"
+                      required
+                      maxLength={280}
+                      defaultValue={post.summary}
+                      className="min-h-24 p-3"
+                    />
+                    <textarea
+                      name="content"
+                      required
+                      defaultValue={post.content}
+                      className="min-h-[300px] p-4 font-mono text-sm leading-7"
+                    />
+                    <div className="grid gap-3 md:grid-cols-2">
+                      <input
+                        name="sourceLabel"
+                        defaultValue={post.sourceLabel ?? ""}
+                        placeholder="Source label, optional"
+                        className="px-3 py-2"
+                      />
+                      <input
+                        name="sourceUrl"
+                        type="url"
+                        defaultValue={post.sourceUrl ?? ""}
+                        placeholder="https:// source link, optional"
+                        className="px-3 py-2"
+                      />
+                    </div>
+                    <button className="rounded-lg bg-amber-300 px-4 py-3 font-bold text-zinc-950 hover:bg-amber-200">
+                      Save Report
+                    </button>
+                  </form>
+                </details>
               </article>
             ))}
             {posts.length === 0 ? (

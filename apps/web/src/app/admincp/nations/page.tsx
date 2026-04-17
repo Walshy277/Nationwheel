@@ -1,10 +1,12 @@
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { Panel } from "@/components/ui/shell";
+import { createNationWikiTemplate } from "@nation-wheel/shared";
 import {
   createNationAction,
   deleteNationAction,
   updateNationStatsAction,
+  updateWikiAction,
 } from "@/app/actions";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
@@ -23,6 +25,7 @@ export default async function AdminNationsPage() {
     getPrisma().nation.findMany({
       orderBy: { name: "asc" },
       include: {
+        wiki: true,
         leaderUser: { select: { id: true, name: true, email: true } },
       },
     }),
@@ -190,6 +193,27 @@ export default async function AdminNationsPage() {
                   Save Nation
                 </button>
               </form>
+              <details className="mt-5 rounded-lg border border-white/10 bg-black/20 p-4">
+                <summary className="font-bold text-zinc-100">
+                  Edit Nation Wiki
+                </summary>
+                <form
+                  action={updateWikiAction.bind(null, nation.id)}
+                  className="mt-4 grid gap-3"
+                >
+                  <textarea
+                    name="content"
+                    required
+                    defaultValue={
+                      nation.wiki?.content ?? createNationWikiTemplate(nation)
+                    }
+                    className="min-h-[320px] p-4 font-mono text-sm leading-7 text-zinc-100"
+                  />
+                  <button className="rounded-lg border border-amber-300/70 px-4 py-2 font-bold text-amber-100 hover:bg-amber-300/10">
+                    Save Wiki
+                  </button>
+                </form>
+              </details>
             </Panel>
           ))}
         </div>

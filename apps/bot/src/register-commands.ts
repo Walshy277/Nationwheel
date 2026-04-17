@@ -1,5 +1,6 @@
 import { REST, Routes } from "discord.js";
 import { assertBotConfig, config } from "./config";
+import { nationCommand } from "./commands/nation";
 import { nationsCommand } from "./commands/nations";
 import { nationwheelCommand } from "./commands/nationwheel";
 import { profileCommand } from "./commands/profile";
@@ -9,6 +10,7 @@ assertBotConfig();
 
 const rest = new REST({ version: "10" }).setToken(config.token!);
 const slashCommands = [
+  nationCommand.data.toJSON(),
   profileCommand.data.toJSON(),
   wikiCommand.data.toJSON(),
   nationsCommand.data.toJSON(),

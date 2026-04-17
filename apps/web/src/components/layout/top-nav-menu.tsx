@@ -35,6 +35,7 @@ export function TopNavMenu({
     { href: "/leaderboards", label: "Leaderboards" },
     { href: "/map", label: "Map" },
     { href: "/lore", label: "Lore" },
+    { href: "/universe-lore", label: "Universe Lore" },
     { href: "/wars", label: "Wars" },
     { href: "/actions", label: "Actions" },
     { href: "/activity", label: "Activity" },

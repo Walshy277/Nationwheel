@@ -3,7 +3,11 @@ import { Role } from "@prisma/client";
 import { updatePublicLorePageAction } from "@/app/actions";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
-import { getPublicContentPage, isPublicContentKey } from "@/lib/public-content";
+import {
+  getPublicContentHref,
+  getPublicContentPage,
+  isPublicContentKey,
+} from "@/lib/public-content";
 import { requirePageRole } from "@/lib/permissions";
 
 const links = [
@@ -11,6 +15,7 @@ const links = [
   { href: "/lorecp/actions", label: "Action Tracker" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
+  { href: "/lorecp/pages/universe", label: "Universe Lore" },
 ];
 
 export default async function PublicPageEditor({
@@ -65,7 +70,7 @@ export default async function PublicPageEditor({
                 Save Public Page
               </button>
               <a
-                href={`/${key}`}
+                href={getPublicContentHref(key)}
                 className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:bg-white/5"
               >
                 Open Public Page

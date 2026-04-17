@@ -14,7 +14,7 @@ import {
   getMilitarySizeLabel,
   parseMilitaryScore,
 } from "@nation-wheel/shared";
-import type { ApiNation } from "../api-client";
+import { listNations, type ApiNation } from "../api-client";
 import { config } from "../config";
 
 export function profileUrl(slug: string) {
@@ -25,6 +25,10 @@ export function wikiUrl(slug: string) {
   return new URL(`/nations/${slug}#wiki`, config.webUrl).toString();
 }
 
+export function homeUrl() {
+  return new URL("/", config.webUrl).toString();
+}
+
 export function mapUrl() {
   return new URL("/map", config.webUrl).toString();
 }
@@ -33,8 +37,17 @@ export function activityUrl() {
   return new URL("/activity", config.webUrl).toString();
 }
 
+export function leaderboardsUrl() {
+  return new URL("/leaderboards", config.webUrl).toString();
+}
+
 export function assetUrl(path: string) {
   return new URL(path, config.webUrl).toString();
+}
+
+export function truncateText(value: string, maxLength: number) {
+  if (value.length <= maxLength) return value;
+  return `${value.slice(0, Math.max(maxLength - 3, 0)).trimEnd()}...`;
 }
 
 export function nationActionRow(nation: Pick<ApiNation, "slug">) {
@@ -59,7 +72,7 @@ export function miniAppActionRow() {
     new ButtonBuilder()
       .setLabel("Open Nation Wheel")
       .setStyle(ButtonStyle.Link)
-      .setURL(activityUrl()),
+      .setURL(homeUrl()),
     new ButtonBuilder()
       .setLabel("Profiles")
       .setStyle(ButtonStyle.Link)
@@ -67,7 +80,7 @@ export function miniAppActionRow() {
     new ButtonBuilder()
       .setLabel("Leaderboards")
       .setStyle(ButtonStyle.Link)
-      .setURL(new URL("/leaderboards", config.webUrl).toString()),
+      .setURL(leaderboardsUrl()),
     new ButtonBuilder()
       .setLabel("Map")
       .setStyle(ButtonStyle.Link)
@@ -117,17 +130,20 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
   if (nation.statNotes?.length) {
     fields.push({
       name: "Current Status",
-      value: nation.statNotes.slice(0, 2).join("\n"),
+      value: truncateText(nation.statNotes.slice(0, 2).join("\n"), 900),
       inline: false,
     });
   }
   if (nation.actions?.length) {
     fields.push({
       name: "Recorded Actions",
-      value: nation.actions
-        .slice(-2)
-        .map((entry) => entry.type)
-        .join("\n"),
+      value: truncateText(
+        nation.actions
+          .slice(-2)
+          .map((entry) => `${entry.type}: ${entry.action}`)
+          .join("\n"),
+        900,
+      ),
       inline: false,
     });
   }
@@ -135,7 +151,7 @@ export function nationProfileEmbed(nation: ApiNation): APIEmbed {
   return {
     title: nation.name,
     url: profileUrl(nation.slug),
-    description: `${nation.government}\n${nation.economy}`,
+    description: truncateText(`${nation.government}\n${nation.economy}`, 400),
     color: 0x38d6b5,
     fields,
     thumbnail: usesBobakoin
@@ -149,7 +165,13 @@ export async function respondWithNationChoices(
   interaction: AutocompleteInteraction,
 ) {
   const focused = interaction.options.getFocused().toLowerCase();
-  const choices = canonNations
+  const nations = await Promise.race([
+    listNations(),
+    new Promise<typeof canonNations>((resolve) => {
+      setTimeout(() => resolve(canonNations), 1500);
+    }),
+  ]);
+  const choices = nations
     .filter(
       (nation) =>
         nation.slug.includes(focused) ||

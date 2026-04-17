@@ -37,12 +37,39 @@ Add public lore rules, action expectations, and how canon decisions are handled 
 
 Add key events in order as the world develops.`,
   },
+  universe: {
+    title: "Universe Lore",
+    content: `# Universe Lore
+
+This page explains the wider Nation Wheel universe.
+
+## Setting
+
+Add the world's origin, major regions, recurring powers, and the tone of the universe here.
+
+## Timeline
+
+Add the most important universe-level events in order.
+
+## Factions and Forces
+
+Add global blocs, ideologies, institutions, religions, technologies, or mysteries that shape the setting.
+
+## Canon Guidelines
+
+Add what players should know before writing lore that affects the wider universe.`,
+  },
 } as const;
 
 export type PublicContentKey = keyof typeof publicContentDefaults;
 
 export function isPublicContentKey(value: string): value is PublicContentKey {
-  return value === "wars" || value === "lore";
+  return value === "wars" || value === "lore" || value === "universe";
+}
+
+export function getPublicContentHref(key: PublicContentKey) {
+  if (key === "universe") return "/universe-lore";
+  return `/${key}`;
 }
 
 export async function getPublicContentPage(key: PublicContentKey) {

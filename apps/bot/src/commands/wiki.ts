@@ -4,10 +4,14 @@ import {
   type ChatInputCommandInteraction,
 } from "discord.js";
 import { getNationBySlug } from "../api-client";
-import { nationActionRow, respondWithNationChoices } from "./helpers";
+import {
+  nationActionRow,
+  respondWithNationChoices,
+  truncateText,
+} from "./helpers";
 
 function trimWiki(content: string) {
-  return content.length > 3500 ? `${content.slice(0, 3497)}...` : content;
+  return truncateText(content, 3500);
 }
 
 export const wikiCommand = {

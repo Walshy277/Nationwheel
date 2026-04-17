@@ -19,6 +19,7 @@ const links = [
   { href: "/lorecp/actions", label: "Action Tracker" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
+  { href: "/lorecp/pages/universe", label: "Universe Lore" },
 ];
 
 export default async function LoreNationPage({

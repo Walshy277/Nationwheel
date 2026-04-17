@@ -3,6 +3,7 @@ export const loreCpLinks = [
   { href: "/lorecp/actions", label: "Action Tracker" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
+  { href: "/lorecp/pages/universe", label: "Universe Lore" },
 ];
 
 export const adminCpLinks = [
@@ -14,7 +15,7 @@ export const adminCpLinks = [
 ];
 
 export const newsCpLinks = [
-  { href: "/newscp", label: "Publish News" },
+  { href: "/newscp", label: "News Desk" },
   { href: "/news", label: "Public News" },
 ];
 

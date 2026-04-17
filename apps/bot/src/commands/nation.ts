@@ -8,10 +8,11 @@ import {
   nationActionRow,
   nationProfileEmbed,
   respondWithNationChoices,
+  truncateText,
 } from "./helpers";
 
 function trimWiki(content: string) {
-  return content.length > 3500 ? `${content.slice(0, 3497)}...` : content;
+  return truncateText(content, 3500);
 }
 
 export const nationCommand = {
@@ -90,6 +91,10 @@ export const nationCommand = {
       await interaction.deferReply();
       const nations = await listNations();
       const nation = nations[Math.floor(Math.random() * nations.length)];
+      if (!nation) {
+        await interaction.editReply("No nations are available yet.");
+        return;
+      }
       await interaction.editReply({
         content: `Random nation: **${nation.name}**`,
         embeds: [nationProfileEmbed(nation)],

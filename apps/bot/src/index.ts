@@ -8,6 +8,7 @@ import {
   type SlashCommandBuilder,
 } from "discord.js";
 import { assertBotConfig, config } from "./config";
+import { nationCommand } from "./commands/nation";
 import { nationsCommand } from "./commands/nations";
 import { nationwheelCommand } from "./commands/nationwheel";
 import { profileCommand } from "./commands/profile";
@@ -24,6 +25,7 @@ type BotCommand = {
 };
 
 const commandList: BotCommand[] = [
+  nationCommand,
   profileCommand,
   wikiCommand,
   nationsCommand,

@@ -21,6 +21,7 @@ import {
   worldNewsPostSchema,
 } from "@/lib/validation";
 import {
+  getPublicContentHref,
   isPublicContentKey,
   publicContentDefaults,
 } from "@/lib/public-content";
@@ -487,7 +488,7 @@ export async function updatePublicLorePageAction(
     },
   });
 
-  revalidatePath(`/${key}`);
+  revalidatePath(getPublicContentHref(key));
   revalidatePath(`/lorecp/pages/${key}`);
 }
 
@@ -511,6 +512,29 @@ export async function createWorldNewsPostAction(formData: FormData) {
       ...payload,
       authorId: user.id,
     },
+  });
+
+  revalidatePath("/news");
+  revalidatePath("/newscp");
+  redirect("/newscp");
+}
+
+export async function updateWorldNewsPostAction(
+  postId: string,
+  formData: FormData,
+) {
+  await requireRole([Role.JOURNALIST, Role.LORE, Role.ADMIN, Role.OWNER]);
+  const payload = worldNewsPostSchema.parse({
+    title: readText(formData, "title"),
+    summary: readText(formData, "summary"),
+    content: readText(formData, "content"),
+    sourceLabel: readNullableText(formData, "sourceLabel"),
+    sourceUrl: readNullableText(formData, "sourceUrl"),
+  });
+
+  await getPrisma().worldNewsPost.update({
+    where: { id: postId },
+    data: payload,
   });
 
   revalidatePath("/news");
