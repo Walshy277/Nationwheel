@@ -7,6 +7,7 @@
     "dev": "pnpm --parallel --filter @nation-wheel/web --filter @nation-wheel/bot dev",
     "dev:web": "pnpm --filter @nation-wheel/web dev",
     "dev:bot": "pnpm --filter @nation-wheel/bot dev",
+    "register:bot": "pnpm --filter @nation-wheel/bot register",
     "start:bot": "pnpm --filter @nation-wheel/bot start",
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",

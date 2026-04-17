@@ -108,7 +108,7 @@ Use these commands for a hosted bot worker:
 
 ```bash
 pnpm install --frozen-lockfile
-pnpm --filter @nation-wheel/bot register
+pnpm register:bot
 pnpm start:bot
 ```
 
@@ -125,6 +125,11 @@ NATION_WHEEL_BOT_API_KEY="same-key-as-vercel-env"
 ```
 
 Do not host the Discord gateway bot as a Vercel Function. The bot keeps a persistent Discord Gateway connection, while Vercel Functions are request-scoped serverless functions. Use Vercel for the website/API and a worker service for the always-on bot process.
+
+This repo includes `render.yaml` for a Render Background Worker named
+`nation-wheel-bot`. Connect the GitHub repo in Render, create the worker from
+the blueprint, and set the secret env vars listed above. Render will run
+`pnpm start:bot` continuously and auto-redeploy it when `main` changes.
 
 ## Discord Lore Team Access
 

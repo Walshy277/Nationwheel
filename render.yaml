@@ -1,0 +1,21 @@
+services:
+  - type: worker
+    name: nation-wheel-bot
+    runtime: node
+    plan: starter
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @nation-wheel/bot build
+    startCommand: pnpm start:bot
+    autoDeploy: true
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: DISCORD_CLIENT_ID
+        sync: false
+      - key: DISCORD_GUILD_ID
+        sync: false
+      - key: NATION_WHEEL_API_URL
+        value: https://nation-wheel.vercel.app/api
+      - key: NATION_WHEEL_WEB_URL
+        value: https://nation-wheel.vercel.app
+      - key: NATION_WHEEL_BOT_API_KEY
+        sync: false

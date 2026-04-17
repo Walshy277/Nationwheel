@@ -1,5 +1,5 @@
 {
   "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm --filter @nation-wheel/web build",
+  "buildCommand": "pnpm --filter @nation-wheel/web exec prisma migrate deploy && pnpm --filter @nation-wheel/web build",
   "framework": "nextjs"
 }
