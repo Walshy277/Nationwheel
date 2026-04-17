@@ -243,7 +243,9 @@ export function NationProfile({
                 <p className="mt-3 text-sm font-semibold text-zinc-400">
                   Nation: {entry.nation}
                 </p>
-                <p className="mt-3 leading-7 text-zinc-300">{entry.action}</p>
+                <div className="mt-3">
+                  <WikiRenderer content={entry.action} />
+                </div>
               </article>
             ))}
           </div>
@@ -269,7 +271,9 @@ export function NationProfile({
                 <p className="mt-3 text-sm font-semibold text-zinc-300">
                   Estimated completion: {entry.timeframe}
                 </p>
-                <p className="mt-3 leading-7 text-zinc-300">{entry.action}</p>
+                <div className="mt-3">
+                  <WikiRenderer content={entry.action} />
+                </div>
                 {entry.requiresSpinReason ? (
                   <p className="mt-3 rounded-md border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100">
                     Requires spin: {entry.requiresSpinReason}
@@ -282,9 +286,7 @@ export function NationProfile({
                         key={update.id}
                         className="rounded-md border border-white/10 bg-black/20 p-3"
                       >
-                        <p className="text-sm leading-6 text-zinc-300">
-                          {update.content}
-                        </p>
+                        <WikiRenderer content={update.content} />
                         <p className="mt-2 text-xs text-zinc-500">
                           {new Date(update.createdAt).toLocaleString("en-GB")}
                         </p>

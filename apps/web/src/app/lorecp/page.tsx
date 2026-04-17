@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ControlSearch } from "@/components/control/control-search";
+import { GameDateControl } from "@/components/control/game-date-control";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
 import { loreCpLinks } from "@/lib/control-panels";
@@ -15,6 +16,7 @@ export default async function LoreCpPage() {
     <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-4">
         <h1 className="text-3xl font-black text-white">Lore Control Panel</h1>
+        <GameDateControl />
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <Panel className="grid gap-3">
             <h2 className="text-xl font-bold text-zinc-50">Action Tracker</h2>

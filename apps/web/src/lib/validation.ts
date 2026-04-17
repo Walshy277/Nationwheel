@@ -72,6 +72,8 @@ export const loreActionSchema = z
   })
   .strict();
 
+export const loreActionEditSchema = loreActionSchema;
+
 export const loreActionUpdateSchema = z
   .object({
     content: z.string().min(1),
@@ -104,5 +106,14 @@ export const worldNewsPostSchema = z
       .nullable()
       .optional()
       .or(z.literal("").transform(() => null)),
+  })
+  .strict();
+
+export const nationMessageSchema = z
+  .object({
+    fromNationId: z.string().min(1),
+    toNationId: z.string().min(1),
+    subject: z.string().min(1).max(140),
+    body: z.string().min(1).max(5000),
   })
   .strict();

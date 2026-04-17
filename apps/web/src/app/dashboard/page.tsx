@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { Role } from "@prisma/client";
+import { LoreActionStatus, Role } from "@prisma/client";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
+import { formatGameDate, getGameClock } from "@/lib/game-clock";
 import { getPrisma } from "@/lib/prisma";
 
 type DashboardLink = {
@@ -174,9 +175,10 @@ export default async function DashboardPage() {
     Role.OWNER,
   ]);
 
-  const [myNation, counts] =
+  const [gameClock, myNation, counts, leaderCounts, staffActions] =
     user && hasDatabase()
       ? await Promise.all([
+          getGameClock(),
           getPrisma().nation.findFirst({
             where: { leaderUserId: user.id },
             orderBy: { name: "asc" },
@@ -192,8 +194,48 @@ export default async function DashboardPage() {
               getPrisma().nationRevision.count(),
             ])
             .catch(() => null),
+          getPrisma()
+            .$transaction([
+              getPrisma().leaderNotification.count({
+                where: { nation: { leaderUserId: user.id }, readAt: null },
+              }),
+              getPrisma().nationMessage.count({
+                where: { toNation: { leaderUserId: user.id }, readAt: null },
+              }),
+              getPrisma().loreAction.count({
+                where: {
+                  nation: { leaderUserId: user.id },
+                  status: { not: LoreActionStatus.COMPLETED },
+                },
+              }),
+            ])
+            .catch(() => null),
+          isLore
+            ? getPrisma()
+                .loreAction.findMany({
+                  where: {
+                    status: {
+                      in: [
+                        LoreActionStatus.CURRENT,
+                        LoreActionStatus.REQUIRES_SPIN,
+                      ],
+                    },
+                  },
+                  orderBy: { updatedAt: "asc" },
+                  take: 80,
+                  include: {
+                    nation: { select: { name: true } },
+                    updates: {
+                      orderBy: { createdAt: "desc" },
+                      take: 1,
+                      select: { createdAt: true },
+                    },
+                  },
+                })
+                .catch(() => [])
+            : Promise.resolve([]),
         ])
-      : [null, null];
+      : [await getGameClock(), null, null, null, []];
 
   const accountLabel =
     user?.name ?? user?.email ?? user?.discordId ?? "Signed out";
@@ -205,6 +247,19 @@ export default async function DashboardPage() {
   const uniqueStaffLinks = Array.from(
     new Map(staffLinks.map((item) => [item.href, item])).values(),
   );
+  const staleCutoff = new Date();
+  staleCutoff.setHours(staleCutoff.getHours() - 24);
+  const staffSpinActions = staffActions.filter(
+    (action) => action.status === LoreActionStatus.REQUIRES_SPIN,
+  );
+  const staleActions = staffActions.filter((action) => {
+    const latestUpdate = action.updates[0]?.createdAt;
+    const latestTouch =
+      latestUpdate && latestUpdate > action.updatedAt
+        ? latestUpdate
+        : action.updatedAt;
+    return latestTouch < staleCutoff;
+  });
 
   if (!user) {
     return (
@@ -253,6 +308,18 @@ export default async function DashboardPage() {
             >
               Manage My Nation
             </Link>
+            <Link
+              href="/dashboard/actions"
+              className="rounded-lg border border-emerald-300/70 px-5 py-3 font-bold text-emerald-100 hover:bg-emerald-300/10"
+            >
+              My Actions
+            </Link>
+            <Link
+              href="/dashboard/messages"
+              className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:bg-white/5"
+            >
+              Messages
+            </Link>
             {uniqueStaffLinks.length ? (
               <a
                 href="#control-panels"
@@ -298,6 +365,14 @@ export default async function DashboardPage() {
                 {counts?.[1] ?? "-"}
               </p>
             </div>
+            <div className="rounded-lg border border-emerald-300/20 bg-emerald-300/10 p-4">
+              <p className="text-xs font-bold uppercase text-zinc-500">
+                Game Date
+              </p>
+              <p className="mt-1 text-2xl font-black text-zinc-50">
+                {formatGameDate(gameClock)}
+              </p>
+            </div>
             <div className="rounded-lg border border-white/10 bg-black/20 p-4">
               <p className="text-xs font-bold uppercase text-zinc-500">
                 Reports
@@ -318,6 +393,59 @@ export default async function DashboardPage() {
         </div>
       </Panel>
 
+      {staffSpinActions.length || staleActions.length ? (
+        <Panel className="border-amber-300/35 bg-amber-300/10">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <Badge tone="warning">Staff Notifications</Badge>
+              <h2 className="mt-3 text-2xl font-bold text-amber-50">
+                Action attention needed
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-amber-100">
+                Lore and admin staff are notified here when an action requires
+                a spin or has gone untouched for 24 hours.
+              </p>
+            </div>
+            <Link
+              href="/lorecp/actions"
+              className="rounded-lg border border-amber-200/50 px-4 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
+            >
+              Open Action Tracker
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2">
+            <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
+              <p className="text-xs font-bold uppercase text-amber-100">
+                Spin required
+              </p>
+              <p className="mt-1 text-2xl font-black text-amber-50">
+                {staffSpinActions.length}
+              </p>
+              <p className="mt-2 text-sm text-amber-100/80">
+                {staffSpinActions
+                  .slice(0, 3)
+                  .map((action) => action.nation.name)
+                  .join(", ") || "Clear"}
+              </p>
+            </div>
+            <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
+              <p className="text-xs font-bold uppercase text-amber-100">
+                Ignored over 24 hours
+              </p>
+              <p className="mt-1 text-2xl font-black text-amber-50">
+                {staleActions.length}
+              </p>
+              <p className="mt-2 text-sm text-amber-100/80">
+                {staleActions
+                  .slice(0, 3)
+                  .map((action) => action.nation.name)
+                  .join(", ") || "Clear"}
+              </p>
+            </div>
+          </div>
+        </Panel>
+      ) : null}
+
       <Section
         title="My Tools"
         detail="Everything a signed-in leader or community member needs day to day."
@@ -329,6 +457,29 @@ export default async function DashboardPage() {
               "Update your public leader name, profile picture, and nation wiki.",
             badge: "Mine",
             tone: "accent",
+          },
+          {
+            href: "/dashboard/actions",
+            title: "My Actions",
+            detail:
+              "Review your active canon actions, spin calls, staff updates, and completed archive.",
+            badge: leaderCounts?.[2] ? `${leaderCounts[2]} Active` : "Tracker",
+            tone: "accent",
+          },
+          {
+            href: "/dashboard/notifications",
+            title: "Notifications",
+            detail:
+              "See staff edits and action updates affecting your linked nation.",
+            badge: leaderCounts?.[0] ? `${leaderCounts[0]} New` : "Updates",
+            tone: leaderCounts?.[0] ? "warning" : "neutral",
+          },
+          {
+            href: "/dashboard/messages",
+            title: "Nation Messages",
+            detail: "Send and receive private diplomatic messages.",
+            badge: leaderCounts?.[1] ? `${leaderCounts[1]} New` : "Private",
+            tone: leaderCounts?.[1] ? "warning" : "neutral",
           },
           ...(myNation
             ? [

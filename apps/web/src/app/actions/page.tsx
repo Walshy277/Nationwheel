@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LoreActionStatus } from "@prisma/client";
 import Link from "next/link";
+import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getPrisma } from "@/lib/prisma";
 
@@ -125,7 +126,9 @@ export default async function PublicActionsPage() {
             <p className="mt-2 text-sm font-semibold text-zinc-400">
               Estimated completion: {action.timeframe}
             </p>
-            <p className="mt-4 leading-7 text-zinc-300">{action.action}</p>
+            <div className="mt-4">
+              <WikiRenderer content={action.action} />
+            </div>
             {action.requiresSpinReason ? (
               <p className="mt-4 rounded-lg border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100">
                 Requires spin: {action.requiresSpinReason}
@@ -141,9 +144,7 @@ export default async function PublicActionsPage() {
                     key={update.id}
                     className="rounded-lg border border-white/10 bg-black/20 p-3"
                   >
-                    <p className="text-sm leading-6 text-zinc-300">
-                      {update.content}
-                    </p>
+                    <WikiRenderer content={update.content} />
                     <p className="mt-2 text-xs text-zinc-500">
                       {update.createdAt.toLocaleString("en-GB")}
                     </p>
@@ -195,17 +196,17 @@ export default async function PublicActionsPage() {
                   {action.updatedAt.toLocaleString("en-GB")}
                 </span>
               </div>
-              <p className="line-clamp-3 text-sm leading-6 text-zinc-300">
-                {action.action}
-              </p>
+              <div className="line-clamp-3">
+                <WikiRenderer content={action.action} />
+              </div>
               {action.updates[0] ? (
                 <div className="rounded-lg border border-white/10 bg-black/20 p-3">
                   <p className="text-xs font-bold uppercase text-zinc-500">
                     Final update
                   </p>
-                  <p className="mt-2 text-sm leading-6 text-zinc-300">
-                    {action.updates[0].content}
-                  </p>
+                  <div className="mt-2">
+                    <WikiRenderer content={action.updates[0].content} />
+                  </div>
                 </div>
               ) : null}
             </Panel>

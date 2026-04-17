@@ -9,10 +9,12 @@ import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissio
 import {
   assignNationSchema,
   discordUserLinkSchema,
+  loreActionEditSchema,
   leaderNameSchema,
   loreActionSchema,
   loreActionStatusSchema,
   loreActionUpdateSchema,
+  nationMessageSchema,
   nationStatsSchema,
   overviewUpdateSchema,
   publicLorePageSchema,
@@ -88,6 +90,47 @@ function highestRole(roles: Role[]) {
     (primary, role) => (rank[role] > rank[primary] ? role : primary),
     Role.USER,
   );
+}
+
+function userHasStaffRole(user: { role: Role; roles?: Role[] | null }) {
+  const roles = new Set([user.role, ...(user.roles ?? [])]);
+  return roles.has(Role.LORE) || roles.has(Role.ADMIN) || roles.has(Role.OWNER);
+}
+
+async function notifyNationLeader({
+  nationId,
+  actorUserId,
+  title,
+  body,
+  href,
+}: {
+  nationId: string;
+  actorUserId?: string | null;
+  title: string;
+  body: string;
+  href?: string;
+}) {
+  const prisma = getPrisma();
+  const nation = await prisma.nation.findUnique({
+    where: { id: nationId },
+    select: { leaderUserId: true },
+  });
+
+  if (!nation?.leaderUserId || nation.leaderUserId === actorUserId) return;
+
+  await prisma.leaderNotification.create({
+    data: {
+      nationId,
+      title,
+      body,
+      href,
+      createdByUserId: actorUserId ?? undefined,
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/dashboard/notifications");
 }
 
 function nationPayloadFromForm(formData: FormData) {
@@ -201,6 +244,16 @@ export async function updateNationStatsAction(
   revalidatePath(`/nations/${payload.slug}`);
   revalidatePath("/dashboard/wiki");
 
+  if (userHasStaffRole(user)) {
+    await notifyNationLeader({
+      nationId,
+      actorUserId: user.id,
+      title: "Nation stats updated",
+      body: "Staff updated your nation's structured canon stats.",
+      href: `/nations/${payload.slug}`,
+    });
+  }
+
   const returnPath = readText(formData, "returnPath");
   if (returnPath.startsWith("/")) redirect(returnPath);
 }
@@ -300,6 +353,16 @@ export async function updateWikiAction(nationId: string, formData: FormData) {
   revalidatePath("/admincp/logs");
   revalidatePath("/nations");
   if (nation?.slug) revalidatePath(`/nations/${nation.slug}`);
+
+  if (userHasStaffRole(user)) {
+    await notifyNationLeader({
+      nationId,
+      actorUserId: user.id,
+      title: "Nation wiki updated",
+      body: "Staff edited your nation's public wiki.",
+      href: nation?.slug ? `/nations/${nation.slug}` : "/dashboard/wiki",
+    });
+  }
 }
 
 export async function updateNationFlagAction(
@@ -334,6 +397,16 @@ export async function updateNationFlagAction(
   revalidatePath("/dashboard/wiki");
   revalidatePath(`/nations/${current.slug}`);
   revalidatePath("/nations");
+
+  if (userHasStaffRole(user)) {
+    await notifyNationLeader({
+      nationId,
+      actorUserId: user.id,
+      title: "Profile picture updated",
+      body: "Staff updated your nation's public profile picture.",
+      href: `/nations/${current.slug}`,
+    });
+  }
 
   const returnPath = readText(formData, "returnPath");
   if (returnPath.startsWith("/")) redirect(returnPath);
@@ -372,6 +445,14 @@ export async function updateNationOverviewAction(
   revalidatePath(`/nations/${current.slug}`);
   revalidatePath(`/lorecp/nations/${nationId}`);
   revalidatePath("/admincp/logs");
+
+  await notifyNationLeader({
+    nationId,
+    actorUserId: user.id,
+    title: "Nation overview updated",
+    body: "Lore staff updated your nation's public overview.",
+    href: `/nations/${current.slug}`,
+  });
 }
 
 export async function createLoreActionAction(formData: FormData) {
@@ -398,13 +479,21 @@ export async function createLoreActionAction(formData: FormData) {
   revalidatePath("/lorecp");
   revalidatePath("/lorecp/actions");
   revalidatePath(`/lorecp/nations/${payload.nationId}`);
+
+  await notifyNationLeader({
+    nationId: payload.nationId,
+    actorUserId: user.id,
+    title: "New canon action tracked",
+    body: `Lore staff added a ${payload.type} action to your nation tracker.`,
+    href: "/dashboard/actions",
+  });
 }
 
 export async function updateLoreActionStatusAction(
   actionId: string,
   formData: FormData,
 ) {
-  await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = loreActionStatusSchema.parse({
     status: readText(formData, "status"),
     requiresSpinReason: readNullableText(formData, "requiresSpinReason"),
@@ -429,7 +518,68 @@ export async function updateLoreActionStatusAction(
 
   revalidatePath("/lorecp");
   revalidatePath("/lorecp/actions");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/actions");
   revalidatePath(`/lorecp/nations/${current.nationId}`);
+
+  await notifyNationLeader({
+    nationId: current.nationId,
+    actorUserId: user.id,
+    title: "Action status updated",
+    body:
+      payload.status === LoreActionStatus.REQUIRES_SPIN
+        ? "Lore staff marked one of your actions as requiring a spin."
+        : `Lore staff moved one of your actions to ${payload.status.replace("_", " ").toLowerCase()}.`,
+    href: "/dashboard/actions",
+  });
+}
+
+export async function updateLoreActionAction(
+  actionId: string,
+  formData: FormData,
+) {
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+  const payload = loreActionEditSchema.parse({
+    nationId: readText(formData, "nationId"),
+    type: readText(formData, "type"),
+    action: readText(formData, "action"),
+    source: readNullableText(formData, "source"),
+    timeframe: readText(formData, "timeframe"),
+    status: readText(formData, "status") || LoreActionStatus.CURRENT,
+    requiresSpinReason: readNullableText(formData, "requiresSpinReason"),
+  });
+  const current = await getPrisma().loreAction.findUniqueOrThrow({
+    where: { id: actionId },
+    select: { nationId: true, rygaaNotifiedAt: true },
+  });
+
+  await getPrisma().loreAction.update({
+    where: { id: actionId },
+    data: {
+      ...payload,
+      rygaaNotifiedAt:
+        payload.status === LoreActionStatus.REQUIRES_SPIN
+          ? (current.rygaaNotifiedAt ?? new Date())
+          : current.rygaaNotifiedAt,
+    },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/actions");
+  revalidatePath("/lorecp");
+  revalidatePath("/lorecp/actions");
+  revalidatePath(`/lorecp/nations/${current.nationId}`);
+  revalidatePath(`/lorecp/nations/${payload.nationId}`);
+
+  await notifyNationLeader({
+    nationId: payload.nationId,
+    actorUserId: user.id,
+    title: "Canon action edited",
+    body: `Lore staff edited a ${payload.type} action on your nation tracker.`,
+    href: "/dashboard/actions",
+  });
 }
 
 export async function addLoreActionUpdateAction(
@@ -456,7 +606,125 @@ export async function addLoreActionUpdateAction(
 
   revalidatePath("/lorecp");
   revalidatePath("/lorecp/actions");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/actions");
   revalidatePath(`/lorecp/nations/${action.nationId}`);
+
+  await notifyNationLeader({
+    nationId: action.nationId,
+    actorUserId: user.id,
+    title: "Action update posted",
+    body: "Lore staff posted a new update on one of your canon actions.",
+    href: "/dashboard/actions",
+  });
+}
+
+export async function markLeaderNotificationReadAction(notificationId: string) {
+  const user = await requireUser();
+  const notification = await getPrisma().leaderNotification.findUniqueOrThrow({
+    where: { id: notificationId },
+    select: { nation: { select: { leaderUserId: true } } },
+  });
+
+  if (notification.nation.leaderUserId !== user.id) {
+    throw new Error("You do not have permission to update this notification.");
+  }
+
+  await getPrisma().leaderNotification.update({
+    where: { id: notificationId },
+    data: { readAt: new Date() },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/notifications");
+}
+
+export async function createNationMessageAction(formData: FormData) {
+  const user = await requireUser();
+  const payload = nationMessageSchema.parse({
+    fromNationId: readText(formData, "fromNationId"),
+    toNationId: readText(formData, "toNationId"),
+    subject: readText(formData, "subject"),
+    body: readText(formData, "body"),
+  });
+
+  if (payload.fromNationId === payload.toNationId) {
+    throw new Error("Choose a different nation to message.");
+  }
+
+  const prisma = getPrisma();
+  const fromNation = await prisma.nation.findUniqueOrThrow({
+    where: { id: payload.fromNationId },
+    select: { id: true, name: true, leaderUserId: true },
+  });
+  const toNation = await prisma.nation.findUniqueOrThrow({
+    where: { id: payload.toNationId },
+    select: { id: true, name: true },
+  });
+
+  if (fromNation.leaderUserId !== user.id) {
+    throw new Error("You can only send messages from your own nation.");
+  }
+
+  await prisma.nationMessage.create({
+    data: payload,
+  });
+
+  await notifyNationLeader({
+    nationId: toNation.id,
+    actorUserId: user.id,
+    title: `Message from ${fromNation.name}`,
+    body: payload.subject,
+    href: "/dashboard/messages",
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/messages");
+}
+
+export async function advanceGameDayAction() {
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+
+  await getPrisma().gameClock.upsert({
+    where: { id: "current" },
+    update: {
+      day: { increment: 1 },
+      updatedByUserId: user.id,
+    },
+    create: {
+      day: 22,
+      year: 4488,
+      updatedByUserId: user.id,
+    },
+  });
+
+  revalidatePath("/", "layout");
+  revalidatePath("/dashboard");
+  revalidatePath("/lorecp");
+  revalidatePath("/admincp");
+  revalidatePath("/actions");
+  revalidatePath("/news");
+}
+
+export async function markNationMessageReadAction(messageId: string) {
+  const user = await requireUser();
+  const message = await getPrisma().nationMessage.findUniqueOrThrow({
+    where: { id: messageId },
+    select: { toNation: { select: { leaderUserId: true } } },
+  });
+
+  if (message.toNation.leaderUserId !== user.id) {
+    throw new Error("You do not have permission to update this message.");
+  }
+
+  await getPrisma().nationMessage.update({
+    where: { id: messageId },
+    data: { readAt: new Date() },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/messages");
 }
 
 export async function updatePublicLorePageAction(

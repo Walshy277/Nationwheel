@@ -11,6 +11,7 @@ import {
   type NationSummary,
 } from "@nation-wheel/shared";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
+import { formatGameDate, getGameClock } from "@/lib/game-clock";
 import { listNationSummaries } from "@/lib/nations";
 import mapImage from "../../../../assets/Final_map_S1.jpg";
 
@@ -101,7 +102,10 @@ function FeaturedCard({
 }
 
 export async function LandingPage() {
-  const nations = await listNationSummaries();
+  const [nations, gameClock] = await Promise.all([
+    listNationSummaries(),
+    getGameClock(),
+  ]);
   const nationCount = nations.length;
   const featured = featuredSlots
     .map((slot) => {
@@ -148,7 +152,10 @@ export async function LandingPage() {
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,6,0.94),rgba(5,7,6,0.76)_52%,rgba(5,7,6,0.42))]" />
           <div className="relative">
-            <Badge tone="accent">{nationCount} canon nations</Badge>
+            <div className="flex flex-wrap gap-2">
+              <Badge tone="accent">{nationCount} canon nations</Badge>
+              <Badge tone="warning">{formatGameDate(gameClock)}</Badge>
+            </div>
             <div className="mt-5 flex flex-wrap items-center gap-4">
               <Image
                 src="/assets/nationwheel_logo.jpg"
@@ -163,8 +170,8 @@ export async function LandingPage() {
               </h1>
             </div>
             <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
-              Browse the canon, compare rival powers, track rankings, and jump
-              from the world map into each nation profile.
+              Browse the canon, compare rival powers, track rankings, and
+              follow the current in-game day as staff advances the world.
             </p>
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               <StatPill

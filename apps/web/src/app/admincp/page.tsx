@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { GameDateControl } from "@/components/control/game-date-control";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
 import { adminCpLinks } from "@/lib/control-panels";
@@ -62,6 +63,8 @@ export default async function AdminCpPage() {
             but the highest-frequency tasks are first.
           </p>
         </Panel>
+
+        <GameDateControl />
 
         <div className="grid gap-4 lg:grid-cols-4">
           {quickActions.map((action) => (

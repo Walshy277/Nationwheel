@@ -2,10 +2,12 @@ import { LoreActionStatus, Role } from "@prisma/client";
 import {
   addLoreActionUpdateAction,
   createLoreActionAction,
+  updateLoreActionAction,
   updateLoreActionStatusAction,
 } from "@/app/actions";
 import { DatabaseRequired } from "@/components/control/database-required";
 import { ControlLayout } from "@/components/layout/control-sidebar";
+import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, Panel } from "@/components/ui/shell";
 import { hasDatabase, loreCpLinks } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
@@ -23,6 +25,16 @@ const columns = [
     empty: "No actions are waiting on a spin.",
   },
 ];
+
+function latestActionTouch(action: {
+  updatedAt: Date;
+  updates: Array<{ createdAt: Date }>;
+}) {
+  const latestUpdate = action.updates[0]?.createdAt;
+  return latestUpdate && latestUpdate > action.updatedAt
+    ? latestUpdate
+    : action.updatedAt;
+}
 
 export default async function LoreActionsPage() {
   await requirePageRole([Role.LORE, Role.ADMIN, Role.OWNER]);
@@ -54,7 +66,7 @@ export default async function LoreActionsPage() {
     getPrisma().loreAction.findMany({
       orderBy: { updatedAt: "desc" },
       include: {
-        nation: { select: { name: true } },
+        nation: { select: { id: true, name: true } },
         updates: {
           orderBy: { createdAt: "desc" },
           take: 3,
@@ -68,6 +80,14 @@ export default async function LoreActionsPage() {
   );
   const completedActions = actions.filter(
     (action) => action.status === LoreActionStatus.COMPLETED,
+  );
+  const staleCutoff = new Date();
+  staleCutoff.setHours(staleCutoff.getHours() - 24);
+  const spinRequiredActions = activeActions.filter(
+    (action) => action.status === LoreActionStatus.REQUIRES_SPIN,
+  );
+  const staleActions = activeActions.filter(
+    (action) => latestActionTouch(action) < staleCutoff,
   );
 
   return (
@@ -115,6 +135,45 @@ export default async function LoreActionsPage() {
             </div>
           </div>
         </Panel>
+
+        {(spinRequiredActions.length || staleActions.length) ? (
+          <Panel className="border-amber-300/35 bg-amber-300/10">
+            <Badge tone="warning">Staff Notifications</Badge>
+            <h2 className="mt-3 text-2xl font-bold text-amber-50">
+              Action attention needed
+            </h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
+                <p className="text-xs font-bold uppercase text-amber-100">
+                  Requires spin
+                </p>
+                <p className="mt-1 text-2xl font-black text-amber-50">
+                  {spinRequiredActions.length}
+                </p>
+                <p className="mt-2 text-sm text-amber-100/80">
+                  {spinRequiredActions
+                    .slice(0, 4)
+                    .map((action) => action.nation.name)
+                    .join(", ") || "Clear"}
+                </p>
+              </div>
+              <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
+                <p className="text-xs font-bold uppercase text-amber-100">
+                  Ignored over 24 hours
+                </p>
+                <p className="mt-1 text-2xl font-black text-amber-50">
+                  {staleActions.length}
+                </p>
+                <p className="mt-2 text-sm text-amber-100/80">
+                  {staleActions
+                    .slice(0, 4)
+                    .map((action) => action.nation.name)
+                    .join(", ") || "Clear"}
+                </p>
+              </div>
+            </div>
+          </Panel>
+        ) : null}
 
         <Panel className="bg-[color:var(--panel-strong)]/85">
           <h2 className="text-2xl font-bold text-zinc-50">Create Action</h2>
@@ -215,9 +274,9 @@ export default async function LoreActionsPage() {
                           Source: {action.source}
                         </p>
                       ) : null}
-                      <p className="mt-3 text-sm leading-6 text-zinc-300">
-                        {action.action}
-                      </p>
+                      <div className="mt-3">
+                        <WikiRenderer content={action.action} />
+                      </div>
                       {action.requiresSpinReason ? (
                         <p className="mt-3 rounded-md border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100">
                           Spin needed: {action.requiresSpinReason}
@@ -244,6 +303,77 @@ export default async function LoreActionsPage() {
                           Add Update
                         </button>
                       </form>
+
+                      <details className="mt-3 rounded-lg border border-white/10 bg-black/20 p-3">
+                        <summary className="font-bold text-zinc-100">
+                          Edit full action
+                        </summary>
+                        <form
+                          action={updateLoreActionAction.bind(null, action.id)}
+                          className="mt-4 grid gap-3 xl:grid-cols-2"
+                        >
+                          <select
+                            name="nationId"
+                            defaultValue={action.nation.id}
+                            required
+                            className="px-3 py-2 text-sm"
+                          >
+                            {nations.map((nation) => (
+                              <option key={nation.id} value={nation.id}>
+                                {nation.name}
+                              </option>
+                            ))}
+                          </select>
+                          <input
+                            name="type"
+                            required
+                            defaultValue={action.type}
+                            className="px-3 py-2 text-sm"
+                          />
+                          <input
+                            name="timeframe"
+                            required
+                            defaultValue={action.timeframe}
+                            className="px-3 py-2 text-sm"
+                          />
+                          <select
+                            name="status"
+                            defaultValue={action.status}
+                            className="px-3 py-2 text-sm"
+                          >
+                            <option value={LoreActionStatus.CURRENT}>
+                              Current
+                            </option>
+                            <option value={LoreActionStatus.REQUIRES_SPIN}>
+                              Requires spin
+                            </option>
+                            <option value={LoreActionStatus.COMPLETED}>
+                              Completed
+                            </option>
+                          </select>
+                          <input
+                            name="source"
+                            defaultValue={action.source ?? ""}
+                            placeholder="Source"
+                            className="px-3 py-2 text-sm xl:col-span-2"
+                          />
+                          <textarea
+                            name="action"
+                            required
+                            defaultValue={action.action}
+                            className="min-h-32 p-3 text-sm xl:col-span-2"
+                          />
+                          <input
+                            name="requiresSpinReason"
+                            defaultValue={action.requiresSpinReason ?? ""}
+                            placeholder="Spin reason"
+                            className="px-3 py-2 text-sm xl:col-span-2"
+                          />
+                          <button className="rounded-lg bg-emerald-300 px-3 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-200 xl:col-span-2">
+                            Save Full Action
+                          </button>
+                        </form>
+                      </details>
 
                       <form
                         action={updateLoreActionStatusAction.bind(
@@ -285,9 +415,7 @@ export default async function LoreActionsPage() {
                               key={update.id}
                               className="rounded-md border border-white/10 bg-black/20 p-3"
                             >
-                              <p className="text-sm leading-6 text-zinc-300">
-                                {update.content}
-                              </p>
+                              <WikiRenderer content={update.content} />
                               <p className="mt-2 text-xs text-zinc-500">
                                 {update.createdAt.toLocaleString("en-GB")} by{" "}
                                 {update.createdByUser?.name ??
@@ -336,9 +464,9 @@ export default async function LoreActionsPage() {
                 <p className="mt-3 text-sm font-semibold text-zinc-300">
                   Completed: {action.updatedAt.toLocaleString("en-GB")}
                 </p>
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
-                  {action.action}
-                </p>
+                <div className="mt-3 line-clamp-3">
+                  <WikiRenderer content={action.action} />
+                </div>
                 <form
                   action={updateLoreActionStatusAction.bind(null, action.id)}
                   className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]"
