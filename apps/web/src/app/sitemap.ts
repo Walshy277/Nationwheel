@@ -13,6 +13,7 @@ const publicRoutes = [
   "/wars",
   "/actions",
   "/activity",
+  "/activity-archive",
   "/login",
 ];
 

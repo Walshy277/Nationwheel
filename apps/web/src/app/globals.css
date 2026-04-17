@@ -22,6 +22,7 @@ html {
   color: var(--foreground);
   scrollbar-color: #455147 #080906;
   scroll-padding-top: 88px;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -42,6 +43,7 @@ body {
     "ss01" on,
     "cv01" on;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 a {
@@ -70,6 +72,10 @@ summary {
   cursor: pointer;
 }
 
+summary::-webkit-details-marker {
+  display: none;
+}
+
 button:disabled,
 input:disabled,
 select:disabled,
@@ -83,7 +89,7 @@ select,
 textarea {
   border: 1px solid rgba(199, 207, 196, 0.34);
   border-radius: 8px;
-  background: rgba(7, 8, 6, 0.86);
+  background: rgba(5, 7, 6, 0.92);
   color: var(--foreground);
   outline: none;
 }
@@ -105,6 +111,15 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(93, 230, 189, 0.16);
 }
 
+@keyframes ticker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 button,
 a {
   transition:
@@ -116,6 +131,10 @@ a {
 
 table {
   border-spacing: 0;
+}
+
+thead {
+  background: rgba(16, 18, 15, 0.96);
 }
 
 th,

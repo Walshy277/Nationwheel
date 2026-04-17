@@ -10,17 +10,10 @@ import {
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { Panel } from "@/components/ui/shell";
+import { loreCpLinks } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
 import { LoreActionStatus, Role } from "@prisma/client";
-
-const links = [
-  { href: "/lorecp", label: "Nation Review" },
-  { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/pages/wars", label: "Wars Page" },
-  { href: "/lorecp/pages/lore", label: "World Lore" },
-  { href: "/lorecp/pages/universe", label: "Universe Lore" },
-];
 
 export default async function LoreNationPage({
   params,
@@ -58,7 +51,7 @@ export default async function LoreNationPage({
   if (!nation) notFound();
 
   return (
-    <ControlLayout title="LoreCP" links={links}>
+    <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-5">
         <Panel>
           <div className="text-xs font-bold uppercase tracking-[0.18em] text-yellow-200">

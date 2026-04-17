@@ -3,6 +3,7 @@ import {
   createWorldNewsPostAction,
   updateWorldNewsPostAction,
 } from "@/app/actions";
+import { ControlSearch } from "@/components/control/control-search";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
 import { hasDatabase, newsCpLinks } from "@/lib/control-panels";
@@ -86,10 +87,17 @@ export default async function NewsControlPage() {
             <h2 className="text-xl font-bold text-zinc-50">Recent Reports</h2>
             <Badge tone="accent">{posts.length}</Badge>
           </div>
-          <div className="grid gap-3">
+          <ControlSearch
+            targetId="news-report-list"
+            label="Search reports"
+            placeholder="Search by headline, summary, author, or source"
+          />
+          <div id="news-report-list" className="mt-4 grid gap-3">
             {posts.map((post) => (
               <article
                 key={post.id}
+                data-control-search-item
+                data-search={`${post.title} ${post.summary} ${post.content} ${post.author?.name ?? ""} ${post.author?.email ?? ""} ${post.sourceLabel ?? ""}`}
                 className="rounded-lg border border-white/10 bg-black/20 p-4"
               >
                 <details>

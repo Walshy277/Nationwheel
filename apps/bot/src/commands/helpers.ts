@@ -25,16 +25,20 @@ export function wikiUrl(slug: string) {
   return new URL(`/nations/${slug}#wiki`, config.webUrl).toString();
 }
 
-export function homeUrl() {
-  return new URL("/", config.webUrl).toString();
+export function botIndexUrl() {
+  return new URL("/activity", config.webUrl).toString();
 }
 
 export function mapUrl() {
   return new URL("/map", config.webUrl).toString();
 }
 
-export function activityUrl() {
-  return new URL("/activity", config.webUrl).toString();
+export function activityArchiveUrl() {
+  return new URL("/activity-archive", config.webUrl).toString();
+}
+
+export function actionsUrl() {
+  return new URL("/actions", config.webUrl).toString();
 }
 
 export function leaderboardsUrl() {
@@ -70,13 +74,17 @@ export function nationActionRow(nation: Pick<ApiNation, "slug">) {
 export function miniAppActionRow() {
   return new ActionRowBuilder<ButtonBuilder>().addComponents(
     new ButtonBuilder()
-      .setLabel("Open Nation Wheel")
+      .setLabel("Bot Home")
       .setStyle(ButtonStyle.Link)
-      .setURL(homeUrl()),
+      .setURL(botIndexUrl()),
     new ButtonBuilder()
       .setLabel("Profiles")
       .setStyle(ButtonStyle.Link)
       .setURL(new URL("/nations", config.webUrl).toString()),
+    new ButtonBuilder()
+      .setLabel("Actions")
+      .setStyle(ButtonStyle.Link)
+      .setURL(actionsUrl()),
     new ButtonBuilder()
       .setLabel("Leaderboards")
       .setStyle(ButtonStyle.Link)

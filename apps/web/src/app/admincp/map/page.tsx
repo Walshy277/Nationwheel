@@ -1,20 +1,14 @@
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
+import { adminCpLinks } from "@/lib/control-panels";
 import { requirePageRole } from "@/lib/permissions";
 import { Role } from "@prisma/client";
-
-const links = [
-  { href: "/admincp/nations", label: "Nations" },
-  { href: "/admincp/users", label: "Users" },
-  { href: "/admincp/map", label: "Map" },
-  { href: "/admincp/logs", label: "Logs" },
-];
 
 export default async function AdminMapPage() {
   await requirePageRole([Role.ADMIN, Role.OWNER]);
 
   return (
-    <ControlLayout title="AdminCP" links={links}>
+    <ControlLayout title="AdminCP" links={adminCpLinks}>
       <Panel>
         <h1 className="text-3xl font-black text-white">Map Assets</h1>
         <p className="mt-3 text-slate-300">

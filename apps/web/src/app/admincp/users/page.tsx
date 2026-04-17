@@ -4,6 +4,7 @@ import {
   updateUserDiscordAction,
   updateUserRoleAction,
 } from "@/app/actions";
+import { ControlSearch } from "@/components/control/control-search";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
 import { adminCpLinks } from "@/lib/control-panels";
@@ -35,10 +36,14 @@ export default async function AdminUsersPage() {
           </p>
         </Panel>
 
-        <div className="grid gap-4">
+        <ControlSearch targetId="admin-users-list" label="Search users" />
+
+        <div id="admin-users-list" className="grid gap-4">
           {users.map((user) => (
             <Panel
               key={user.id}
+              data-control-search-item
+              data-search={`${user.name ?? ""} ${user.email ?? ""} ${user.discordId ?? ""} ${user.role} ${user.roles.join(" ")} ${user.leaderOf.map((nation) => nation.name).join(" ")}`}
               className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px_260px_280px]"
             >
               <div className="min-w-0">

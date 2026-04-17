@@ -25,9 +25,17 @@ No public war briefings have been published yet.
 
 This page is the public world-lore hub.
 
+## Setting
+
+Add the world's origin, major regions, recurring powers, and the tone of the world here.
+
 ## Current Era
 
 Add the current season context, major events, blocs, global crises, and story direction here.
+
+## Factions and Forces
+
+Add global blocs, ideologies, institutions, religions, technologies, or mysteries that shape the setting.
 
 ## Canon Rules
 
@@ -37,38 +45,28 @@ Add public lore rules, action expectations, and how canon decisions are handled 
 
 Add key events in order as the world develops.`,
   },
-  universe: {
-    title: "Universe Lore",
-    content: `# Universe Lore
+  announcements: {
+    title: "Announcements",
+    content: `# Announcements
 
-This page explains the wider Nation Wheel universe.
-
-## Setting
-
-Add the world's origin, major regions, recurring powers, and the tone of the universe here.
-
-## Timeline
-
-Add the most important universe-level events in order.
-
-## Factions and Forces
-
-Add global blocs, ideologies, institutions, religions, technologies, or mysteries that shape the setting.
-
-## Canon Guidelines
-
-Add what players should know before writing lore that affects the wider universe.`,
+- Welcome to Nation Wheel.
+- Check the actions page for active canon updates.
+- Watch World News for official reports.`,
   },
 } as const;
 
 export type PublicContentKey = keyof typeof publicContentDefaults;
 
 export function isPublicContentKey(value: string): value is PublicContentKey {
-  return value === "wars" || value === "lore" || value === "universe";
+  return (
+    value === "wars" ||
+    value === "lore" ||
+    value === "announcements"
+  );
 }
 
 export function getPublicContentHref(key: PublicContentKey) {
-  if (key === "universe") return "/universe-lore";
+  if (key === "announcements") return "/news";
   return `/${key}`;
 }
 

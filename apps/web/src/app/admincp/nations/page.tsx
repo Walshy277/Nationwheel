@@ -1,4 +1,5 @@
 import { ControlLayout } from "@/components/layout/control-sidebar";
+import { ControlSearch } from "@/components/control/control-search";
 import { FlagUploadField } from "@/components/nation/flag-upload-field";
 import { Panel } from "@/components/ui/shell";
 import { createNationWikiTemplate } from "@nation-wheel/shared";
@@ -8,16 +9,10 @@ import {
   updateNationStatsAction,
   updateWikiAction,
 } from "@/app/actions";
+import { adminCpLinks } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
 import { Role } from "@prisma/client";
-
-const links = [
-  { href: "/admincp/nations", label: "Nations" },
-  { href: "/admincp/users", label: "Users" },
-  { href: "/admincp/map", label: "Map" },
-  { href: "/admincp/logs", label: "Logs" },
-];
 
 export default async function AdminNationsPage() {
   await requirePageRole([Role.ADMIN, Role.OWNER]);
@@ -36,7 +31,7 @@ export default async function AdminNationsPage() {
   ]);
 
   return (
-    <ControlLayout title="AdminCP" links={links}>
+    <ControlLayout title="AdminCP" links={adminCpLinks}>
       <div className="grid gap-5">
         <Panel>
           <h1 className="text-3xl font-black text-white">Nation Management</h1>
@@ -110,9 +105,19 @@ export default async function AdminNationsPage() {
           </form>
         </Panel>
 
-        <div className="grid gap-4">
+        <ControlSearch
+          targetId="admin-nations-list"
+          label="Search nations"
+          placeholder="Search by nation, government, economy, leader, or status"
+        />
+
+        <div id="admin-nations-list" className="grid gap-4">
           {nations.map((nation) => (
-            <Panel key={nation.id}>
+            <Panel
+              key={nation.id}
+              data-control-search-item
+              data-search={`${nation.name} ${nation.government} ${nation.economy} ${nation.military} ${nation.leaderName ?? ""} ${nation.leaderUser?.name ?? ""} ${nation.leaderUser?.email ?? ""}`}
+            >
               <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <h2 className="text-2xl font-bold text-white">

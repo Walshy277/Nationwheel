@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ControlSearch } from "@/components/control/control-search";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
 import { adminCpLinks } from "@/lib/control-panels";
@@ -75,8 +76,14 @@ export default async function AdminLogsPage() {
           </p>
         </Panel>
 
+        <ControlSearch
+          targetId="admin-log-list"
+          label="Search logs"
+          placeholder="Search by nation, editor, field, or changed value"
+        />
+
         <Panel>
-          <div className="grid gap-3">
+          <div id="admin-log-list" className="grid gap-3">
             {revisions.map((revision) => {
               const fields = changedFields(
                 revision.previousValue,
@@ -86,6 +93,8 @@ export default async function AdminLogsPage() {
               return (
                 <article
                   key={revision.id}
+                  data-control-search-item
+                  data-search={`${revision.nation.name} ${revision.fieldType} ${formatActor(revision)} ${JSON.stringify(revision.previousValue)} ${JSON.stringify(revision.newValue)}`}
                   className="rounded-lg border border-white/10 bg-black/20 p-4"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">

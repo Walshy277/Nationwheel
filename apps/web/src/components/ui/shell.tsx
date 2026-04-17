@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentPropsWithoutRef, ReactNode } from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
@@ -12,7 +12,7 @@ export function PageShell({
   return (
     <main
       className={cn(
-        "mx-auto grid w-full max-w-7xl gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12",
+        "mx-auto grid w-full max-w-screen-2xl gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12",
         "max-[420px]:gap-7 max-[420px]:px-3 max-[420px]:py-6",
         className,
       )}
@@ -25,14 +25,16 @@ export function PageShell({
 export function Panel({
   children,
   className,
+  ...props
 }: {
   children: ReactNode;
   className?: string;
-}) {
+} & ComponentPropsWithoutRef<"section">) {
   return (
     <section
+      {...props}
       className={cn(
-        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-xl shadow-black/22 ring-1 ring-white/[0.05] sm:p-6",
+        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-xl shadow-black/22 ring-1 ring-white/[0.06] sm:p-6",
         "max-[420px]:p-4",
         className,
       )}

@@ -3,7 +3,7 @@ export const loreCpLinks = [
   { href: "/lorecp/actions", label: "Action Tracker" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
-  { href: "/lorecp/pages/universe", label: "Universe Lore" },
+  { href: "/lorecp/pages/announcements", label: "Announcements" },
 ];
 
 export const adminCpLinks = [
@@ -12,6 +12,8 @@ export const adminCpLinks = [
   { href: "/admincp/nations", label: "Nations" },
   { href: "/admincp/logs", label: "Logs" },
   { href: "/admincp/map", label: "Map" },
+  { href: "/lorecp/pages/announcements", label: "Announcements" },
+  { href: "/newscp", label: "News Desk" },
 ];
 
 export const newsCpLinks = [

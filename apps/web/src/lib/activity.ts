@@ -12,24 +12,35 @@ export type ActivityFeedItem = {
   timestamp?: string;
 };
 
+function timeoutAfter<T>(milliseconds: number, fallback: T) {
+  return new Promise<T>((resolve) => {
+    setTimeout(() => resolve(fallback), milliseconds);
+  });
+}
+
 export async function listActivityFeed(): Promise<ActivityFeedItem[]> {
   if (!process.env.DATABASE_URL) {
     return listCanonActivityFeed();
   }
 
   try {
-    const actions = await getPrisma().loreAction.findMany({
-      orderBy: { updatedAt: "desc" },
-      take: 40,
-      include: {
-        nation: { select: { name: true, slug: true } },
-        updates: {
-          orderBy: { createdAt: "desc" },
-          take: 1,
-          select: { content: true, createdAt: true },
+    const actions = await Promise.race([
+      getPrisma().loreAction.findMany({
+        orderBy: { updatedAt: "desc" },
+        take: 40,
+        include: {
+          nation: { select: { name: true, slug: true } },
+          updates: {
+            orderBy: { createdAt: "desc" },
+            take: 1,
+            select: { content: true, createdAt: true },
+          },
         },
-      },
-    });
+      }),
+      timeoutAfter(8000, null),
+    ]);
+
+    if (!actions) return listCanonActivityFeed();
 
     return actions.map((action) => ({
       id: action.id,

@@ -11,7 +11,10 @@ type NavLink = {
 };
 
 const toolsMenuClassName =
-  "mt-2 grid max-h-[70vh] gap-1 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-56 lg:shadow-black/40";
+  "mt-2 grid max-h-[72vh] gap-1 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-[640px] lg:grid-cols-3 lg:gap-3 lg:p-3 lg:shadow-black/40";
+
+const menuLinkClassName =
+  "block rounded-md px-3 py-2 font-semibold hover:bg-white/5 hover:text-white";
 
 export function TopNavMenu({
   userLabel,
@@ -28,17 +31,21 @@ export function TopNavMenu({
   const primaryLinks: NavLink[] = [
     ...(myNationHref ? [{ href: myNationHref, label: "My Nation" }] : []),
     { href: "/nations", label: "Nations" },
+    { href: "/actions", label: "Actions" },
     { href: "/news", label: "News" },
   ];
 
-  const exploreLinks: NavLink[] = [
+  const worldLinks: NavLink[] = [
+    { href: "/lore", label: "World Lore" },
+    { href: "/wars", label: "Wars" },
+    { href: "/activity-archive", label: "Activity Archive" },
+  ];
+
+  const toolsLinks: NavLink[] = [
     { href: "/leaderboards", label: "Leaderboards" },
     { href: "/map", label: "Map" },
-    { href: "/lore", label: "Lore" },
-    { href: "/universe-lore", label: "Universe Lore" },
-    { href: "/wars", label: "Wars" },
-    { href: "/actions", label: "Actions" },
-    { href: "/activity", label: "Activity" },
+    { href: "/nations#compare", label: "Compare Nations" },
+    { href: "/activity", label: "Bot Index" },
   ];
 
   useEffect(() => {
@@ -112,36 +119,60 @@ export function TopNavMenu({
             </button>
             {isOpen ? (
               <div className={toolsMenuClassName} role="menu">
-                {controlLinks.length ? (
-                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-emerald-200">
-                    Control Panels
+                <div>
+                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
+                    World
                   </div>
-                ) : null}
-                {controlLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    role="menuitem"
-                    onClick={() => setIsOpen(false)}
-                    className="block rounded-md px-3 py-2 font-semibold text-zinc-100 hover:bg-white/5 hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
-                  Explore
+                  {worldLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      role="menuitem"
+                      onClick={() => setIsOpen(false)}
+                      className={menuLinkClassName}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
-                {exploreLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    role="menuitem"
-                    onClick={() => setIsOpen(false)}
-                    className="block rounded-md px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                <div>
+                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
+                    Tools
+                  </div>
+                  {toolsLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      role="menuitem"
+                      onClick={() => setIsOpen(false)}
+                      className={menuLinkClassName}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
+                </div>
+                <div>
+                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-emerald-200">
+                    Control
+                  </div>
+                  {controlLinks.length ? (
+                    controlLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        role="menuitem"
+                        onClick={() => setIsOpen(false)}
+                        className={`${menuLinkClassName} text-zinc-100`}
+                      >
+                        {link.label}
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="px-3 py-2 text-sm leading-6 text-zinc-500">
+                      Sign in for dashboard and staff tools.
+                    </p>
+                  )}
+                </div>
               </div>
             ) : null}
           </div>

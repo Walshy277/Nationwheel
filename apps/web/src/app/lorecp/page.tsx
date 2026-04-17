@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ControlSearch } from "@/components/control/control-search";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Panel } from "@/components/ui/shell";
 import { loreCpLinks } from "@/lib/control-panels";
@@ -38,15 +39,26 @@ export default async function LoreCpPage() {
             <Link href="/lorecp/pages/lore" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">Edit Lore</Link>
           </Panel>
           <Panel className="grid gap-3">
-            <h2 className="text-xl font-bold text-zinc-50">Universe Lore</h2>
+            <h2 className="text-xl font-bold text-zinc-50">Announcements</h2>
             <p className="text-sm leading-6 text-zinc-400">
-              Publish the wider setting, history, factions, and canon guidance.
+              Edit the public ticker shown on the news desk.
             </p>
-            <Link href="/lorecp/pages/universe" className="rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10">Edit Universe</Link>
+            <Link href="/lorecp/pages/announcements" className="rounded-lg border border-sky-300/70 px-4 py-2 text-sm font-bold text-sky-100 hover:bg-sky-300/10">Edit Announcements</Link>
           </Panel>
         </div>
+        <ControlSearch
+          targetId="lore-nation-review-list"
+          label="Search nations"
+          placeholder="Search by nation, government, leader, economy, or military"
+        />
+        <div id="lore-nation-review-list" className="grid gap-4">
         {nations.map((nation) => (
-          <Panel key={nation.id} className="grid gap-3 md:grid-cols-[1fr_auto]">
+          <Panel
+            key={nation.id}
+            data-control-search-item
+            data-search={`${nation.name} ${nation.government} ${nation.leaderName ?? ""} ${nation.economy} ${nation.military}`}
+            className="grid gap-3 md:grid-cols-[1fr_auto]"
+          >
             <div>
               <h2 className="text-xl font-bold text-white">{nation.name}</h2>
               <p className="mt-1 text-sm text-slate-400">
@@ -56,6 +68,7 @@ export default async function LoreCpPage() {
             <Link href={`/lorecp/nations/${nation.id}`} className="self-center rounded-lg border border-yellow-300/60 px-4 py-2 text-sm font-bold text-yellow-100">Review</Link>
           </Panel>
         ))}
+        </div>
       </div>
     </ControlLayout>
   );

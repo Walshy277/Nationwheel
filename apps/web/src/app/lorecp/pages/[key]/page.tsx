@@ -3,20 +3,13 @@ import { Role } from "@prisma/client";
 import { updatePublicLorePageAction } from "@/app/actions";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { Badge, Panel } from "@/components/ui/shell";
+import { loreCpLinks } from "@/lib/control-panels";
 import {
   getPublicContentHref,
   getPublicContentPage,
   isPublicContentKey,
 } from "@/lib/public-content";
 import { requirePageRole } from "@/lib/permissions";
-
-const links = [
-  { href: "/lorecp", label: "Nation Review" },
-  { href: "/lorecp/actions", label: "Action Tracker" },
-  { href: "/lorecp/pages/wars", label: "Wars Page" },
-  { href: "/lorecp/pages/lore", label: "World Lore" },
-  { href: "/lorecp/pages/universe", label: "Universe Lore" },
-];
 
 export default async function PublicPageEditor({
   params,
@@ -29,7 +22,7 @@ export default async function PublicPageEditor({
   const page = await getPublicContentPage(key);
 
   return (
-    <ControlLayout title="LoreCP" links={links}>
+    <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-5">
         <Panel>
           <Badge tone="warning">Public Page Editor</Badge>

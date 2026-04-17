@@ -22,17 +22,38 @@ const featuredSlots = [
   { key: "hdi", label: "Highest HDI", detail: "HDI" },
 ] as const;
 
-const quickLinks = [
-  ["Nation Directory", "/nations", "Search every nation profile."],
-  ["Compare Nations", "/nations#compare", "Select 2-4 nations side by side."],
-  [
-    "Leaderboards",
-    "/leaderboards",
-    "Rank land, GDP, army ranking, population, and HDI.",
-  ],
-  ["World News", "/news", "Read the latest reports from journalists."],
-  ["Universe Lore", "/universe-lore", "Read the wider setting and canon."],
-  ["Season Map", "/map", "Open the world reference map."],
+const quickLinkGroups = [
+  {
+    title: "Nations",
+    links: [
+      ["Nation Directory", "/nations", "Search every nation profile."],
+      [
+        "Compare Nations",
+        "/nations#compare",
+        "Select 2-4 nations side by side.",
+      ],
+      [
+        "Leaderboards",
+        "/leaderboards",
+        "Rank land, GDP, army ranking, population, and HDI.",
+      ],
+    ],
+  },
+  {
+    title: "Canon",
+    links: [
+      ["Actions", "/actions", "Track current and completed canon actions."],
+      ["World News", "/news", "Read the latest reports from journalists."],
+      ["World Lore", "/lore", "Read the wider setting and canon."],
+    ],
+  },
+  {
+    title: "Reference",
+    links: [
+      ["Season Map", "/map", "Open the world reference map."],
+      ["Bot Index", "/activity", "Open the Discord-friendly command center."],
+    ],
+  },
 ] as const;
 
 function StatPill({ label, value }: { label: string; value: string }) {
@@ -127,72 +148,84 @@ export async function LandingPage() {
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,7,6,0.94),rgba(5,7,6,0.76)_52%,rgba(5,7,6,0.42))]" />
           <div className="relative">
-          <Badge tone="accent">{nationCount} canon nations</Badge>
-          <div className="mt-5 flex flex-wrap items-center gap-4">
-            <Image
-              src="/assets/nationwheel_logo.jpg"
-              alt="Nation Wheel"
-              width={84}
-              height={84}
-              className="h-20 w-20 rounded-lg border border-emerald-300/35 object-cover shadow-xl shadow-black/30"
-              priority
-            />
-            <h1 className="max-w-3xl text-4xl font-black leading-tight text-zinc-50 sm:text-5xl md:text-6xl">
-              Nation Wheel
-            </h1>
+            <Badge tone="accent">{nationCount} canon nations</Badge>
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <Image
+                src="/assets/nationwheel_logo.jpg"
+                alt="Nation Wheel"
+                width={84}
+                height={84}
+                className="h-20 w-20 rounded-lg border border-emerald-300/35 object-cover shadow-xl shadow-black/30"
+                priority
+              />
+              <h1 className="max-w-3xl text-4xl font-black leading-tight text-zinc-50 sm:text-5xl md:text-6xl">
+                Nation Wheel
+              </h1>
+            </div>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
+              Browse the canon, compare rival powers, track rankings, and jump
+              from the world map into each nation profile.
+            </p>
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <StatPill
+                label="Population"
+                value={formatNumber(totalPopulation)}
+              />
+              <StatPill label="Land" value={`${formatNumber(totalArea)} km2`} />
+              <StatPill label="GDP" value={formatMoney(totalGdp)} />
+            </div>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <Link
+                href="/nations#compare"
+                className="w-full rounded-lg bg-emerald-300 px-5 py-3 text-center font-bold text-zinc-950 hover:bg-emerald-200 sm:w-auto"
+              >
+                Compare Nations
+              </Link>
+              <Link
+                href="/actions"
+                className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
+              >
+                Actions
+              </Link>
+              <Link
+                href="/nations"
+                className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
+              >
+                Browse Nations
+              </Link>
+            </div>
           </div>
-          <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
-            Browse the canon, compare rival powers, track rankings, and jump
-            from the world map into each nation profile.
-          </p>
-          <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <StatPill label="Population" value={formatNumber(totalPopulation)} />
-            <StatPill label="Land" value={`${formatNumber(totalArea)} km2`} />
-            <StatPill label="GDP" value={formatMoney(totalGdp)} />
-          </div>
-          <div className="mt-7 flex flex-wrap gap-3">
-            <Link
-              href="/nations#compare"
-              className="w-full rounded-lg bg-emerald-300 px-5 py-3 text-center font-bold text-zinc-950 hover:bg-emerald-200 sm:w-auto"
-            >
-              Compare Nations
-            </Link>
-            <Link
-              href="/leaderboards"
-              className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
-            >
-              Leaderboards
-            </Link>
-            <Link
-              href="/nations"
-              className="w-full rounded-lg border border-white/10 px-5 py-3 text-center font-bold text-zinc-100 hover:border-emerald-300 hover:bg-white/5 sm:w-auto"
-            >
-              Browse Nations
-            </Link>
-          </div>
-        </div>
         </div>
         <Panel className="grid gap-4">
           <Badge tone="neutral">World Index</Badge>
           <h2 className="text-2xl font-bold text-zinc-50">Start Here</h2>
-          <div className="grid divide-y divide-white/10">
-            {quickLinks.map(([label, href, text]) => (
-              <Link
-                key={href}
-                href={href}
-                className="group grid gap-1 py-4 first:pt-0 last:pb-0"
-              >
-                <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
-                  {label}
-                </span>
-                <span className="mt-1 block text-sm leading-6 text-zinc-300">
-                  {text}
-                </span>
-              </Link>
+          <div className="grid gap-5">
+            {quickLinkGroups.map((group) => (
+              <div key={group.title}>
+                <div className="mb-2 text-xs font-bold uppercase text-zinc-500">
+                  {group.title}
+                </div>
+                <div className="grid divide-y divide-white/10">
+                  {group.links.map(([label, href, text]) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="group grid gap-1 py-3 first:pt-0 last:pb-0"
+                    >
+                      <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
+                        {label}
+                      </span>
+                      <span className="mt-1 block text-sm leading-6 text-zinc-300">
+                        {text}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
           <Link
-            href="/activity"
+            href="/activity-archive"
             className="text-sm font-semibold text-zinc-400 hover:text-emerald-100"
           >
             Activity archive

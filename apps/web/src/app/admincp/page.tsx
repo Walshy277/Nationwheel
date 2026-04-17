@@ -33,6 +33,14 @@ const quickActions = [
   },
 ] as const;
 
+const contentActions = [
+  { href: "/lorecp/pages/announcements", label: "Announcements" },
+  { href: "/newscp", label: "News Reports" },
+  { href: "/lorecp/pages/lore", label: "World Lore" },
+  { href: "/lorecp/pages/wars", label: "Wars Page" },
+  { href: "/admincp/nations", label: "Nation Wikis" },
+] as const;
+
 export default async function AdminCpPage() {
   await requirePageRole([Role.ADMIN, Role.OWNER]);
   const [nationCount, userCount, revisionCount] = await Promise.all([
@@ -67,6 +75,37 @@ export default async function AdminCpPage() {
             </Link>
           ))}
         </div>
+
+        <Panel>
+          <details>
+            <summary className="flex items-center justify-between gap-3">
+              <div>
+                <Badge tone="warning">Website Content</Badge>
+                <h2 className="mt-3 text-2xl font-bold text-white">
+                  Edit Public Pages
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-zinc-400">
+                  Jump straight to the content areas without loading every edit
+                  form at once.
+                </p>
+              </div>
+              <span className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100">
+                Open
+              </span>
+            </summary>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {contentActions.map((action) => (
+                <Link
+                  key={action.href}
+                  href={action.href}
+                  className="rounded-lg border border-white/10 bg-black/20 px-4 py-3 font-bold text-zinc-100 hover:border-emerald-300/70 hover:bg-white/5"
+                >
+                  {action.label}
+                </Link>
+              ))}
+            </div>
+          </details>
+        </Panel>
 
         <Panel className="grid gap-3">
           <h2 className="text-xl font-bold text-white">World Status</h2>

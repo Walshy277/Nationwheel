@@ -22,11 +22,6 @@ const columns = [
     title: "Requires Spin",
     empty: "No actions are waiting on a spin.",
   },
-  {
-    status: LoreActionStatus.COMPLETED,
-    title: "Completed Actions",
-    empty: "No completed actions yet.",
-  },
 ];
 
 export default async function LoreActionsPage() {
@@ -68,13 +63,19 @@ export default async function LoreActionsPage() {
       },
     }),
   ]);
+  const activeActions = actions.filter(
+    (action) => action.status !== LoreActionStatus.COMPLETED,
+  );
+  const completedActions = actions.filter(
+    (action) => action.status === LoreActionStatus.COMPLETED,
+  );
 
   return (
     <ControlLayout title="LoreCP" links={loreCpLinks}>
-      <div className="grid gap-5">
+      <div className="grid gap-6">
         <Panel>
           <Badge tone="warning">Daily lore loop</Badge>
-          <h1 className="mt-4 text-3xl font-black text-zinc-50">
+          <h1 className="mt-4 text-4xl font-black text-zinc-50">
             Action Tracker
           </h1>
           <p className="mt-3 max-w-3xl text-zinc-300">
@@ -82,13 +83,44 @@ export default async function LoreActionsPage() {
             completion timeframe, then post daily updates leaders can follow.
             Actions marked as requiring a spin are flagged for Rygaa.
           </p>
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-bold uppercase text-zinc-500">
+                Active
+              </p>
+              <p className="mt-1 text-2xl font-black text-zinc-50">
+                {activeActions.length}
+              </p>
+            </div>
+            <div className="rounded-lg border border-amber-300/20 bg-amber-300/10 p-4">
+              <p className="text-xs font-bold uppercase text-amber-100">
+                Awaiting Spin
+              </p>
+              <p className="mt-1 text-2xl font-black text-amber-50">
+                {
+                  activeActions.filter(
+                    (action) =>
+                      action.status === LoreActionStatus.REQUIRES_SPIN,
+                  ).length
+                }
+              </p>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-bold uppercase text-zinc-500">
+                Archived
+              </p>
+              <p className="mt-1 text-2xl font-black text-zinc-50">
+                {completedActions.length}
+              </p>
+            </div>
+          </div>
         </Panel>
 
-        <Panel>
-          <h2 className="text-xl font-bold text-zinc-50">Create Action</h2>
+        <Panel className="bg-[color:var(--panel-strong)]/85">
+          <h2 className="text-2xl font-bold text-zinc-50">Create Action</h2>
           <form
             action={createLoreActionAction}
-            className="mt-5 grid gap-3 lg:grid-cols-2"
+            className="mt-5 grid gap-3 xl:grid-cols-2"
           >
             <select name="nationId" required className="px-3 py-2">
               <option value="">Select nation</option>
@@ -124,28 +156,28 @@ export default async function LoreActionsPage() {
             <input
               name="source"
               placeholder="TikTok source or note"
-              className="px-3 py-2 lg:col-span-2"
+              className="px-3 py-2 xl:col-span-2"
             />
             <textarea
               name="action"
               required
               placeholder="Nation:, Action Type:, Action:"
-              className="min-h-32 p-3 lg:col-span-2"
+              className="min-h-32 p-3 xl:col-span-2"
             />
             <input
               name="requiresSpinReason"
               placeholder="Spin reason, if needed"
-              className="px-3 py-2 lg:col-span-2"
+              className="px-3 py-2 xl:col-span-2"
             />
-            <button className="rounded-lg bg-amber-300 px-4 py-2 font-bold text-zinc-950 hover:bg-amber-200 lg:col-span-2">
+            <button className="rounded-lg bg-amber-300 px-4 py-2 font-bold text-zinc-950 hover:bg-amber-200 xl:col-span-2">
               Track Action
             </button>
           </form>
         </Panel>
 
-        <div className="grid gap-5 xl:grid-cols-3">
+        <div className="grid gap-5 xl:grid-cols-2">
           {columns.map((column) => {
-            const items = actions.filter(
+            const items = activeActions.filter(
               (action) => action.status === column.status,
             );
             return (
@@ -276,6 +308,72 @@ export default async function LoreActionsPage() {
             );
           })}
         </div>
+
+        <Panel>
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <Badge tone="neutral">Archive</Badge>
+              <h2 className="mt-3 text-2xl font-bold text-zinc-50">
+                Completed Actions
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
+                Finished actions stay here for review without cluttering the
+                active tracker.
+              </p>
+            </div>
+            <Badge>{completedActions.length}</Badge>
+          </div>
+          <div className="grid gap-3 xl:grid-cols-2">
+            {completedActions.map((action) => (
+              <article
+                key={action.id}
+                className="rounded-lg border border-white/10 bg-black/20 p-4"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>{action.nation.name}</Badge>
+                  <Badge tone="accent">{action.type}</Badge>
+                </div>
+                <p className="mt-3 text-sm font-semibold text-zinc-300">
+                  Completed: {action.updatedAt.toLocaleString("en-GB")}
+                </p>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-300">
+                  {action.action}
+                </p>
+                <form
+                  action={updateLoreActionStatusAction.bind(null, action.id)}
+                  className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]"
+                >
+                  <select
+                    name="status"
+                    defaultValue={action.status}
+                    className="px-3 py-2 text-sm"
+                  >
+                    <option value={LoreActionStatus.CURRENT}>Current</option>
+                    <option value={LoreActionStatus.REQUIRES_SPIN}>
+                      Requires spin
+                    </option>
+                    <option value={LoreActionStatus.COMPLETED}>
+                      Completed
+                    </option>
+                  </select>
+                  <input
+                    type="hidden"
+                    name="requiresSpinReason"
+                    value={action.requiresSpinReason ?? ""}
+                  />
+                  <button className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5">
+                    Restore
+                  </button>
+                </form>
+              </article>
+            ))}
+            {completedActions.length === 0 ? (
+              <p className="text-sm text-zinc-400">
+                No completed actions have been archived yet.
+              </p>
+            ) : null}
+          </div>
+        </Panel>
       </div>
     </ControlLayout>
   );

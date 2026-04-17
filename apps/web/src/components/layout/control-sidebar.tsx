@@ -11,9 +11,9 @@ export function ControlLayout({
   children: ReactNode;
 }) {
   return (
-    <main className="mx-auto grid w-full max-w-7xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[240px_1fr] lg:px-8">
+    <main className="mx-auto grid w-full max-w-screen-2xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8">
       <aside className="rounded-lg border border-white/10 bg-[color:var(--panel)]/94 p-4 shadow-lg shadow-black/20 lg:sticky lg:top-24 lg:self-start">
-        <div className="mb-4 text-xs font-bold uppercase text-emerald-200">
+        <div className="mb-4 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-xs font-bold uppercase text-emerald-100">
           {title}
         </div>
         <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-1">
@@ -28,7 +28,7 @@ export function ControlLayout({
           ))}
         </nav>
       </aside>
-      <section>{children}</section>
+      <section className="min-w-0">{children}</section>
     </main>
   );
 }
