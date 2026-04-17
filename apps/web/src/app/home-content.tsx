@@ -27,6 +27,7 @@ const quickLinkGroups = [
   {
     title: "Nations",
     links: [
+      ["Site Directory", "/directory", "Find the right page or control panel."],
       ["Nation Directory", "/nations", "Search every nation profile."],
       [
         "Compare Nations",
@@ -46,6 +47,7 @@ const quickLinkGroups = [
       ["Actions", "/actions", "Track current and completed canon actions."],
       ["World News", "/news", "Read the latest reports from journalists."],
       ["World Lore", "/lore", "Read the wider setting and canon."],
+      ["Wars", "/wars", "Check active conflicts and outcomes."],
     ],
   },
   {

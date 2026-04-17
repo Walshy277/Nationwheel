@@ -16,6 +16,20 @@ export function ControlLayout({
         <div className="mb-4 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-xs font-bold uppercase text-emerald-100">
           {title}
         </div>
+        <div className="mb-3 grid grid-cols-2 gap-2 lg:grid-cols-1">
+          <Link
+            href="/dashboard"
+            className="rounded-md border border-emerald-300/35 bg-emerald-300/10 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/15"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/directory"
+            className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-200 hover:bg-white/5"
+          >
+            Directory
+          </Link>
+        </div>
         <nav className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-1">
           {links.map((link) => (
             <Link

@@ -16,6 +16,13 @@ type DashboardLink = {
 
 const publicLinks: DashboardLink[] = [
   {
+    href: "/directory",
+    title: "Site Directory",
+    detail: "Find public pages, player tools, and staff panels by category.",
+    badge: "Guide",
+    tone: "accent",
+  },
+  {
     href: "/nations",
     title: "Nation Directory",
     detail: "Search profiles, flags, leaders, stats, and public wiki pages.",

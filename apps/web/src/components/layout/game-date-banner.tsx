@@ -20,6 +20,9 @@ export async function GameDateBanner() {
           ) : null}
         </div>
         <div className="flex flex-wrap gap-3 text-xs font-semibold text-zinc-400">
+          <Link href="/directory" className="hover:text-emerald-100">
+            Directory
+          </Link>
           <Link href="/actions" className="hover:text-emerald-100">
             Actions
           </Link>

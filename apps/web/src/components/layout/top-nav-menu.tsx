@@ -4,6 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import {
+  publicDirectoryGroups,
+  staffDirectoryGroups,
+} from "@/lib/site-directory";
 
 type NavLink = {
   href: string;
@@ -12,7 +16,7 @@ type NavLink = {
 };
 
 const toolsMenuClassName =
-  "mt-2 grid max-h-[72vh] gap-4 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-3 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-[720px] lg:grid-cols-[minmax(0,1fr)_280px] lg:p-4 lg:shadow-black/40";
+  "mt-2 grid max-h-[76vh] gap-4 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-3 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-[860px] lg:grid-cols-[minmax(0,1fr)_300px] lg:p-4 lg:shadow-black/40";
 
 function MenuSection({
   title,
@@ -65,52 +69,15 @@ export function TopNavMenu({
   const [isOpen, setIsOpen] = useState(false);
 
   const primaryLinks: NavLink[] = [
-    ...(myNationHref ? [{ href: myNationHref, label: "My Nation" }] : []),
+    { href: "/directory", label: "Directory" },
     { href: "/nations", label: "Nations" },
     { href: "/actions", label: "Actions" },
     { href: "/news", label: "News" },
   ];
-
-  const worldLinks: NavLink[] = [
-    {
-      href: "/lore",
-      label: "World Lore",
-      detail: "Setting, canon rules, factions, and timeline.",
-    },
-    {
-      href: "/wars",
-      label: "Wars",
-      detail: "Public conflict briefings and outcomes.",
-    },
-    {
-      href: "/activity-archive",
-      label: "Activity Archive",
-      detail: "Older canon updates and tracker history.",
-    },
-  ];
-
-  const toolsLinks: NavLink[] = [
-    {
-      href: "/leaderboards",
-      label: "Leaderboards",
-      detail: "Rank GDP, population, land, HDI, and army.",
-    },
-    {
-      href: "/map",
-      label: "Map",
-      detail: "Open the Season 1 world reference.",
-    },
-    {
-      href: "/nations#compare",
-      label: "Compare Nations",
-      detail: "Compare two to four nations side by side.",
-    },
-    {
-      href: "/activity",
-      label: "Bot Index",
-      detail: "Discord-friendly command center links.",
-    },
-  ];
+  const publicCanon = publicDirectoryGroups[0]!;
+  const worldReference = publicDirectoryGroups[1]!;
+  const publicTools = publicDirectoryGroups[2]!;
+  const staffLinks = staffDirectoryGroups.flatMap((group) => group.links);
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -183,15 +150,20 @@ export function TopNavMenu({
             </button>
             {isOpen ? (
               <div className={toolsMenuClassName} role="menu">
-                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <MenuSection
-                    title="World"
-                    links={worldLinks}
+                    title={publicCanon.title}
+                    links={publicCanon.links}
                     onNavigate={() => setIsOpen(false)}
                   />
                   <MenuSection
-                    title="Tools"
-                    links={toolsLinks}
+                    title={worldReference.title}
+                    links={worldReference.links}
+                    onNavigate={() => setIsOpen(false)}
+                  />
+                  <MenuSection
+                    title={publicTools.title}
+                    links={publicTools.links}
                     onNavigate={() => setIsOpen(false)}
                   />
                 </div>
@@ -216,11 +188,34 @@ export function TopNavMenu({
                       >
                         Open Dashboard
                       </Link>
+                      {myNationHref ? (
+                        <Link
+                          href={myNationHref}
+                          role="menuitem"
+                          onClick={() => setIsOpen(false)}
+                          className="mt-2 inline-flex w-full justify-center rounded-lg border border-emerald-300/45 px-4 py-3 font-bold text-emerald-100 hover:bg-emerald-300/10"
+                        >
+                          Open My Nation
+                        </Link>
+                      ) : null}
                       {controlLinks.length ? (
-                        <p className="mt-3 text-xs leading-5 text-emerald-100/80">
-                          Staff access detected. AdminCP, LoreCP, and NewsCP
-                          shortcuts live inside Dashboard.
-                        </p>
+                        <div className="mt-4">
+                          <div className="mb-2 text-xs font-bold uppercase tracking-wide text-emerald-100">
+                            Staff Shortcuts
+                          </div>
+                          <div className="grid gap-2">
+                            {staffLinks.slice(0, 6).map((link) => (
+                              <Link
+                                key={link.href}
+                                href={link.href}
+                                onClick={() => setIsOpen(false)}
+                                className="rounded-lg border border-emerald-300/20 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/60 hover:bg-emerald-300/10"
+                              >
+                                {link.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </div>
                       ) : null}
                     </>
                   ) : (
