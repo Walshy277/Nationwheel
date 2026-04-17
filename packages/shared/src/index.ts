@@ -62,6 +62,7 @@ export type TrackedLoreAction = {
   id: string;
   type: string;
   action: string;
+  outcome?: string | null;
   source?: string | null;
   timeframe: string;
   status: "CURRENT" | "COMPLETED" | "REQUIRES_SPIN";

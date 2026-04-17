@@ -24,6 +24,18 @@ export type ApiNation = {
   wiki?: { content: string } | null;
 };
 
+export type ApiLoreAction = {
+  id: string;
+  nationId: string;
+  type: string;
+  action: string;
+  source?: string | null;
+  timeframe: string;
+  status: "CURRENT" | "COMPLETED" | "REQUIRES_SPIN";
+  requiresSpinReason?: string | null;
+  nation?: { name: string; slug: string };
+};
+
 export class NationWheelApiError extends Error {
   constructor(message: string) {
     super(message);
@@ -103,4 +115,23 @@ export async function listNations() {
       wiki: null,
     }));
   }
+}
+
+export async function createTrackedAction(input: {
+  nationSlug: string;
+  type: string;
+  action: string;
+  timeframe: string;
+  source?: string | null;
+  requiresSpinReason?: string | null;
+}) {
+  const result = await apiFetch<{ action: ApiLoreAction }>("/actions", {
+    method: "POST",
+    body: JSON.stringify({
+      ...input,
+      status: input.requiresSpinReason ? "REQUIRES_SPIN" : "CURRENT",
+    }),
+  });
+
+  return result.action;
 }

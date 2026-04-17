@@ -12,6 +12,7 @@ import { nationCommand } from "./commands/nation";
 import { nationsCommand } from "./commands/nations";
 import { nationwheelCommand } from "./commands/nationwheel";
 import { profileCommand } from "./commands/profile";
+import { trackActionCommand } from "./commands/trackaction";
 import { wikiCommand } from "./commands/wiki";
 
 assertBotConfig();
@@ -30,6 +31,7 @@ const commandList: BotCommand[] = [
   wikiCommand,
   nationsCommand,
   nationwheelCommand,
+  trackActionCommand,
 ];
 const commands = new Map(
   commandList.map((command) => [command.data.name, command]),

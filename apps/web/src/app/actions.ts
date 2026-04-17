@@ -9,6 +9,7 @@ import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissio
 import {
   assignNationSchema,
   discordUserLinkSchema,
+  loreActionCompletionSchema,
   loreActionEditSchema,
   leaderNameSchema,
   loreActionSchema,
@@ -152,6 +153,32 @@ function nationPayloadFromForm(formData: FormData) {
     culture: readOptionalNullableText(formData, "culture"),
     hdi: readOptionalNullableText(formData, "hdi"),
     leaderUserId: readOptionalNullableText(formData, "leaderUserId"),
+  });
+}
+
+const completionStatKeys = [
+  "people",
+  "government",
+  "gdp",
+  "economy",
+  "military",
+  "area",
+  "geoPoliticalStatus",
+  "block",
+  "culture",
+  "hdi",
+] as const;
+
+type CompletionStatKey = (typeof completionStatKeys)[number];
+
+function actionCompletionPayloadFromForm(formData: FormData) {
+  const stats = Object.fromEntries(
+    completionStatKeys.map((key) => [key, readNullableText(formData, key)]),
+  ) as Record<CompletionStatKey, string | null>;
+
+  return loreActionCompletionSchema.parse({
+    outcome: readText(formData, "outcome"),
+    ...stats,
   });
 }
 
@@ -498,6 +525,9 @@ export async function updateLoreActionStatusAction(
     status: readText(formData, "status"),
     requiresSpinReason: readNullableText(formData, "requiresSpinReason"),
   });
+  if (payload.status === LoreActionStatus.COMPLETED) {
+    throw new Error("Complete actions with an outcome and stat effects.");
+  }
 
   const current = await getPrisma().loreAction.findUniqueOrThrow({
     where: { id: actionId },
@@ -535,6 +565,108 @@ export async function updateLoreActionStatusAction(
   });
 }
 
+export async function completeLoreActionAction(
+  actionId: string,
+  formData: FormData,
+) {
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+  const payload = actionCompletionPayloadFromForm(formData);
+  const prisma = getPrisma();
+
+  const result = await prisma.$transaction(async (tx) => {
+    const current = await tx.loreAction.findUniqueOrThrow({
+      where: { id: actionId },
+      include: {
+        nation: {
+          select: {
+            id: true,
+            slug: true,
+            name: true,
+            leaderUserId: true,
+            people: true,
+            government: true,
+            gdp: true,
+            economy: true,
+            military: true,
+            area: true,
+            geoPoliticalStatus: true,
+            block: true,
+            culture: true,
+            hdi: true,
+          },
+        },
+      },
+    });
+
+    const statUpdates = Object.fromEntries(
+      completionStatKeys
+        .map((key) => [key, payload[key]] as const)
+        .filter((entry): entry is readonly [CompletionStatKey, string] => {
+          const [key, value] = entry;
+          return Boolean(value && value !== current.nation[key]);
+        }),
+    ) as Partial<Record<CompletionStatKey, string>>;
+
+    await tx.loreAction.update({
+      where: { id: actionId },
+      data: {
+        status: LoreActionStatus.COMPLETED,
+        outcome: payload.outcome,
+      },
+    });
+
+    if (Object.keys(statUpdates).length) {
+      await tx.nation.update({
+        where: { id: current.nationId },
+        data: {
+          ...statUpdates,
+          revisions: {
+            create: {
+              fieldType: "STATS",
+              previousValue: Object.fromEntries(
+                Object.keys(statUpdates).map((key) => [
+                  key,
+                  current.nation[key as CompletionStatKey],
+                ]),
+              ),
+              newValue: statUpdates,
+              changedByUserId: user.id,
+            },
+          },
+        },
+      });
+    }
+
+    return {
+      nationId: current.nationId,
+      nationSlug: current.nation.slug,
+      statUpdateCount: Object.keys(statUpdates).length,
+    };
+  });
+
+  revalidatePath("/");
+  revalidatePath("/lorecp");
+  revalidatePath("/lorecp/actions");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/actions");
+  revalidatePath("/nations");
+  revalidatePath(`/nations/${result.nationSlug}`);
+  revalidatePath(`/lorecp/nations/${result.nationId}`);
+  revalidatePath("/admincp/logs");
+
+  await notifyNationLeader({
+    nationId: result.nationId,
+    actorUserId: user.id,
+    title: "Action completed",
+    body:
+      result.statUpdateCount > 0
+        ? `Lore staff completed an action and updated ${result.statUpdateCount} nation stat${result.statUpdateCount === 1 ? "" : "s"}.`
+        : "Lore staff completed one of your canon actions.",
+    href: "/dashboard/actions",
+  });
+}
+
 export async function updateLoreActionAction(
   actionId: string,
   formData: FormData,
@@ -549,6 +681,9 @@ export async function updateLoreActionAction(
     status: readText(formData, "status") || LoreActionStatus.CURRENT,
     requiresSpinReason: readNullableText(formData, "requiresSpinReason"),
   });
+  if (payload.status === LoreActionStatus.COMPLETED) {
+    throw new Error("Complete actions with an outcome and stat effects.");
+  }
   const current = await getPrisma().loreAction.findUniqueOrThrow({
     where: { id: actionId },
     select: { nationId: true, rygaaNotifiedAt: true },

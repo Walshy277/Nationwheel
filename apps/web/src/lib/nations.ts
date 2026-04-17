@@ -101,6 +101,7 @@ export async function getNationProfile(slug: string) {
       id: action.id,
       type: action.type,
       action: action.action,
+      outcome: action.outcome,
       source: action.source,
       timeframe: action.timeframe,
       status: action.status,

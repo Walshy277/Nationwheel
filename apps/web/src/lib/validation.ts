@@ -87,6 +87,22 @@ export const loreActionStatusSchema = z
   })
   .strict();
 
+export const loreActionCompletionSchema = z
+  .object({
+    outcome: z.string().min(10),
+    people: z.string().nullable().optional(),
+    government: z.string().nullable().optional(),
+    gdp: z.string().nullable().optional(),
+    economy: z.string().nullable().optional(),
+    military: z.string().nullable().optional(),
+    area: z.string().nullable().optional(),
+    geoPoliticalStatus: z.string().nullable().optional(),
+    block: z.string().nullable().optional(),
+    culture: z.string().nullable().optional(),
+    hdi: z.string().nullable().optional(),
+  })
+  .strict();
+
 export const publicLorePageSchema = z
   .object({
     title: z.string().min(1),

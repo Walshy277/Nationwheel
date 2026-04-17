@@ -1,6 +1,7 @@
 import { LoreActionStatus, Role } from "@prisma/client";
 import {
   addLoreActionUpdateAction,
+  completeLoreActionAction,
   createLoreActionAction,
   updateLoreActionAction,
   updateLoreActionStatusAction,
@@ -66,7 +67,22 @@ export default async function LoreActionsPage() {
     getPrisma().loreAction.findMany({
       orderBy: { updatedAt: "desc" },
       include: {
-        nation: { select: { id: true, name: true } },
+        nation: {
+          select: {
+            id: true,
+            name: true,
+            people: true,
+            government: true,
+            gdp: true,
+            economy: true,
+            military: true,
+            area: true,
+            geoPoliticalStatus: true,
+            block: true,
+            culture: true,
+            hdi: true,
+          },
+        },
         updates: {
           orderBy: { createdAt: "desc" },
           take: 3,
@@ -175,8 +191,18 @@ export default async function LoreActionsPage() {
           </Panel>
         ) : null}
 
-        <Panel className="bg-[color:var(--panel-strong)]/85">
-          <h2 className="text-2xl font-bold text-zinc-50">Create Action</h2>
+        <Panel id="create-action" className="scroll-mt-28 bg-[color:var(--panel-strong)]/85">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <Badge tone="accent">Create / Track</Badge>
+              <h2 className="mt-3 text-2xl font-bold text-zinc-50">
+                Create Action
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-400">
+                Add new canon actions here, or use `/trackaction` in Discord.
+              </p>
+            </div>
+          </div>
           <form
             action={createLoreActionAction}
             className="mt-5 grid gap-3 xl:grid-cols-2"
@@ -210,7 +236,6 @@ export default async function LoreActionsPage() {
               <option value={LoreActionStatus.REQUIRES_SPIN}>
                 Requires spin
               </option>
-              <option value={LoreActionStatus.COMPLETED}>Completed</option>
             </select>
             <input
               name="source"
@@ -347,9 +372,6 @@ export default async function LoreActionsPage() {
                             <option value={LoreActionStatus.REQUIRES_SPIN}>
                               Requires spin
                             </option>
-                            <option value={LoreActionStatus.COMPLETED}>
-                              Completed
-                            </option>
                           </select>
                           <input
                             name="source"
@@ -393,9 +415,6 @@ export default async function LoreActionsPage() {
                           <option value={LoreActionStatus.REQUIRES_SPIN}>
                             Requires spin
                           </option>
-                          <option value={LoreActionStatus.COMPLETED}>
-                            Completed
-                          </option>
                         </select>
                         <input
                           name="requiresSpinReason"
@@ -407,6 +426,94 @@ export default async function LoreActionsPage() {
                           Update Status
                         </button>
                       </form>
+
+                      <details className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-3">
+                        <summary className="font-bold text-emerald-100">
+                          Complete with outcome and stat effects
+                        </summary>
+                        <form
+                          action={completeLoreActionAction.bind(null, action.id)}
+                          className="mt-4 grid gap-3"
+                        >
+                          <textarea
+                            name="outcome"
+                            required
+                            minLength={10}
+                            placeholder="Outcome. Explain what happened in canon and why the action is complete."
+                            className="min-h-28 p-3 text-sm"
+                          />
+                          <div className="grid gap-3 md:grid-cols-2">
+                            <input
+                              name="area"
+                              defaultValue={action.nation.area ?? ""}
+                              placeholder="Area, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="people"
+                              defaultValue={action.nation.people}
+                              placeholder="Population, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="gdp"
+                              defaultValue={action.nation.gdp}
+                              placeholder="GDP, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="hdi"
+                              defaultValue={action.nation.hdi ?? ""}
+                              placeholder="HDI, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="economy"
+                              defaultValue={action.nation.economy}
+                              placeholder="Economy, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="military"
+                              defaultValue={action.nation.military}
+                              placeholder="Military, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="government"
+                              defaultValue={action.nation.government}
+                              placeholder="Government, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="geoPoliticalStatus"
+                              defaultValue={action.nation.geoPoliticalStatus ?? ""}
+                              placeholder="Geo-political status, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="block"
+                              defaultValue={action.nation.block ?? ""}
+                              placeholder="Block, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                            <input
+                              name="culture"
+                              defaultValue={action.nation.culture ?? ""}
+                              placeholder="Culture, if changed"
+                              className="px-3 py-2 text-sm"
+                            />
+                          </div>
+                          <p className="text-xs leading-5 text-zinc-500">
+                            Leave a stat exactly as-is if the outcome does not
+                            change it. Changed stats are saved with an audit
+                            revision automatically.
+                          </p>
+                          <button className="rounded-lg bg-emerald-300 px-3 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-200">
+                            Complete Action
+                          </button>
+                        </form>
+                      </details>
 
                       {action.updates.length ? (
                         <div className="mt-4 grid gap-2">
@@ -467,21 +574,28 @@ export default async function LoreActionsPage() {
                 <div className="mt-3 line-clamp-3">
                   <WikiRenderer content={action.action} />
                 </div>
+                {action.outcome ? (
+                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                    <p className="text-xs font-bold uppercase text-emerald-100">
+                      Outcome
+                    </p>
+                    <div className="mt-2">
+                      <WikiRenderer content={action.outcome} />
+                    </div>
+                  </div>
+                ) : null}
                 <form
                   action={updateLoreActionStatusAction.bind(null, action.id)}
                   className="mt-4 grid gap-2 sm:grid-cols-[1fr_auto]"
                 >
                   <select
                     name="status"
-                    defaultValue={action.status}
+                    defaultValue={LoreActionStatus.CURRENT}
                     className="px-3 py-2 text-sm"
                   >
                     <option value={LoreActionStatus.CURRENT}>Current</option>
                     <option value={LoreActionStatus.REQUIRES_SPIN}>
                       Requires spin
-                    </option>
-                    <option value={LoreActionStatus.COMPLETED}>
-                      Completed
                     </option>
                   </select>
                   <input

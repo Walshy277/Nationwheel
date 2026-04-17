@@ -1,5 +1,17 @@
 import { canonNations, createNationWikiTemplate } from "@nation-wheel/shared";
 
+function canonNationResponse(slug: string) {
+  const canonNation = canonNations.find((candidate) => candidate.slug === slug);
+  if (!canonNation) return null;
+
+  return {
+    ...canonNation,
+    id: `canon-${canonNation.slug}`,
+    leaderUser: null,
+    wiki: { content: createNationWikiTemplate(canonNation) },
+  };
+}
+
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug: string }> },
@@ -7,22 +19,12 @@ export async function GET(
   const { slug } = await params;
 
   if (!process.env.DATABASE_URL) {
-    const canonNation = canonNations.find(
-      (candidate) => candidate.slug === slug,
-    );
-
-    if (!canonNation) {
+    const nation = canonNationResponse(slug);
+    if (!nation) {
       return Response.json({ error: "Nation not found" }, { status: 404 });
     }
 
-    return Response.json({
-      nation: {
-        ...canonNation,
-        id: `canon-${canonNation.slug}`,
-        leaderUser: null,
-        wiki: { content: createNationWikiTemplate(canonNation) },
-      },
-    });
+    return Response.json({ nation });
   }
 
   try {
@@ -38,13 +40,16 @@ export async function GET(
       },
     });
 
-    if (!nation)
-      return Response.json({ error: "Nation not found" }, { status: 404 });
+    if (!nation) {
+      const canonNation = canonNationResponse(slug);
+      if (!canonNation) {
+        return Response.json({ error: "Nation not found" }, { status: 404 });
+      }
+      return Response.json({ nation: canonNation });
+    }
     return Response.json({ nation: withCanonMetadata(nation) });
   } catch (error) {
-    const canonNation = canonNations.find(
-      (candidate) => candidate.slug === slug,
-    );
+    const canonNation = canonNationResponse(slug);
     if (!canonNation) {
       console.error(error);
       return Response.json(
@@ -53,13 +58,6 @@ export async function GET(
       );
     }
 
-    return Response.json({
-      nation: {
-        ...canonNation,
-        id: `canon-${canonNation.slug}`,
-        leaderUser: null,
-        wiki: { content: createNationWikiTemplate(canonNation) },
-      },
-    });
+    return Response.json({ nation: canonNation });
   }
 }

@@ -86,6 +86,13 @@ const loreLinks: DashboardLink[] = [
     badge: "Actions",
   },
   {
+    href: "/lorecp/actions#create-action",
+    title: "Create Action",
+    detail: "Jump straight to the canon action creation form.",
+    badge: "Track",
+    tone: "warning",
+  },
+  {
     href: "/lorecp/pages/lore",
     title: "World Lore",
     detail: "Edit the single merged world and setting lore page.",

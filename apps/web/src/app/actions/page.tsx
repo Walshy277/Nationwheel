@@ -199,6 +199,16 @@ export default async function PublicActionsPage() {
               <div className="line-clamp-3">
                 <WikiRenderer content={action.action} />
               </div>
+              {action.outcome ? (
+                <div className="rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                  <p className="text-xs font-bold uppercase text-emerald-100">
+                    Outcome
+                  </p>
+                  <div className="mt-2">
+                    <WikiRenderer content={action.outcome} />
+                  </div>
+                </div>
+              ) : null}
               {action.updates[0] ? (
                 <div className="rounded-lg border border-white/10 bg-black/20 p-3">
                   <p className="text-xs font-bold uppercase text-zinc-500">

@@ -208,6 +208,16 @@ export default async function DashboardActionsPage() {
               <div className="mt-3 line-clamp-4">
                 <WikiRenderer content={action.action} />
               </div>
+              {action.outcome ? (
+                <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                  <p className="text-xs font-bold uppercase text-emerald-100">
+                    Outcome
+                  </p>
+                  <div className="mt-2">
+                    <WikiRenderer content={action.outcome} />
+                  </div>
+                </div>
+              ) : null}
             </Panel>
           ))}
           {nations.length && completed.length === 0 ? (

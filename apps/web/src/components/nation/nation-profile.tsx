@@ -279,6 +279,16 @@ export function NationProfile({
                     Requires spin: {entry.requiresSpinReason}
                   </p>
                 ) : null}
+                {entry.outcome ? (
+                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                    <p className="text-xs font-bold uppercase text-emerald-100">
+                      Outcome
+                    </p>
+                    <div className="mt-2">
+                      <WikiRenderer content={entry.outcome} />
+                    </div>
+                  </div>
+                ) : null}
                 {entry.updates.length ? (
                   <div className="mt-4 grid gap-2">
                     {entry.updates.map((update) => (

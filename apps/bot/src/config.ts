@@ -7,6 +7,10 @@ export const config = {
   apiUrl: process.env.NATION_WHEEL_API_URL ?? "http://localhost:3000/api",
   webUrl: process.env.NATION_WHEEL_WEB_URL ?? "http://localhost:3000",
   botApiKey: process.env.NATION_WHEEL_BOT_API_KEY,
+  staffRoleIds: (process.env.NATION_WHEEL_STAFF_ROLE_IDS ?? "")
+    .split(",")
+    .map((roleId) => roleId.trim())
+    .filter(Boolean),
 };
 
 export function assertBotConfig() {

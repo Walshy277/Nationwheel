@@ -17,6 +17,12 @@ import {
 import { listNations, type ApiNation } from "../api-client";
 import { config } from "../config";
 
+let nationChoiceCache: ApiNation[] = canonNations.map((nation) => ({
+  ...nation,
+  id: `canon-${nation.slug}`,
+  wiki: null,
+}));
+
 export function profileUrl(slug: string) {
   return new URL(`/nations/${slug}`, config.webUrl).toString();
 }
@@ -174,9 +180,12 @@ export async function respondWithNationChoices(
 ) {
   const focused = interaction.options.getFocused().toLowerCase();
   const nations = await Promise.race([
-    listNations(),
-    new Promise<typeof canonNations>((resolve) => {
-      setTimeout(() => resolve(canonNations), 1500);
+    listNations().then((latest) => {
+      nationChoiceCache = latest;
+      return latest;
+    }).catch(() => nationChoiceCache),
+    new Promise<ApiNation[]>((resolve) => {
+      setTimeout(() => resolve(nationChoiceCache), 2500);
     }),
   ]);
   const choices = nations

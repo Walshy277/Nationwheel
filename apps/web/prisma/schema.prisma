@@ -115,6 +115,7 @@ model LoreAction {
   source             String?
   timeframe          String
   status             LoreActionStatus   @default(CURRENT)
+  outcome            String?
   requiresSpinReason String?
   rygaaNotifiedAt    DateTime?
   createdByUserId    String?
