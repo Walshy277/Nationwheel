@@ -8,13 +8,49 @@ import { SignOutButton } from "@/components/auth/sign-out-button";
 type NavLink = {
   href: string;
   label: string;
+  detail?: string;
 };
 
 const toolsMenuClassName =
-  "mt-2 grid max-h-[72vh] gap-1 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-2 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-[640px] lg:grid-cols-3 lg:gap-3 lg:p-3 lg:shadow-black/40";
+  "mt-2 grid max-h-[72vh] gap-4 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-3 shadow-2xl shadow-black/30 lg:absolute lg:right-0 lg:top-10 lg:mt-0 lg:w-[720px] lg:grid-cols-[minmax(0,1fr)_280px] lg:p-4 lg:shadow-black/40";
 
-const menuLinkClassName =
-  "block rounded-md px-3 py-2 font-semibold hover:bg-white/5 hover:text-white";
+function MenuSection({
+  title,
+  links,
+  onNavigate,
+}: {
+  title: string;
+  links: NavLink[];
+  onNavigate: () => void;
+}) {
+  return (
+    <section>
+      <div className="mb-2 px-1 text-xs font-bold uppercase tracking-wide text-zinc-500">
+        {title}
+      </div>
+      <div className="grid gap-2">
+        {links.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            role="menuitem"
+            onClick={onNavigate}
+            className="group rounded-lg border border-white/8 bg-white/[0.02] px-3 py-3 hover:border-emerald-300/40 hover:bg-white/5"
+          >
+            <span className="block font-bold text-zinc-100 group-hover:text-emerald-100">
+              {link.label}
+            </span>
+            {link.detail ? (
+              <span className="mt-1 block text-xs leading-5 text-zinc-500 group-hover:text-zinc-300">
+                {link.detail}
+              </span>
+            ) : null}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function TopNavMenu({
   userLabel,
@@ -36,16 +72,44 @@ export function TopNavMenu({
   ];
 
   const worldLinks: NavLink[] = [
-    { href: "/lore", label: "World Lore" },
-    { href: "/wars", label: "Wars" },
-    { href: "/activity-archive", label: "Activity Archive" },
+    {
+      href: "/lore",
+      label: "World Lore",
+      detail: "Setting, canon rules, factions, and timeline.",
+    },
+    {
+      href: "/wars",
+      label: "Wars",
+      detail: "Public conflict briefings and outcomes.",
+    },
+    {
+      href: "/activity-archive",
+      label: "Activity Archive",
+      detail: "Older canon updates and tracker history.",
+    },
   ];
 
   const toolsLinks: NavLink[] = [
-    { href: "/leaderboards", label: "Leaderboards" },
-    { href: "/map", label: "Map" },
-    { href: "/nations#compare", label: "Compare Nations" },
-    { href: "/activity", label: "Bot Index" },
+    {
+      href: "/leaderboards",
+      label: "Leaderboards",
+      detail: "Rank GDP, population, land, HDI, and army.",
+    },
+    {
+      href: "/map",
+      label: "Map",
+      detail: "Open the Season 1 world reference.",
+    },
+    {
+      href: "/nations#compare",
+      label: "Compare Nations",
+      detail: "Compare two to four nations side by side.",
+    },
+    {
+      href: "/activity",
+      label: "Bot Index",
+      detail: "Discord-friendly command center links.",
+    },
   ];
 
   useEffect(() => {
@@ -119,60 +183,62 @@ export function TopNavMenu({
             </button>
             {isOpen ? (
               <div className={toolsMenuClassName} role="menu">
-                <div>
-                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
-                    World
-                  </div>
-                  {worldLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      role="menuitem"
-                      onClick={() => setIsOpen(false)}
-                      className={menuLinkClassName}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <MenuSection
+                    title="World"
+                    links={worldLinks}
+                    onNavigate={() => setIsOpen(false)}
+                  />
+                  <MenuSection
+                    title="Tools"
+                    links={toolsLinks}
+                    onNavigate={() => setIsOpen(false)}
+                  />
                 </div>
-                <div>
-                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-zinc-500">
-                    Tools
+                <section className="rounded-lg border border-emerald-300/20 bg-emerald-300/8 p-4">
+                  <div className="text-xs font-bold uppercase tracking-wide text-emerald-100">
+                    Control Hub
                   </div>
-                  {toolsLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      role="menuitem"
-                      onClick={() => setIsOpen(false)}
-                      className={menuLinkClassName}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
-                </div>
-                <div>
-                  <div className="px-3 pb-1 pt-2 text-xs font-bold uppercase text-emerald-200">
-                    Control
-                  </div>
-                  {controlLinks.length ? (
-                    controlLinks.map((link) => (
+                  <h2 className="mt-3 text-xl font-black text-zinc-50">
+                    Dashboard
+                  </h2>
+                  {userLabel ? (
+                    <>
+                      <p className="mt-2 text-sm leading-6 text-zinc-300">
+                        Manage your nation and open any available staff control
+                        panel from one place.
+                      </p>
                       <Link
-                        key={link.href}
-                        href={link.href}
+                        href="/dashboard"
                         role="menuitem"
                         onClick={() => setIsOpen(false)}
-                        className={`${menuLinkClassName} text-zinc-100`}
+                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-300 px-4 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
                       >
-                        {link.label}
+                        Open Dashboard
                       </Link>
-                    ))
+                      {controlLinks.length ? (
+                        <p className="mt-3 text-xs leading-5 text-emerald-100/80">
+                          Staff access detected. AdminCP, LoreCP, and NewsCP
+                          shortcuts live inside Dashboard.
+                        </p>
+                      ) : null}
+                    </>
                   ) : (
-                    <p className="px-3 py-2 text-sm leading-6 text-zinc-500">
-                      Sign in for dashboard and staff tools.
-                    </p>
+                    <>
+                      <p className="mt-2 text-sm leading-6 text-zinc-300">
+                        Sign in to manage your nation and access staff tools.
+                      </p>
+                      <Link
+                        href="/login"
+                        role="menuitem"
+                        onClick={() => setIsOpen(false)}
+                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-300 px-4 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+                      >
+                        Login
+                      </Link>
+                    </>
                   )}
-                </div>
+                </section>
               </div>
             ) : null}
           </div>
