@@ -50,7 +50,7 @@ export default function DirectoryPage() {
             tools, and staff control panels.
           </p>
         </div>
-        <div className="rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-4">
+        <div className="rounded-lg border border-emerald-300/25 bg-emerald-900/8 p-4">
           <p className="text-xs font-bold uppercase text-emerald-100">
             Quick Path
           </p>

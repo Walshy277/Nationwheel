@@ -296,7 +296,7 @@ export default async function DashboardPage() {
           </p>
           <Link
             href="/login"
-            className="mt-6 inline-flex rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+            className="mt-6 inline-flex rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800"
           >
             Login
           </Link>
@@ -325,13 +325,13 @@ export default async function DashboardPage() {
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/dashboard/wiki"
-              className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+              className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800"
             >
               Manage My Nation
             </Link>
             <Link
               href="/dashboard/actions"
-              className="rounded-lg border border-emerald-300/70 px-5 py-3 font-bold text-emerald-100 hover:bg-emerald-300/10"
+              className="rounded-lg border border-emerald-300/70 px-5 py-3 font-bold text-emerald-100 hover:bg-emerald-900/10"
             >
               My Actions
             </Link>
@@ -386,7 +386,7 @@ export default async function DashboardPage() {
                 {counts?.[1] ?? "-"}
               </p>
             </div>
-            <div className="rounded-lg border border-emerald-300/20 bg-emerald-300/10 p-4">
+            <div className="rounded-lg border border-emerald-300/20 bg-emerald-900/10 p-4">
               <p className="text-xs font-bold uppercase text-zinc-500">
                 Game Date
               </p>

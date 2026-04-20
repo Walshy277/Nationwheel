@@ -183,7 +183,7 @@ export default async function ForumThreadPage({
               placeholder="Add a reply. BBCode works here."
               className="min-h-36 p-3"
             />
-            <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200">
+            <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
               Post Reply
             </button>
           </form>

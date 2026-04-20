@@ -78,7 +78,7 @@ export default async function PublicActionsPage() {
         <div className="mt-5 flex flex-wrap gap-3">
           <a
             href="#active"
-            className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
+            className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
           >
             Active Actions
           </a>
@@ -200,7 +200,7 @@ export default async function PublicActionsPage() {
                 <WikiRenderer content={action.action} />
               </div>
               {action.outcome ? (
-                <div className="rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                <div className="rounded-lg border border-emerald-300/25 bg-emerald-900/10 p-3">
                   <p className="text-xs font-bold uppercase text-emerald-100">
                     Outcome
                   </p>

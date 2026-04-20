@@ -25,8 +25,8 @@ export default async function LoreCpPage() {
               requirements.
             </p>
             <div className="flex flex-wrap gap-2">
-              <Link href="/lorecp/actions#create-action" className="rounded-lg bg-emerald-300 px-4 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-200">Create Action</Link>
-              <Link href="/lorecp/actions" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">Edit Actions</Link>
+              <Link href="/lorecp/actions#create-action" className="rounded-lg bg-emerald-900 px-4 py-2 text-sm font-bold text-emerald-50 hover:bg-emerald-800">Create Action</Link>
+              <Link href="/lorecp/actions" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10">Edit Actions</Link>
             </div>
           </Panel>
           <Panel className="grid gap-3">
@@ -41,7 +41,7 @@ export default async function LoreCpPage() {
             <p className="text-sm leading-6 text-zinc-400">
               Maintain the public canon hub, timeline, and world rules.
             </p>
-            <Link href="/lorecp/pages/lore" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">Edit Lore</Link>
+            <Link href="/lorecp/pages/lore" className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10">Edit Lore</Link>
           </Panel>
           <Panel className="grid gap-3">
             <h2 className="text-xl font-bold text-zinc-50">Announcements</h2>

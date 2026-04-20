@@ -184,7 +184,7 @@ export function NationDevEditor() {
           <button
             type="button"
             onClick={addNation}
-            className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
+            className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
           >
             Add
           </button>
@@ -257,7 +257,7 @@ export function NationDevEditor() {
           <button
             type="button"
             onClick={applyDraft}
-            className="rounded-lg bg-emerald-300 px-4 py-2 font-bold text-zinc-950 hover:bg-emerald-200"
+            className="rounded-lg bg-emerald-900 px-4 py-2 font-bold text-emerald-50 hover:bg-emerald-800"
           >
             Stage Nation
           </button>
@@ -265,7 +265,7 @@ export function NationDevEditor() {
             type="button"
             onClick={saveChanges}
             disabled={!canWrite}
-            className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10 disabled:cursor-not-allowed disabled:opacity-50"
           >
             Save Files
           </button>

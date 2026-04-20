@@ -229,7 +229,7 @@ export function TopNavMenu({
                     />
                   ))}
                 </div>
-                <section className="rounded-lg border border-emerald-300/20 bg-emerald-300/8 p-4">
+                <section className="rounded-lg border border-emerald-300/20 bg-emerald-900/8 p-4">
                   <div className="text-xs font-bold uppercase tracking-wide text-emerald-100">
                     Control Hub
                   </div>
@@ -246,7 +246,7 @@ export function TopNavMenu({
                         href="/dashboard"
                         role="menuitem"
                         onClick={() => setIsOpen(false)}
-                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-300 px-4 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-900 px-4 py-3 font-bold text-emerald-50 hover:bg-emerald-800"
                       >
                         Open Dashboard
                       </Link>
@@ -255,7 +255,7 @@ export function TopNavMenu({
                           href={myNationHref}
                           role="menuitem"
                           onClick={() => setIsOpen(false)}
-                          className="mt-2 inline-flex w-full justify-center rounded-lg border border-emerald-300/45 px-4 py-3 font-bold text-emerald-100 hover:bg-emerald-300/10"
+                          className="mt-2 inline-flex w-full justify-center rounded-lg border border-emerald-300/45 px-4 py-3 font-bold text-emerald-100 hover:bg-emerald-900/10"
                         >
                           Open My Nation
                         </Link>
@@ -271,7 +271,7 @@ export function TopNavMenu({
                                 key={link.href}
                                 href={link.href}
                                 onClick={() => setIsOpen(false)}
-                                className="rounded-lg border border-emerald-300/20 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/60 hover:bg-emerald-300/10"
+                                className="rounded-lg border border-emerald-300/20 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/60 hover:bg-emerald-900/10"
                               >
                                 {link.label}
                               </Link>
@@ -289,7 +289,7 @@ export function TopNavMenu({
                         href="/login"
                         role="menuitem"
                         onClick={() => setIsOpen(false)}
-                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-300 px-4 py-3 font-bold text-zinc-950 hover:bg-emerald-200"
+                        className="mt-4 inline-flex w-full justify-center rounded-lg bg-emerald-900 px-4 py-3 font-bold text-emerald-50 hover:bg-emerald-800"
                       >
                         Login
                       </Link>

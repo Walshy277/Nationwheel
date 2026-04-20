@@ -99,7 +99,7 @@ export default async function AdminNationsPage() {
               nationName="New nation"
               className="grid gap-2 text-sm text-slate-300"
             />
-            <button className="rounded-lg bg-emerald-300 px-4 py-2 font-bold text-slate-950 md:col-span-2">
+            <button className="rounded-lg bg-emerald-900 px-4 py-2 font-bold text-emerald-50 md:col-span-2">
               Create Nation
             </button>
           </form>

@@ -34,13 +34,13 @@ export default async function DashboardNotificationsPage() {
         </div>
         <Link
           href="/dashboard/inbox"
-          className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
+          className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
         >
           Open Mail
         </Link>
       </div>
 
-      <Panel className="grid gap-4 border-emerald-300/30 bg-emerald-300/10 lg:grid-cols-[1fr_auto] lg:items-center">
+      <Panel className="grid gap-4 border-emerald-300/30 bg-emerald-900/10 lg:grid-cols-[1fr_auto] lg:items-center">
         <div className="grid gap-3 sm:grid-cols-3">
           <div>
             <p className="text-xs font-bold uppercase text-zinc-500">Unread</p>
@@ -73,7 +73,7 @@ export default async function DashboardNotificationsPage() {
                 value={notification.id}
               />
             ))}
-            <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200">
+            <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
               Mark all read
             </button>
           </form>
@@ -112,7 +112,7 @@ export default async function DashboardNotificationsPage() {
                 {notification.href ? (
                   <Link
                     href={notification.href}
-                    className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
+                    className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
                   >
                     Open
                   </Link>

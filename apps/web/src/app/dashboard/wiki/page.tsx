@@ -35,7 +35,7 @@ export default async function DashboardWikiPage() {
           </p>
           <Link
             href="/nations"
-            className="mt-5 inline-flex rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10"
+            className="mt-5 inline-flex rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10"
           >
             Browse Nations
           </Link>
@@ -78,7 +78,7 @@ export default async function DashboardWikiPage() {
                 placeholder="Enter the current leader name"
                 className="min-h-11 min-w-0 flex-1 rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-zinc-100 sm:min-w-[320px]"
               />
-              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10">
+              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10">
                 Save Leader Name
               </button>
             </div>
@@ -99,7 +99,7 @@ export default async function DashboardWikiPage() {
                 currentImage={nation.flagImage}
                 nationName={nation.name}
               />
-              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10">
+              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10">
                 Save Profile Picture
               </button>
             </div>
@@ -118,7 +118,7 @@ export default async function DashboardWikiPage() {
               }
             />
             <div className="flex flex-wrap gap-3">
-              <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200">
+              <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
                 Save Lore
               </button>
               <Link

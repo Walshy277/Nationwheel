@@ -192,7 +192,7 @@ export async function SideNav() {
             />
           ))}
           {!user ? (
-            <section className="rounded-lg border border-emerald-300/20 bg-emerald-300/8 p-3">
+            <section className="rounded-lg border border-emerald-300/20 bg-emerald-900/8 p-3">
               <h2 className="text-xs font-black uppercase tracking-wide text-emerald-100">
                 Player Access
               </h2>
@@ -202,7 +202,7 @@ export async function SideNav() {
               </p>
               <Link
                 href="/login"
-                className="mt-3 inline-flex w-full justify-center rounded-lg bg-emerald-300 px-3 py-2 text-sm font-black text-zinc-950 hover:bg-emerald-200"
+                className="mt-3 inline-flex w-full justify-center rounded-lg bg-emerald-900 px-3 py-2 text-sm font-black text-emerald-50 hover:bg-emerald-800"
               >
                 Login
               </Link>

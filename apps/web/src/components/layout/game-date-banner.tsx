@@ -9,7 +9,7 @@ export async function GameDateBanner() {
     <div className="border-b border-white/10 bg-[#0c100d]/92">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-2 text-sm sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md border border-emerald-300/45 bg-emerald-300/12 px-2.5 py-1 text-xs font-bold uppercase text-emerald-100">
+          <span className="rounded-md border border-emerald-300/45 bg-emerald-900/12 px-2.5 py-1 text-xs font-bold uppercase text-emerald-100">
             In-game date
           </span>
           <span className="font-black text-zinc-50">

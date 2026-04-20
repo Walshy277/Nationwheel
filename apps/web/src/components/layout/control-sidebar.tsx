@@ -13,13 +13,13 @@ export function ControlLayout({
   return (
     <main className="mx-auto grid w-full max-w-screen-2xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8">
       <aside className="rounded-lg border border-white/10 bg-[color:var(--panel)]/94 p-4 shadow-lg shadow-black/20 lg:sticky lg:top-24 lg:self-start">
-        <div className="mb-4 rounded-md border border-emerald-300/25 bg-emerald-300/10 px-3 py-2 text-xs font-bold uppercase text-emerald-100">
+        <div className="mb-4 rounded-md border border-emerald-300/25 bg-emerald-900/10 px-3 py-2 text-xs font-bold uppercase text-emerald-100">
           {title}
         </div>
         <div className="mb-3 grid grid-cols-2 gap-2 lg:grid-cols-1">
           <Link
             href="/dashboard"
-            className="rounded-md border border-emerald-300/35 bg-emerald-300/10 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/15"
+            className="rounded-md border border-emerald-300/35 bg-emerald-900/10 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/15"
           >
             Dashboard
           </Link>

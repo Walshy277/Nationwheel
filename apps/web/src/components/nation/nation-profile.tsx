@@ -39,7 +39,7 @@ export function NationProfile({
             />
           </div>
         ) : (
-          <div className="grid aspect-[3/2] w-full max-w-[240px] place-items-center rounded-lg border border-emerald-300/35 bg-emerald-300/10 text-4xl font-black text-emerald-100">
+          <div className="grid aspect-[3/2] w-full max-w-[240px] place-items-center rounded-lg border border-emerald-300/35 bg-emerald-900/10 text-4xl font-black text-emerald-100">
             {nation.name.slice(0, 2).toUpperCase()}
           </div>
         )}
@@ -102,7 +102,7 @@ export function NationProfile({
               {isAdmin ? (
                 <Link
                   href="/admincp/users"
-                  className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
+                  className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
                 >
                   Manage Roles
                 </Link>
@@ -189,7 +189,7 @@ export function NationProfile({
                 placeholder="Culture"
                 className="px-3 py-2 md:col-span-2"
               />
-              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-300/10 md:col-span-2">
+              <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10 md:col-span-2">
                 Save Stats
               </button>
             </form>
@@ -280,7 +280,7 @@ export function NationProfile({
                   </p>
                 ) : null}
                 {entry.outcome ? (
-                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-900/10 p-3">
                     <p className="text-xs font-bold uppercase text-emerald-100">
                       Outcome
                     </p>

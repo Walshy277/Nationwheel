@@ -324,7 +324,7 @@ export default async function LoreActionsPage() {
                           placeholder="Daily update"
                           className="min-h-24 p-3 text-sm"
                         />
-                        <button className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
+                        <button className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10">
                           Add Update
                         </button>
                       </form>
@@ -391,7 +391,7 @@ export default async function LoreActionsPage() {
                             placeholder="Spin reason"
                             className="px-3 py-2 text-sm xl:col-span-2"
                           />
-                          <button className="rounded-lg bg-emerald-300 px-3 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-200 xl:col-span-2">
+                          <button className="rounded-lg bg-emerald-900 px-3 py-2 text-sm font-bold text-emerald-50 hover:bg-emerald-800 xl:col-span-2">
                             Save Full Action
                           </button>
                         </form>
@@ -427,7 +427,7 @@ export default async function LoreActionsPage() {
                         </button>
                       </form>
 
-                      <details className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-3">
+                      <details className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-900/8 p-3">
                         <summary className="font-bold text-emerald-100">
                           Complete with outcome and stat effects
                         </summary>
@@ -509,7 +509,7 @@ export default async function LoreActionsPage() {
                             change it. Changed stats are saved with an audit
                             revision automatically.
                           </p>
-                          <button className="rounded-lg bg-emerald-300 px-3 py-2 text-sm font-bold text-zinc-950 hover:bg-emerald-200">
+                          <button className="rounded-lg bg-emerald-900 px-3 py-2 text-sm font-bold text-emerald-50 hover:bg-emerald-800">
                             Complete Action
                           </button>
                         </form>
@@ -575,7 +575,7 @@ export default async function LoreActionsPage() {
                   <WikiRenderer content={action.action} />
                 </div>
                 {action.outcome ? (
-                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-300/10 p-3">
+                  <div className="mt-3 rounded-lg border border-emerald-300/25 bg-emerald-900/10 p-3">
                     <p className="text-xs font-bold uppercase text-emerald-100">
                       Outcome
                     </p>

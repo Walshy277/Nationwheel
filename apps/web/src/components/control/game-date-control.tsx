@@ -7,7 +7,7 @@ export async function GameDateControl() {
   const updatedBy = clock.updatedByUser?.name ?? clock.updatedByUser?.email;
 
   return (
-    <Panel className="border-emerald-300/35 bg-emerald-300/10">
+    <Panel className="border-emerald-300/35 bg-emerald-900/10">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <Badge tone="accent">World Clock</Badge>
@@ -27,7 +27,7 @@ export async function GameDateControl() {
           ) : null}
         </div>
         <form action={advanceGameDayAction}>
-          <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200">
+          <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
             Next Day
           </button>
         </form>

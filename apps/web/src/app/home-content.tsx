@@ -151,7 +151,7 @@ export async function LandingPage() {
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
                 href="/nations#compare"
-                className="w-full rounded-lg bg-emerald-300 px-5 py-3 text-center font-bold text-zinc-950 hover:bg-emerald-200 sm:w-auto"
+                className="w-full rounded-lg bg-emerald-900 px-5 py-3 text-center font-bold text-emerald-50 hover:bg-emerald-800 sm:w-auto"
               >
                 Compare Nations
               </Link>
@@ -184,7 +184,7 @@ export async function LandingPage() {
               </div>
               <Link
                 href="/directory"
-                className="group grid rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-3"
+                className="group grid rounded-lg border border-emerald-300/25 bg-emerald-900/8 p-3"
               >
                 <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
                   Site Directory

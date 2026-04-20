@@ -79,7 +79,7 @@ function LeaderboardTable({ rows }: { rows: BoardRow[] }) {
           <Link
             key={entry.nation.slug}
             href={`/nations/${entry.nation.slug}`}
-            className="grid gap-2 rounded-lg border border-white/10 bg-black/20 p-3 hover:border-emerald-300/70 hover:bg-emerald-300/5"
+            className="grid gap-2 rounded-lg border border-white/10 bg-black/20 p-3 hover:border-emerald-300/70 hover:bg-emerald-900/5"
           >
             <div className="flex items-start justify-between gap-3">
               <span className="break-words font-bold text-zinc-50">
@@ -107,7 +107,7 @@ function LeaderboardTable({ rows }: { rows: BoardRow[] }) {
           {rows.map((entry) => (
             <tr
               key={entry.nation.slug}
-              className="border-b border-white/5 hover:bg-emerald-300/5"
+              className="border-b border-white/5 hover:bg-emerald-900/5"
             >
               <td className="py-3 pr-4 font-mono text-emerald-200">
                 {entry.ranked ? `#${entry.rank}` : "-"}

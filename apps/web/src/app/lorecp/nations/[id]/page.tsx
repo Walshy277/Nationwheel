@@ -155,7 +155,7 @@ export default async function LoreNationPage({
                     placeholder="Daily update"
                     className="min-h-24 p-3 text-sm"
                   />
-                  <button className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10">
+                  <button className="rounded-lg border border-emerald-300/70 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10">
                     Add Update
                   </button>
                 </form>

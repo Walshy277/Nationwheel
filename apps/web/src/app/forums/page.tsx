@@ -91,7 +91,7 @@ export default async function ForumsPage() {
             community support.
           </p>
         </div>
-        <Panel className="grid gap-4 border-emerald-300/25 bg-emerald-300/8">
+        <Panel className="grid gap-4 border-emerald-300/25 bg-emerald-900/8">
           <p className="text-xs font-bold uppercase text-emerald-100">
             Board Stats
           </p>
@@ -154,7 +154,7 @@ export default async function ForumsPage() {
               placeholder="Opening post. BBCode works here."
               className="min-h-36 p-3 lg:col-span-2"
             />
-            <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200 lg:col-span-2">
+            <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800 lg:col-span-2">
               Create Topic
             </button>
           </form>

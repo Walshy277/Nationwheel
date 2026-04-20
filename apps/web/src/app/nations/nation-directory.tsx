@@ -149,7 +149,7 @@ export function NationDirectory({ nations }: { nations: NationSummary[] }) {
               <Panel className="h-full transition group-hover:-translate-y-0.5 group-hover:border-emerald-300/70 group-hover:bg-[color:var(--panel-strong)]">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex min-w-0 items-start gap-3">
-                    <div className="relative grid aspect-[3/2] w-20 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-emerald-300/10 p-1 text-sm font-black text-emerald-100">
+                    <div className="relative grid aspect-[3/2] w-20 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/10 bg-emerald-900/10 p-1 text-sm font-black text-emerald-100">
                       {nation.flagImage ? (
                         <Image
                           src={nation.flagImage}

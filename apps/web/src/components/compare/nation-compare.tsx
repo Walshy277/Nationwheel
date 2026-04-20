@@ -292,7 +292,7 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
             type="button"
             onClick={addNation}
             disabled={selectedSlugs.length >= 4}
-            className="w-full rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            className="w-full rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             Add Nation
           </button>
@@ -462,7 +462,7 @@ export function NationCompare({ nations }: { nations: NationSummary[] }) {
                     >
                       <span className="inline-flex flex-wrap items-center gap-2">
                         {isBest ? (
-                          <span className="rounded-md border border-emerald-300/50 bg-emerald-300/10 px-2 py-1 text-xs font-bold uppercase text-emerald-100">
+                          <span className="rounded-md border border-emerald-300/50 bg-emerald-900/10 px-2 py-1 text-xs font-bold uppercase text-emerald-100">
                             Best
                           </span>
                         ) : null}
