@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { GameDateBanner } from "@/components/layout/game-date-banner";
+import { SideNav } from "@/components/layout/side-nav";
 import { TopNav } from "@/components/layout/top-nav";
 
 const geistSans = Geist({
@@ -46,7 +47,10 @@ export default function RootLayout({
       <body className="font-sans antialiased">
         <TopNav />
         <GameDateBanner />
-        {children}
+        <div className="xl:grid xl:grid-cols-[280px_minmax(0,1fr)]">
+          <SideNav />
+          <div className="min-w-0">{children}</div>
+        </div>
       </body>
     </html>
   );

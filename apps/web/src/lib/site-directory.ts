@@ -120,6 +120,11 @@ export const dashboardDirectoryGroups: SiteDirectoryGroup[] = [
         label: "Postal Service",
         detail: "Tracked diplomatic mail, staff edits, and action notices.",
       },
+      {
+        href: "/dashboard/notifications",
+        label: "Notifications",
+        detail: "Staff updates, action changes, and unread alerts.",
+      },
     ],
   },
 ];
