@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import {
@@ -13,6 +14,11 @@ type NavLink = {
   href: string;
   label: string;
   detail?: string;
+};
+
+type UnreadCounts = {
+  mail: number;
+  notifications: number;
 };
 
 const toolsMenuClassName =
@@ -56,13 +62,81 @@ function MenuSection({
   );
 }
 
+function NavIconButton({
+  href,
+  label,
+  count,
+  children,
+}: {
+  href: string;
+  label: string;
+  count: number;
+  children: ReactNode;
+}) {
+  const displayCount = count > 99 ? "99+" : count.toString();
+
+  return (
+    <Link
+      href={href}
+      aria-label={count ? `${label}, ${count} unread` : label}
+      title={count ? `${label}: ${count} unread` : label}
+      className="relative grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-zinc-200 hover:border-emerald-300/60 hover:bg-white/5 hover:text-white"
+    >
+      {children}
+      {count ? (
+        <span className="absolute -right-1 -top-1 min-w-5 rounded-full border border-[#080907] bg-amber-300 px-1.5 py-0.5 text-center text-[10px] font-black leading-none text-zinc-950">
+          {displayCount}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+function BellIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    >
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+      <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+    </svg>
+  );
+}
+
+function LetterIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    >
+      <path d="M4 6h16v12H4z" />
+      <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
 export function TopNavMenu({
   userLabel,
   myNationHref,
+  unreadCounts,
   controlLinks,
 }: {
   userLabel: string | null;
   myNationHref: string | null;
+  unreadCounts: UnreadCounts;
   controlLinks: NavLink[];
 }) {
   const menuRef = useRef<HTMLDivElement>(null);
@@ -228,6 +302,24 @@ export function TopNavMenu({
         </nav>
 
         <div className="flex items-center gap-2">
+          {userLabel ? (
+            <>
+              <NavIconButton
+                href="/dashboard/notifications"
+                label="Notifications"
+                count={unreadCounts.notifications}
+              >
+                <BellIcon />
+              </NavIconButton>
+              <NavIconButton
+                href="/dashboard/inbox"
+                label="Postal mail"
+                count={unreadCounts.mail}
+              >
+                <LetterIcon />
+              </NavIconButton>
+            </>
+          ) : null}
           <Link
             href={userLabel ? "/dashboard" : "/login"}
             className="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 hover:border-emerald-300/60 hover:bg-white/5"

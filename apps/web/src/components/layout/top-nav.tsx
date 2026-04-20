@@ -20,6 +20,24 @@ async function getMyNationHref(userId: string | undefined) {
   return nation ? `/nations/${nation.slug}` : null;
 }
 
+async function getNavUnreadCounts(userId: string | undefined) {
+  if (!userId || !hasDatabase()) {
+    return { mail: 0, notifications: 0 };
+  }
+
+  const prisma = getPrisma();
+  const [mail, notifications] = await prisma.$transaction([
+    prisma.nationMessage.count({
+      where: { toNation: { leaderUserId: userId }, readAt: null },
+    }),
+    prisma.leaderNotification.count({
+      where: { nation: { leaderUserId: userId }, readAt: null },
+    }),
+  ]);
+
+  return { mail, notifications };
+}
+
 export async function TopNav() {
   const user = await getCurrentUser();
   const userRoles = user
@@ -41,6 +59,7 @@ export async function TopNav() {
     <TopNavMenu
       userLabel={user?.role ?? null}
       myNationHref={await getMyNationHref(user?.id)}
+      unreadCounts={await getNavUnreadCounts(user?.id)}
       controlLinks={controlLinks}
     />
   );
