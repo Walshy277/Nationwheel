@@ -27,7 +27,7 @@ const categories = [
 ] as const;
 
 const reactionLabels: Record<ReactionKind, string> = {
-  LIKE: "Like",
+  LIKE: "👍",
   SUPPORT: "Support",
   CONCERN: "Concern",
   INSIGHT: "Insight",
@@ -61,10 +61,26 @@ export default async function ForumsPage() {
         },
       })
     : [];
+  const totalReplies = threads.reduce(
+    (total, thread) => total + thread._count.posts,
+    0,
+  );
+  const totalReactions = threads.reduce(
+    (total, thread) => total + thread.reactions.length,
+    0,
+  );
+  const groupedThreads = categories.map((category) => ({
+    category,
+    threads: threads.filter((thread) => thread.category === category),
+  }));
+  const uncategorizedThreads = threads.filter(
+    (thread) =>
+      !categories.includes(thread.category as (typeof categories)[number]),
+  );
 
   return (
     <PageShell className="grid gap-6">
-      <header className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+      <header className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-end">
         <div>
           <Badge tone="accent">Forums</Badge>
           <h1 className="mt-4 text-4xl font-black text-zinc-50">
@@ -75,11 +91,11 @@ export default async function ForumsPage() {
             community support.
           </p>
         </div>
-        <Panel className="border-emerald-300/25 bg-emerald-300/8">
+        <Panel className="grid gap-4 border-emerald-300/25 bg-emerald-300/8">
           <p className="text-xs font-bold uppercase text-emerald-100">
-            Forum Status
+            Board Stats
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-3 gap-3">
             <div>
               <p className="text-3xl font-black text-zinc-50">
                 {threads.length}
@@ -87,17 +103,31 @@ export default async function ForumsPage() {
               <p className="text-xs text-zinc-400">Threads</p>
             </div>
             <div>
-              <p className="text-3xl font-black text-zinc-50">
-                {threads.reduce((total, thread) => total + thread._count.posts, 0)}
-              </p>
+              <p className="text-3xl font-black text-zinc-50">{totalReplies}</p>
               <p className="text-xs text-zinc-400">Replies</p>
+            </div>
+            <div>
+              <p className="text-3xl font-black text-zinc-50">
+                {totalReactions}
+              </p>
+              <p className="text-xs text-zinc-400">Reactions</p>
             </div>
           </div>
         </Panel>
       </header>
 
-      <Panel className="bg-[color:var(--panel-strong)]/85">
-        <h2 className="text-2xl font-bold text-zinc-50">Start a Thread</h2>
+      <Panel className="bg-[color:var(--panel-strong)]/85" id="new-thread">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-2xl font-bold text-zinc-50">New Topic</h2>
+            <p className="mt-2 text-sm leading-6 text-zinc-400">
+              Start a board topic with a category, title, and opening post.
+            </p>
+          </div>
+          <Badge tone={user ? "accent" : "neutral"}>
+            {user ? "Signed in" : "Login required"}
+          </Badge>
+        </div>
         {user ? (
           <form
             action={createForumThreadAction}
@@ -121,11 +151,11 @@ export default async function ForumsPage() {
               name="body"
               required
               maxLength={8000}
-              placeholder="Open with the question, proposal, or report. BBCode works here."
+              placeholder="Opening post. BBCode works here."
               className="min-h-36 p-3 lg:col-span-2"
             />
             <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200 lg:col-span-2">
-              Publish Thread
+              Create Topic
             </button>
           </form>
         ) : (
@@ -138,78 +168,128 @@ export default async function ForumsPage() {
         )}
       </Panel>
 
-      <section className="grid gap-4">
-        {threads.map((thread) => {
-          const counts = reactionCounts(thread.reactions);
-          const latestPost = thread.posts[0];
-          return (
-            <Panel
-              key={thread.id}
-              className={thread.isPinned ? "border-amber-300/35" : undefined}
-            >
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="flex flex-wrap items-center gap-2">
-                    {thread.isPinned ? <Badge tone="warning">Pinned</Badge> : null}
-                    <Badge>{thread.category}</Badge>
-                    <Badge>{thread._count.posts} replies</Badge>
-                  </div>
-                  <Link href={`/forums/${thread.slug}`}>
-                    <h2 className="mt-3 text-2xl font-black text-zinc-50 hover:text-emerald-100">
-                      {thread.title}
+      <section className="grid gap-5">
+        {[...groupedThreads, { category: "Other", threads: uncategorizedThreads }]
+          .filter((group) => group.threads.length > 0 || group.category !== "Other")
+          .map((group) => (
+            <Panel key={group.category} className="p-0">
+              <div className="rounded-t-lg border-b border-white/10 bg-black/30 px-4 py-3 sm:px-5">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-black text-zinc-50">
+                      {group.category}
                     </h2>
-                  </Link>
-                  <p className="mt-2 text-xs text-zinc-500">
-                    Started {thread.createdAt.toLocaleString("en-GB")} by{" "}
-                    {thread.author.name ?? thread.author.email ?? "Community"}
-                  </p>
-                </div>
-                <Link
-                  href={`/forums/${thread.slug}`}
-                  className="rounded-lg border border-emerald-300/70 px-4 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-300/10"
-                >
-                  Open
-                </Link>
-              </div>
-
-              <div className="mt-4 line-clamp-4">
-                <WikiRenderer content={thread.body} />
-              </div>
-
-              <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
-                {(Object.keys(reactionLabels) as ReactionKind[]).map((kind) => (
-                  <form
-                    key={kind}
-                    action={toggleForumReactionAction.bind(null, thread.id)}
+                    <p className="mt-1 text-sm text-zinc-400">
+                      {group.threads.length} topic
+                      {group.threads.length === 1 ? "" : "s"}
+                    </p>
+                  </div>
+                  <a
+                    href="#new-thread"
+                    className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
                   >
-                    <input type="hidden" name="kind" value={kind} />
-                    <button
-                      className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
-                      disabled={!user}
-                    >
-                      {reactionLabels[kind]} {counts[kind] ?? 0}
-                    </button>
-                  </form>
-                ))}
+                    New Topic
+                  </a>
+                </div>
               </div>
-
-              {latestPost ? (
-                <p className="mt-4 text-sm text-zinc-400">
-                  Latest reply by{" "}
-                  {latestPost.author.name ??
-                    latestPost.author.email ??
-                    "Community"}{" "}
-                  on {latestPost.createdAt.toLocaleString("en-GB")}
-                </p>
-              ) : null}
+              <div className="hidden grid-cols-[minmax(0,1fr)_96px_120px_240px] border-b border-white/10 px-5 py-2 text-xs font-bold uppercase text-zinc-500 lg:grid">
+                <div>Topic</div>
+                <div className="text-center">Replies</div>
+                <div className="text-center">Reactions</div>
+                <div>Latest</div>
+              </div>
+              <div className="divide-y divide-white/10">
+                {group.threads.map((thread) => {
+                  const counts = reactionCounts(thread.reactions);
+                  const latestPost = thread.posts[0];
+                  return (
+                    <article
+                      key={thread.id}
+                      className="grid gap-4 px-4 py-4 hover:bg-white/[0.03] sm:px-5 lg:grid-cols-[minmax(0,1fr)_96px_120px_240px] lg:items-center"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-2">
+                          {thread.isPinned ? (
+                            <Badge tone="warning">Pinned</Badge>
+                          ) : null}
+                          <Badge>{thread.category}</Badge>
+                        </div>
+                        <Link href={`/forums/${thread.slug}`}>
+                          <h3 className="mt-2 text-xl font-black text-zinc-50 hover:text-emerald-100">
+                            {thread.title}
+                          </h3>
+                        </Link>
+                        <p className="mt-2 text-xs text-zinc-500">
+                          Started by{" "}
+                          {thread.author.name ??
+                            thread.author.email ??
+                            "Community"}{" "}
+                          on {thread.createdAt.toLocaleString("en-GB")}
+                        </p>
+                        <div className="mt-3 line-clamp-2 text-sm">
+                          <WikiRenderer content={thread.body} />
+                        </div>
+                      </div>
+                      <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-center lg:border-0 lg:bg-transparent">
+                        <p className="text-2xl font-black text-zinc-50">
+                          {thread._count.posts}
+                        </p>
+                        <p className="text-xs text-zinc-500 lg:hidden">
+                          Replies
+                        </p>
+                      </div>
+                      <div className="grid gap-2">
+                        <div className="text-center text-sm font-bold text-zinc-200">
+                          {thread.reactions.length} total
+                        </div>
+                        <div className="flex flex-wrap justify-center gap-1">
+                          {(Object.keys(reactionLabels) as ReactionKind[]).map(
+                            (kind) => (
+                              <form
+                                key={kind}
+                                action={toggleForumReactionAction.bind(
+                                  null,
+                                  thread.id,
+                                )}
+                              >
+                                <input type="hidden" name="kind" value={kind} />
+                                <button
+                                  title={reactionLabels[kind]}
+                                  className="rounded-md border border-white/10 px-2 py-1 text-xs font-bold text-zinc-100 hover:border-emerald-300/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+                                  disabled={!user}
+                                >
+                                  {reactionLabels[kind]} {counts[kind] ?? 0}
+                                </button>
+                              </form>
+                            ),
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-sm leading-6 text-zinc-400">
+                        {latestPost ? (
+                          <>
+                            <p className="font-bold text-zinc-200">
+                              {latestPost.author.name ??
+                                latestPost.author.email ??
+                                "Community"}
+                            </p>
+                            <p>{latestPost.createdAt.toLocaleString("en-GB")}</p>
+                          </>
+                        ) : (
+                          <p>No replies yet</p>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+                {group.threads.length === 0 ? (
+                  <div className="px-4 py-6 text-sm text-zinc-300 sm:px-5">
+                    No topics in this board yet.
+                  </div>
+                ) : null}
+              </div>
             </Panel>
-          );
-        })}
-        {threads.length === 0 ? (
-          <Panel className="text-zinc-300">
-            No forum threads yet. Start the first discussion.
-          </Panel>
-        ) : null}
+          ))}
       </section>
     </PageShell>
   );

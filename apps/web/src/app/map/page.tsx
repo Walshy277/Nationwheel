@@ -24,8 +24,8 @@ export default async function MapPage() {
           profiles and wiki pages.
         </p>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <NationMap className="min-h-[680px]" />
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <NationMap />
         <Panel>
           <div className="text-xs font-bold uppercase text-zinc-400">
             Reference Index

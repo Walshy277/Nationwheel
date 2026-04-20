@@ -32,7 +32,7 @@ export async function generateMetadata({
 }
 
 const reactionLabels: Record<ReactionKind, string> = {
-  LIKE: "Like",
+  LIKE: "👍",
   SUPPORT: "Support",
   CONCERN: "Concern",
   INSIGHT: "Insight",
@@ -74,7 +74,7 @@ export default async function ForumThreadPage({
 
   return (
     <PageShell className="grid gap-6">
-      <div>
+      <header className="grid gap-4 border-b border-white/10 pb-6">
         <Link
           href="/forums"
           className="text-sm font-bold text-emerald-100 hover:text-emerald-200"
@@ -93,11 +93,30 @@ export default async function ForumThreadPage({
           Started {thread.createdAt.toLocaleString("en-GB")} by{" "}
           {thread.author.name ?? thread.author.email ?? "Community"}
         </p>
-      </div>
+      </header>
 
-      <Panel className="grid gap-5 border-emerald-300/25">
-        <WikiRenderer content={thread.body} />
-        <div className="flex flex-wrap items-center gap-2 border-t border-white/10 pt-4">
+      <Panel className="overflow-hidden p-0">
+        <div className="grid lg:grid-cols-[220px_minmax(0,1fr)]">
+          <aside className="border-b border-white/10 bg-black/25 p-4 lg:border-b-0 lg:border-r lg:p-5">
+            <p className="text-sm font-black text-zinc-50">
+              {thread.author.name ?? thread.author.email ?? "Community"}
+            </p>
+            <p className="mt-1 text-xs uppercase text-zinc-500">Topic author</p>
+            <div className="mt-4 grid grid-cols-2 gap-2 lg:grid-cols-1">
+              <Badge>{thread.category}</Badge>
+              <Badge>{thread.posts.length} replies</Badge>
+            </div>
+          </aside>
+          <article className="p-4 sm:p-5">
+            <div className="text-xs font-bold uppercase text-zinc-500">
+              Opening Post
+            </div>
+            <div className="mt-4">
+              <WikiRenderer content={thread.body} />
+            </div>
+          </article>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 border-t border-white/10 bg-black/20 px-4 py-3 sm:px-5">
           {(Object.keys(reactionLabels) as ReactionKind[]).map((kind) => (
             <form
               key={kind}
@@ -116,17 +135,32 @@ export default async function ForumThreadPage({
       </Panel>
 
       <section className="grid gap-4">
-        <h2 className="text-2xl font-black text-zinc-50">Replies</h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-2xl font-black text-zinc-50">Replies</h2>
+          <Badge>{thread.posts.length}</Badge>
+        </div>
         {thread.posts.map((post) => (
-          <Panel key={post.id}>
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <Badge>{post.author.name ?? post.author.email ?? "Community"}</Badge>
-              <span className="text-xs text-zinc-500">
-                {post.createdAt.toLocaleString("en-GB")}
-              </span>
-            </div>
-            <div className="mt-4">
-              <WikiRenderer content={post.body} />
+          <Panel key={post.id} className="overflow-hidden p-0">
+            <div className="grid lg:grid-cols-[220px_minmax(0,1fr)]">
+              <aside className="border-b border-white/10 bg-black/25 p-4 lg:border-b-0 lg:border-r lg:p-5">
+                <p className="text-sm font-black text-zinc-50">
+                  {post.author.name ?? post.author.email ?? "Community"}
+                </p>
+                <p className="mt-1 text-xs uppercase text-zinc-500">Member</p>
+              </aside>
+              <article className="p-4 sm:p-5">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+                  <span className="text-xs font-bold uppercase text-zinc-500">
+                    Reply
+                  </span>
+                  <span className="text-xs text-zinc-500">
+                    {post.createdAt.toLocaleString("en-GB")}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <WikiRenderer content={post.body} />
+                </div>
+              </article>
             </div>
           </Panel>
         ))}

@@ -28,13 +28,6 @@ function announcementItems(content: string) {
     .slice(0, 8);
 }
 
-const reactionLabels: Record<ReactionKind, string> = {
-  LIKE: "Like",
-  SUPPORT: "Support",
-  CONCERN: "Concern",
-  INSIGHT: "Insight",
-};
-
 function reactionCounts(reactions: Array<{ kind: ReactionKind }>) {
   return reactions.reduce(
     (counts, reaction) => ({
@@ -58,17 +51,15 @@ function NewsReactions({
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      {(Object.keys(reactionLabels) as ReactionKind[]).map((kind) => (
-        <form key={kind} action={toggleWorldNewsReactionAction.bind(null, postId)}>
-          <input type="hidden" name="kind" value={kind} />
-          <button
-            className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-amber-300/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!signedIn}
-          >
-            {reactionLabels[kind]} {counts[kind] ?? 0}
-          </button>
-        </form>
-      ))}
+      <form action={toggleWorldNewsReactionAction.bind(null, postId)}>
+        <input type="hidden" name="kind" value={ReactionKind.LIKE} />
+        <button
+          className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-amber-300/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!signedIn}
+        >
+          👍 {counts.LIKE ?? 0}
+        </button>
+      </form>
     </div>
   );
 }
