@@ -26,7 +26,6 @@ export async function TopNav() {
     ? Array.from(new Set([user.role, ...(user.roles ?? [])]))
     : [];
   const controlLinks = [
-    ...(user ? [{ href: "/dashboard", label: "Dashboard" }] : []),
     ...(hasPanelAccess(userRoles, "LORECP")
       ? [{ href: "/lorecp", label: "LoreCP" }]
       : []),

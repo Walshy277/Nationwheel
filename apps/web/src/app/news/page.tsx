@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ReactionKind } from "@prisma/client";
+import { toggleWorldNewsReactionAction } from "@/app/actions";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
+import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
 import { getPublicContentPage } from "@/lib/public-content";
@@ -25,16 +28,65 @@ function announcementItems(content: string) {
     .slice(0, 8);
 }
 
+const reactionLabels: Record<ReactionKind, string> = {
+  LIKE: "Like",
+  SUPPORT: "Support",
+  CONCERN: "Concern",
+  INSIGHT: "Insight",
+};
+
+function reactionCounts(reactions: Array<{ kind: ReactionKind }>) {
+  return reactions.reduce(
+    (counts, reaction) => ({
+      ...counts,
+      [reaction.kind]: (counts[reaction.kind] ?? 0) + 1,
+    }),
+    {} as Partial<Record<ReactionKind, number>>,
+  );
+}
+
+function NewsReactions({
+  postId,
+  reactions,
+  signedIn,
+}: {
+  postId: string;
+  reactions: Array<{ kind: ReactionKind }>;
+  signedIn: boolean;
+}) {
+  const counts = reactionCounts(reactions);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      {(Object.keys(reactionLabels) as ReactionKind[]).map((kind) => (
+        <form key={kind} action={toggleWorldNewsReactionAction.bind(null, postId)}>
+          <input type="hidden" name="kind" value={kind} />
+          <button
+            className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-amber-300/50 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={!signedIn}
+          >
+            {reactionLabels[kind]} {counts[kind] ?? 0}
+          </button>
+        </form>
+      ))}
+    </div>
+  );
+}
+
 export default async function WorldNewsPage() {
-  const [posts, announcements] = await Promise.all([
+  const [posts, announcements, user] = await Promise.all([
     hasDatabase()
       ? getPrisma().worldNewsPost.findMany({
           orderBy: { publishedAt: "desc" },
           take: 30,
-          include: { author: { select: { name: true, email: true } } },
+          include: {
+            author: { select: { name: true, email: true } },
+            reactions: { select: { kind: true, userId: true } },
+          },
         })
       : [],
     getPublicContentPage("announcements"),
+    getCurrentUser(),
   ]);
   const tickerItems = [
     ...announcementItems(announcements.content),
@@ -78,6 +130,24 @@ export default async function WorldNewsPage() {
             </p>
             <div className="mt-6 border-t border-white/10 pt-6">
               <WikiRenderer content={leadPost.content} />
+            </div>
+            <div className="mt-6 border-t border-white/10 pt-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+                Reader reaction
+              </p>
+              <NewsReactions
+                postId={leadPost.id}
+                reactions={leadPost.reactions}
+                signedIn={Boolean(user)}
+              />
+              {!user ? (
+                <p className="mt-3 text-sm text-zinc-400">
+                  <Link href="/login" className="font-bold text-amber-100">
+                    Sign in
+                  </Link>{" "}
+                  to react to reports.
+                </p>
+              ) : null}
             </div>
           </article>
           <aside className="rounded-lg border border-white/10 bg-black/20 p-4">
@@ -131,6 +201,11 @@ export default async function WorldNewsPage() {
                   <WikiRenderer content={post.content} />
                 </div>
               </details>
+              <NewsReactions
+                postId={post.id}
+                reactions={post.reactions}
+                signedIn={Boolean(user)}
+              />
               <div className="flex flex-wrap items-center gap-3 text-sm text-zinc-400">
                 <span>
                   By {post.author?.name ?? post.author?.email ?? "World News"}

@@ -9,6 +9,8 @@ const publicRoutes = [
   "/leaderboards",
   "/map",
   "/news",
+  "/forums",
+  "/directory",
   "/lore",
   "/wars",
   "/actions",

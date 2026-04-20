@@ -43,6 +43,13 @@ const publicLinks: DashboardLink[] = [
     tone: "warning",
   },
   {
+    href: "/forums",
+    title: "Forums",
+    detail: "Discuss canon, diplomacy, trade, news, and support.",
+    badge: "Community",
+    tone: "accent",
+  },
+  {
     href: "/map",
     title: "World Map",
     detail: "Open the Season 1 reference map.",
@@ -332,7 +339,7 @@ export default async function DashboardPage() {
               href="/dashboard/inbox"
               className="rounded-lg border border-white/10 px-5 py-3 font-bold text-zinc-100 hover:bg-white/5"
             >
-              Inbox
+              Postal Service
             </Link>
             {uniqueStaffLinks.length ? (
               <a
@@ -482,9 +489,9 @@ export default async function DashboardPage() {
           },
           {
             href: "/dashboard/inbox",
-            title: "Inbox",
+            title: "Postal Service",
             detail:
-              "Read private messages, staff edits, and action notifications.",
+              "Read tracked diplomatic mail, staff edits, and action notifications.",
             badge:
               (leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)
                 ? `${(leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)} New`

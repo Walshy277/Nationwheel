@@ -9,6 +9,8 @@ import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissio
 import {
   assignNationSchema,
   discordUserLinkSchema,
+  forumPostSchema,
+  forumThreadSchema,
   loreActionCompletionSchema,
   loreActionEditSchema,
   leaderNameSchema,
@@ -19,6 +21,7 @@ import {
   nationStatsSchema,
   overviewUpdateSchema,
   publicLorePageSchema,
+  reactionSchema,
   roleUpdateSchema,
   wikiUpdateSchema,
   worldNewsPostSchema,
@@ -69,6 +72,28 @@ function slugify(value: string) {
     .replace(/&/g, " and ")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function createTrackingCode() {
+  return `NWPS-${Date.now().toString(36).toUpperCase()}-${Math.random()
+    .toString(36)
+    .slice(2, 7)
+    .toUpperCase()}`;
+}
+
+async function createUniqueForumSlug(title: string) {
+  const base = slugify(title) || "thread";
+  const prisma = getPrisma();
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    const slug = attempt === 0 ? base : `${base}-${attempt + 1}`;
+    const existing = await prisma.forumThread.findUnique({
+      where: { slug },
+      select: { id: true },
+    });
+    if (!existing) return slug;
+  }
+
+  return `${base}-${Date.now().toString(36)}`;
 }
 
 function withoutUndefinedValues<T extends Record<string, unknown>>(value: T) {
@@ -784,7 +809,12 @@ export async function createNationMessageAction(formData: FormData) {
   }
 
   const message = await prisma.nationMessage.create({
-    data: payload,
+    data: {
+      ...payload,
+      serviceName: "Nation Wheel Postal Service",
+      trackingCode: createTrackingCode(),
+      status: "DELIVERED",
+    },
   });
 
   await prisma.leaderNotification.create({
@@ -802,6 +832,137 @@ export async function createNationMessageAction(formData: FormData) {
   revalidatePath("/dashboard/inbox");
   revalidatePath("/dashboard/notifications");
   revalidatePath("/dashboard/messages");
+}
+
+export async function createForumThreadAction(formData: FormData) {
+  const user = await requireUser();
+  const payload = forumThreadSchema.parse({
+    title: readText(formData, "title"),
+    category: readText(formData, "category"),
+    body: readText(formData, "body"),
+  });
+  const slug = await createUniqueForumSlug(payload.title);
+
+  const thread = await getPrisma().forumThread.create({
+    data: {
+      ...payload,
+      slug,
+      authorId: user.id,
+    },
+  });
+
+  revalidatePath("/forums");
+  redirect(`/forums/${thread.slug}`);
+}
+
+export async function createForumPostAction(
+  threadId: string,
+  formData: FormData,
+) {
+  const user = await requireUser();
+  const payload = forumPostSchema.parse({
+    body: readText(formData, "body"),
+  });
+  const prisma = getPrisma();
+  const thread = await prisma.forumThread.findUniqueOrThrow({
+    where: { id: threadId },
+    select: { slug: true },
+  });
+
+  await prisma.forumPost.create({
+    data: {
+      threadId,
+      authorId: user.id,
+      body: payload.body,
+    },
+  });
+  await prisma.forumThread.update({
+    where: { id: threadId },
+    data: { updatedAt: new Date() },
+  });
+
+  revalidatePath("/forums");
+  revalidatePath(`/forums/${thread.slug}`);
+}
+
+export async function toggleForumReactionAction(
+  threadId: string,
+  formData: FormData,
+) {
+  const user = await requireUser();
+  const payload = reactionSchema.parse({
+    kind: readText(formData, "kind"),
+  });
+  const prisma = getPrisma();
+  const thread = await prisma.forumThread.findUniqueOrThrow({
+    where: { id: threadId },
+    select: { slug: true },
+  });
+
+  const existing = await prisma.forumReaction.findUnique({
+    where: {
+      threadId_userId_kind: {
+        threadId,
+        userId: user.id,
+        kind: payload.kind,
+      },
+    },
+  });
+
+  if (existing) {
+    await prisma.forumReaction.delete({ where: { id: existing.id } });
+  } else {
+    await prisma.forumReaction.create({
+      data: {
+        threadId,
+        userId: user.id,
+        kind: payload.kind,
+      },
+    });
+  }
+
+  revalidatePath("/forums");
+  revalidatePath(`/forums/${thread.slug}`);
+}
+
+export async function toggleWorldNewsReactionAction(
+  postId: string,
+  formData: FormData,
+) {
+  const user = await requireUser();
+  const payload = reactionSchema.parse({
+    kind: readText(formData, "kind"),
+  });
+  const prisma = getPrisma();
+
+  await prisma.worldNewsPost.findUniqueOrThrow({
+    where: { id: postId },
+    select: { id: true },
+  });
+
+  const existing = await prisma.worldNewsReaction.findUnique({
+    where: {
+      postId_userId_kind: {
+        postId,
+        userId: user.id,
+        kind: payload.kind,
+      },
+    },
+  });
+
+  if (existing) {
+    await prisma.worldNewsReaction.delete({ where: { id: existing.id } });
+  } else {
+    await prisma.worldNewsReaction.create({
+      data: {
+        postId,
+        userId: user.id,
+        kind: payload.kind,
+      },
+    });
+  }
+
+  revalidatePath("/news");
 }
 
 export async function advanceGameDayAction() {

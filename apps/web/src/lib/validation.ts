@@ -1,4 +1,4 @@
-import { LoreActionStatus, Role } from "@prisma/client";
+import { LoreActionStatus, ReactionKind, Role } from "@prisma/client";
 import { z } from "zod";
 
 export const nationStatsSchema = z
@@ -131,5 +131,25 @@ export const nationMessageSchema = z
     toNationId: z.string().min(1),
     subject: z.string().min(1).max(140),
     body: z.string().min(1).max(5000),
+  })
+  .strict();
+
+export const reactionSchema = z
+  .object({
+    kind: z.nativeEnum(ReactionKind),
+  })
+  .strict();
+
+export const forumThreadSchema = z
+  .object({
+    title: z.string().min(4).max(140),
+    category: z.string().min(1).max(48),
+    body: z.string().min(10).max(8000),
+  })
+  .strict();
+
+export const forumPostSchema = z
+  .object({
+    body: z.string().min(2).max(8000),
   })
   .strict();

@@ -30,6 +30,13 @@ enum LoreActionStatus {
   REQUIRES_SPIN
 }
 
+enum ReactionKind {
+  LIKE
+  SUPPORT
+  CONCERN
+  INSIGHT
+}
+
 model User {
   id                String             @id @default(cuid())
   name              String?
@@ -47,6 +54,10 @@ model User {
   loreActionUpdates LoreActionUpdate[] @relation("LoreActionUpdateCreatedBy")
   publicPageUpdates PublicLorePage[]   @relation("PublicPageUpdatedBy")
   newsPosts         WorldNewsPost[]    @relation("WorldNewsPostAuthor")
+  newsReactions     WorldNewsReaction[]
+  forumThreads      ForumThread[]      @relation("ForumThreadAuthor")
+  forumPosts        ForumPost[]        @relation("ForumPostAuthor")
+  forumReactions    ForumReaction[]
   leaderNotifications LeaderNotification[] @relation("LeaderNotificationCreatedBy")
   gameClockUpdates GameClock[] @relation("GameClockUpdatedBy")
   accounts          Account[]
@@ -159,6 +170,9 @@ model NationMessage {
   fromNation   Nation   @relation("NationMessageFrom", fields: [fromNationId], references: [id], onDelete: Cascade)
   toNationId   String
   toNation     Nation   @relation("NationMessageTo", fields: [toNationId], references: [id], onDelete: Cascade)
+  serviceName  String   @default("Nation Wheel Postal Service")
+  trackingCode String   @unique
+  status       String   @default("DELIVERED")
   subject      String
   body         String
   readAt       DateTime?
@@ -199,11 +213,70 @@ model WorldNewsPost {
   sourceUrl   String?
   authorId    String?
   author      User?     @relation("WorldNewsPostAuthor", fields: [authorId], references: [id])
+  reactions   WorldNewsReaction[]
   publishedAt DateTime  @default(now())
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   @@index([publishedAt])
+}
+
+model WorldNewsReaction {
+  id        String       @id @default(cuid())
+  postId    String
+  post      WorldNewsPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ReactionKind
+  createdAt DateTime     @default(now())
+
+  @@unique([postId, userId, kind])
+  @@index([postId, kind])
+}
+
+model ForumThread {
+  id          String       @id @default(cuid())
+  title       String
+  slug        String       @unique
+  category    String
+  body        String
+  isPinned    Boolean      @default(false)
+  authorId    String
+  author      User         @relation("ForumThreadAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  posts       ForumPost[]
+  reactions   ForumReaction[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([category, updatedAt])
+  @@index([authorId, createdAt])
+}
+
+model ForumPost {
+  id        String       @id @default(cuid())
+  threadId  String
+  thread    ForumThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User         @relation("ForumPostAuthor", fields: [authorId], references: [id], onDelete: Cascade)
+  body      String
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
+  @@index([threadId, createdAt])
+  @@index([authorId, createdAt])
+}
+
+model ForumReaction {
+  id        String       @id @default(cuid())
+  threadId  String
+  thread    ForumThread  @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      ReactionKind
+  createdAt DateTime     @default(now())
+
+  @@unique([threadId, userId, kind])
+  @@index([threadId, kind])
 }
 
 model Account {

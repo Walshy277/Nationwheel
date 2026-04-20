@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@nation-wheel/shared": "workspace:*",
-    "discord.js": "^14.19.3",
+    "discord.js": "^14.26.3",
     "dotenv": "^16.6.1",
     "tsx": "^4.20.6"
   },

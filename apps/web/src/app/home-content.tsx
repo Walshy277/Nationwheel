@@ -13,6 +13,7 @@ import {
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { formatGameDate, getGameClock } from "@/lib/game-clock";
 import { listNationSummaries } from "@/lib/nations";
+import { publicDirectoryGroups } from "@/lib/site-directory";
 import mapImage from "../../../../assets/Final_map_S1.jpg";
 
 const featuredSlots = [
@@ -21,42 +22,6 @@ const featuredSlots = [
   { key: "gdp", label: "Largest GDP", detail: "GDP" },
   { key: "military", label: "Highest Army Ranking", detail: "Army ranking" },
   { key: "hdi", label: "Highest HDI", detail: "HDI" },
-] as const;
-
-const quickLinkGroups = [
-  {
-    title: "Nations",
-    links: [
-      ["Site Directory", "/directory", "Find the right page or control panel."],
-      ["Nation Directory", "/nations", "Search every nation profile."],
-      [
-        "Compare Nations",
-        "/nations#compare",
-        "Select 2-4 nations side by side.",
-      ],
-      [
-        "Leaderboards",
-        "/leaderboards",
-        "Rank land, GDP, army ranking, population, and HDI.",
-      ],
-    ],
-  },
-  {
-    title: "Canon",
-    links: [
-      ["Actions", "/actions", "Track current and completed canon actions."],
-      ["World News", "/news", "Read the latest reports from journalists."],
-      ["World Lore", "/lore", "Read the wider setting and canon."],
-      ["Wars", "/wars", "Check active conflicts and outcomes."],
-    ],
-  },
-  {
-    title: "Reference",
-    links: [
-      ["Season Map", "/map", "Open the world reference map."],
-      ["Bot Index", "/activity", "Open the Discord-friendly command center."],
-    ],
-  },
 ] as const;
 
 function StatPill({ label, value }: { label: string; value: string }) {
@@ -208,24 +173,45 @@ export async function LandingPage() {
         <Panel className="grid gap-4">
           <Badge tone="neutral">World Index</Badge>
           <h2 className="text-2xl font-bold text-zinc-50">Start Here</h2>
+          <p className="text-sm leading-6 text-zinc-400">
+            Pages are grouped by daily browsing, canon reference, and analysis
+            tools.
+          </p>
           <div className="grid gap-5">
-            {quickLinkGroups.map((group) => (
+            <div>
+              <div className="mb-2 text-xs font-bold uppercase text-zinc-500">
+                Site Guide
+              </div>
+              <Link
+                href="/directory"
+                className="group grid rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-3"
+              >
+                <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
+                  Site Directory
+                </span>
+                <span className="mt-1 block text-sm leading-6 text-zinc-300">
+                  Find every public page, player dashboard, and staff control
+                  panel.
+                </span>
+              </Link>
+            </div>
+            {publicDirectoryGroups.map((group) => (
               <div key={group.title}>
                 <div className="mb-2 text-xs font-bold uppercase text-zinc-500">
                   {group.title}
                 </div>
                 <div className="grid divide-y divide-white/10">
-                  {group.links.map(([label, href, text]) => (
+                  {group.links.map((link) => (
                     <Link
-                      key={href}
-                      href={href}
+                      key={link.href}
+                      href={link.href}
                       className="group grid gap-1 py-3 first:pt-0 last:pb-0"
                     >
                       <span className="block font-bold text-zinc-50 group-hover:text-emerald-100">
-                        {label}
+                        {link.label}
                       </span>
                       <span className="mt-1 block text-sm leading-6 text-zinc-300">
-                        {text}
+                        {link.detail}
                       </span>
                     </Link>
                   ))}

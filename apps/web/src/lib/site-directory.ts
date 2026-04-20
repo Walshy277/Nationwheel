@@ -10,31 +10,49 @@ export type SiteDirectoryGroup = {
   links: SiteDirectoryLink[];
 };
 
+export const primaryNavLinks: SiteDirectoryLink[] = [
+  {
+    href: "/nations",
+    label: "Nations",
+    detail: "Profiles, wiki pages, leaders, stats, and comparison tools.",
+  },
+  {
+    href: "/actions",
+    label: "Actions",
+    detail: "Ongoing canon actions, spin requirements, and outcomes.",
+  },
+  {
+    href: "/news",
+    label: "News",
+    detail: "Published reports, announcements, and the news ticker.",
+  },
+  {
+    href: "/forums",
+    label: "Forums",
+    detail: "Discuss canon, diplomacy, trade, news, and support.",
+  },
+  {
+    href: "/map",
+    label: "Map",
+    detail: "Season 1 world reference map.",
+  },
+];
+
 export const publicDirectoryGroups: SiteDirectoryGroup[] = [
   {
-    title: "Public Canon",
-    detail: "Read the current state of the world.",
+    title: "Explore",
+    detail: "Start with the live state of the world.",
     links: [
-      {
-        href: "/nations",
-        label: "Nations",
-        detail: "Profiles, wiki pages, leaders, stats, and comparison tools.",
-      },
-      {
-        href: "/actions",
-        label: "Actions",
-        detail: "Ongoing canon actions, spin requirements, and outcomes.",
-      },
-      {
-        href: "/news",
-        label: "News",
-        detail: "Published reports, announcements, and the news ticker.",
-      },
+      primaryNavLinks[0]!,
+      primaryNavLinks[1]!,
+      primaryNavLinks[2]!,
+      primaryNavLinks[3]!,
+      primaryNavLinks[4]!,
     ],
   },
   {
-    title: "World Reference",
-    detail: "Use these pages when checking setting context.",
+    title: "Canon Library",
+    detail: "Reference pages for setting context and continuity.",
     links: [
       {
         href: "/lore",
@@ -47,11 +65,6 @@ export const publicDirectoryGroups: SiteDirectoryGroup[] = [
         detail: "Active wars, frozen conflicts, and peace outcomes.",
       },
       {
-        href: "/map",
-        label: "Map",
-        detail: "Season 1 world reference map.",
-      },
-      {
         href: "/activity-archive",
         label: "Activity Archive",
         detail: "Older activity feed and tracker history.",
@@ -59,7 +72,7 @@ export const publicDirectoryGroups: SiteDirectoryGroup[] = [
     ],
   },
   {
-    title: "Tools",
+    title: "Analysis Tools",
     detail: "Ranking, comparison, and Discord helper pages.",
     links: [
       {
@@ -81,26 +94,33 @@ export const publicDirectoryGroups: SiteDirectoryGroup[] = [
   },
 ];
 
-export const dashboardDirectoryLinks: SiteDirectoryLink[] = [
+export const dashboardDirectoryGroups: SiteDirectoryGroup[] = [
   {
-    href: "/dashboard",
-    label: "Dashboard",
-    detail: "Signed-in home for leaders and staff.",
-  },
-  {
-    href: "/dashboard/wiki",
-    label: "My Nation",
-    detail: "Edit your linked nation wiki, leader name, and profile picture.",
-  },
-  {
-    href: "/dashboard/actions",
-    label: "My Actions",
-    detail: "Track actions and outcomes for your linked nation.",
-  },
-  {
-    href: "/dashboard/inbox",
-    label: "Inbox",
-    detail: "Private messages, staff edits, and action notifications.",
+    title: "Player Hub",
+    detail: "Signed-in pages for leaders and community members.",
+    links: [
+      {
+        href: "/dashboard",
+        label: "Dashboard",
+        detail: "Signed-in home for leaders and staff.",
+      },
+      {
+        href: "/dashboard/wiki",
+        label: "My Nation",
+        detail:
+          "Edit your linked nation wiki, leader name, and profile picture.",
+      },
+      {
+        href: "/dashboard/actions",
+        label: "My Actions",
+        detail: "Track actions and outcomes for your linked nation.",
+      },
+      {
+        href: "/dashboard/inbox",
+        label: "Postal Service",
+        detail: "Tracked diplomatic mail, staff edits, and action notices.",
+      },
+    ],
   },
 ];
 
@@ -174,3 +194,15 @@ export const staffDirectoryGroups: SiteDirectoryGroup[] = [
     ],
   },
 ];
+
+export const dashboardDirectoryLinks = dashboardDirectoryGroups.flatMap(
+  (group) => group.links,
+);
+
+export const allPublicDirectoryLinks = publicDirectoryGroups.flatMap(
+  (group) => group.links,
+);
+
+export const allStaffDirectoryLinks = staffDirectoryGroups.flatMap(
+  (group) => group.links,
+);

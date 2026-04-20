@@ -58,13 +58,13 @@ export default async function DashboardInboxPage() {
   return (
     <PageShell className="grid gap-6">
       <div>
-        <Badge tone="accent">Inbox</Badge>
+        <Badge tone="accent">Postal Service</Badge>
         <h1 className="mt-4 text-4xl font-black text-zinc-50">
-          Nation Inbox
+          World Postal Service
         </h1>
         <p className="mt-3 max-w-3xl text-zinc-300">
-          Private messages and staff notifications for nations linked to your
-          account live here.
+          Private diplomatic mail is delivered through the Nation Wheel Postal
+          Service, with tracking codes for every inter-nation dispatch.
         </p>
       </div>
 
@@ -78,7 +78,7 @@ export default async function DashboardInboxPage() {
           </div>
           <div>
             <p className="text-xs font-bold uppercase text-zinc-500">
-              Messages
+              Parcels
             </p>
             <p className="mt-1 text-3xl font-black text-zinc-50">
               {received.length}
@@ -119,7 +119,7 @@ export default async function DashboardInboxPage() {
       </Panel>
 
       <Panel className="bg-[color:var(--panel-strong)]/85">
-        <h2 className="text-2xl font-bold text-zinc-50">Send Message</h2>
+        <h2 className="text-2xl font-bold text-zinc-50">Dispatch Mail</h2>
         {myNations.length ? (
           <form
             action={createNationMessageAction}
@@ -133,7 +133,7 @@ export default async function DashboardInboxPage() {
               ))}
             </select>
             <select name="toNationId" required className="px-3 py-2">
-              <option value="">Choose recipient nation</option>
+              <option value="">Choose delivery nation</option>
               {allNations
                 .filter(
                   (nation) => !myNations.some((mine) => mine.id === nation.id),
@@ -148,30 +148,30 @@ export default async function DashboardInboxPage() {
               name="subject"
               required
               maxLength={140}
-              placeholder="Subject"
+              placeholder="Parcel subject"
               className="px-3 py-2 lg:col-span-2"
             />
             <textarea
               name="body"
               required
               maxLength={5000}
-              placeholder="Private message. BBCode works here: [b]bold[/b], [quote]text[/quote], [url=https://example.com]link[/url]."
+              placeholder="Private diplomatic mail. BBCode works here: [b]bold[/b], [quote]text[/quote], [url=https://example.com]link[/url]."
               className="min-h-40 p-3 lg:col-span-2"
             />
             <button className="rounded-lg bg-emerald-300 px-5 py-3 font-bold text-zinc-950 hover:bg-emerald-200 lg:col-span-2">
-              Send Message
+              Send via Postal Service
             </button>
           </form>
         ) : (
           <p className="mt-3 text-zinc-300">
-            You need a linked nation before you can send private messages.
+            You need a linked nation before you can dispatch diplomatic mail.
           </p>
         )}
       </Panel>
 
       <section className="grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-2xl font-black text-zinc-50">Messages</h2>
+          <h2 className="text-2xl font-black text-zinc-50">Incoming Mail</h2>
           <Badge tone={unreadMessages.length ? "warning" : "neutral"}>
             {unreadMessages.length} unread
           </Badge>
@@ -187,6 +187,7 @@ export default async function DashboardInboxPage() {
                   <Badge tone={message.readAt ? "neutral" : "warning"}>
                     {message.readAt ? "Read" : "Unread"}
                   </Badge>
+                  <Badge>{message.status}</Badge>
                   <Badge>From {message.fromNation.name}</Badge>
                   <Badge>To {message.toNation.name}</Badge>
                 </div>
@@ -194,6 +195,7 @@ export default async function DashboardInboxPage() {
                   {message.subject}
                 </h3>
                 <p className="mt-2 text-xs text-zinc-500">
+                  {message.serviceName} · Tracking {message.trackingCode} ·{" "}
                   {message.createdAt.toLocaleString("en-GB")}
                 </p>
               </div>
@@ -211,7 +213,7 @@ export default async function DashboardInboxPage() {
           </Panel>
         ))}
         {received.length === 0 ? (
-          <Panel className="text-zinc-300">No private messages yet.</Panel>
+          <Panel className="text-zinc-300">No incoming mail yet.</Panel>
         ) : null}
       </section>
 
@@ -292,13 +294,15 @@ export default async function DashboardInboxPage() {
           {sent.map((message) => (
             <Panel key={message.id}>
               <div className="flex flex-wrap items-center gap-2">
-                <Badge>To {message.toNation.name}</Badge>
+              <Badge>{message.status}</Badge>
+              <Badge>To {message.toNation.name}</Badge>
                 <Badge>{message.readAt ? "Read" : "Unread"}</Badge>
               </div>
               <h3 className="mt-3 text-lg font-bold text-zinc-50">
                 {message.subject}
               </h3>
               <p className="mt-2 text-xs text-zinc-500">
+                Tracking {message.trackingCode} ·{" "}
                 {message.createdAt.toLocaleString("en-GB")}
               </p>
               <div className="mt-3 line-clamp-4">

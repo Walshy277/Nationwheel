@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import {
-  dashboardDirectoryLinks,
+  dashboardDirectoryGroups,
   publicDirectoryGroups,
   staffDirectoryGroups,
 } from "@/lib/site-directory";
@@ -39,15 +39,42 @@ function LinkList({
 export default function DirectoryPage() {
   return (
     <PageShell className="grid gap-6">
-      <div>
-        <Badge tone="accent">Directory</Badge>
-        <h1 className="mt-4 text-4xl font-black text-zinc-50">
-          Find the Right Page
-        </h1>
-        <p className="mt-3 max-w-3xl text-zinc-300">
-          Nation Wheel is split into public canon, world reference, player
-          dashboard tools, and staff control panels.
-        </p>
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+        <div>
+          <Badge tone="accent">Directory</Badge>
+          <h1 className="mt-4 text-4xl font-black text-zinc-50">
+            Site Directory
+          </h1>
+          <p className="mt-3 max-w-3xl text-zinc-300">
+            Nation Wheel is organized into public world pages, signed-in leader
+            tools, and staff control panels.
+          </p>
+        </div>
+        <div className="rounded-lg border border-emerald-300/25 bg-emerald-300/8 p-4">
+          <p className="text-xs font-bold uppercase text-emerald-100">
+            Quick Path
+          </p>
+          <div className="mt-3 grid gap-2">
+            <Link
+              href="/nations"
+              className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/50"
+            >
+              Browse the world
+            </Link>
+            <Link
+              href="/dashboard"
+              className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/50"
+            >
+              Manage my nation
+            </Link>
+            <Link
+              href="/lorecp"
+              className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-100 hover:border-emerald-300/50"
+            >
+              Open staff tools
+            </Link>
+          </div>
+        </div>
       </div>
 
       <section className="grid gap-4 lg:grid-cols-3">
@@ -67,15 +94,19 @@ export default function DirectoryPage() {
       <section className="grid gap-4 lg:grid-cols-[0.85fr_1.15fr]">
         <Panel>
           <Badge tone="accent">Signed In</Badge>
-          <h2 className="mt-3 text-2xl font-bold text-zinc-50">
-            Player Dashboard
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-zinc-400">
-            Use these pages for your own nation, messages, and updates.
-          </p>
-          <div className="mt-4">
-            <LinkList links={dashboardDirectoryLinks} />
-          </div>
+          {dashboardDirectoryGroups.map((group) => (
+            <div key={group.title}>
+              <h2 className="mt-3 text-2xl font-bold text-zinc-50">
+                {group.title}
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-zinc-400">
+                {group.detail}
+              </p>
+              <div className="mt-4">
+                <LinkList links={group.links} />
+              </div>
+            </div>
+          ))}
         </Panel>
 
         <Panel>
