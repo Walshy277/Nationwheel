@@ -4,6 +4,7 @@ import { ReactionKind } from "@prisma/client";
 import { toggleWorldNewsReactionAction } from "@/app/actions";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
+import { ContentImage } from "@/components/ui/content-image";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
@@ -116,6 +117,13 @@ export default async function WorldNewsPage() {
             <h2 className="mt-3 text-4xl font-black leading-tight text-zinc-50 md:text-5xl">
               {leadPost.title}
             </h2>
+            {leadPost.heroImageUrl ? (
+              <ContentImage
+                src={leadPost.heroImageUrl}
+                alt={leadPost.title}
+                className="mt-5 max-h-[420px]"
+              />
+            ) : null}
             <p className="mt-5 text-lg leading-8 text-zinc-200">
               {leadPost.summary}
             </p>
@@ -184,6 +192,13 @@ export default async function WorldNewsPage() {
               <p className="text-base leading-7 text-zinc-300">
                 {post.summary}
               </p>
+              {post.heroImageUrl ? (
+                <ContentImage
+                  src={post.heroImageUrl}
+                  alt={post.title}
+                  className="max-h-56"
+                />
+              ) : null}
               <details>
                 <summary className="rounded-lg border border-white/10 px-4 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5">
                   Read report

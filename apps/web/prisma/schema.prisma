@@ -220,6 +220,7 @@ model WorldNewsPost {
   title       String
   summary     String
   content     String
+  heroImageUrl String?
   sourceLabel String?
   sourceUrl   String?
   authorId    String?
@@ -251,6 +252,7 @@ model ForumThread {
   slug        String       @unique
   category    String
   body        String
+  imageUrl    String?
   isPinned    Boolean      @default(false)
   authorId    String
   author      User         @relation("ForumThreadAuthor", fields: [authorId], references: [id], onDelete: Cascade)
@@ -270,6 +272,7 @@ model ForumPost {
   authorId  String
   author    User         @relation("ForumPostAuthor", fields: [authorId], references: [id], onDelete: Cascade)
   body      String
+  imageUrl  String?
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
 

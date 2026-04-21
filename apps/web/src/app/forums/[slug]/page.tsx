@@ -10,6 +10,7 @@ import {
   toggleForumThreadPinnedAction,
 } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
+import { ContentImage } from "@/components/ui/content-image";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
@@ -131,6 +132,13 @@ export default async function ForumThreadPage({
             <div className="text-xs font-bold uppercase text-zinc-500">
               Opening Post
             </div>
+            {thread.imageUrl ? (
+              <ContentImage
+                src={thread.imageUrl}
+                alt={thread.title}
+                className="mt-4 max-h-[420px]"
+              />
+            ) : null}
             <div className="mt-4">
               <WikiRenderer content={thread.body} />
             </div>
@@ -187,6 +195,13 @@ export default async function ForumThreadPage({
                   </div>
                 </div>
                 <div className="mt-4">
+                  {post.imageUrl ? (
+                    <ContentImage
+                      src={post.imageUrl}
+                      alt={`${thread.title} reply`}
+                      className="mb-4 max-h-80"
+                    />
+                  ) : null}
                   <WikiRenderer content={post.body} />
                 </div>
               </article>
@@ -211,6 +226,12 @@ export default async function ForumThreadPage({
               maxLength={8000}
               placeholder="Add a reply. BBCode works here."
               className="min-h-36 p-3"
+            />
+            <input
+              name="imageUrl"
+              type="url"
+              placeholder="https:// optional reply image"
+              className="px-3 py-2"
             />
             <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
               Post Reply

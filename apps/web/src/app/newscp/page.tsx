@@ -65,6 +65,12 @@ export default async function NewsControlPage() {
             />
             <div className="grid gap-3 md:grid-cols-2">
               <input
+                name="heroImageUrl"
+                type="url"
+                placeholder="https:// hero image, optional"
+                className="px-3 py-2"
+              />
+              <input
                 name="sourceLabel"
                 placeholder="Source label, optional"
                 className="px-3 py-2"
@@ -147,6 +153,13 @@ export default async function NewsControlPage() {
                       className="min-h-[300px] p-4 font-mono text-sm leading-7"
                     />
                     <div className="grid gap-3 md:grid-cols-2">
+                      <input
+                        name="heroImageUrl"
+                        type="url"
+                        defaultValue={post.heroImageUrl ?? ""}
+                        placeholder="https:// hero image, optional"
+                        className="px-3 py-2"
+                      />
                       <input
                         name="sourceLabel"
                         defaultValue={post.sourceLabel ?? ""}

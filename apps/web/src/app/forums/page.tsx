@@ -8,6 +8,7 @@ import {
   toggleForumThreadPinnedAction,
 } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
+import { ContentImage } from "@/components/ui/content-image";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
@@ -158,6 +159,12 @@ export default async function ForumsPage() {
               placeholder="Opening post. BBCode works here."
               className="min-h-36 p-3 lg:col-span-2"
             />
+            <input
+              name="imageUrl"
+              type="url"
+              placeholder="https:// optional thread image"
+              className="px-3 py-2 lg:col-span-2"
+            />
             <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800 lg:col-span-2">
               Create Topic
             </button>
@@ -235,6 +242,15 @@ export default async function ForumsPage() {
                             "Community"}{" "}
                           on {thread.createdAt.toLocaleString("en-GB")}
                         </p>
+                        {thread.imageUrl ? (
+                          <div className="mt-3 max-w-sm">
+                            <ContentImage
+                              src={thread.imageUrl}
+                              alt={thread.title}
+                              className="max-h-44"
+                            />
+                          </div>
+                        ) : null}
                         <div className="mt-3 line-clamp-2 text-sm">
                           <WikiRenderer content={thread.body} />
                         </div>

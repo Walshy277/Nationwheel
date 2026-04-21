@@ -874,6 +874,7 @@ export async function createForumThreadAction(formData: FormData) {
     title: readText(formData, "title"),
     category: readText(formData, "category"),
     body: readText(formData, "body"),
+    imageUrl: readNullableText(formData, "imageUrl"),
   });
   const slug = await createUniqueForumSlug(payload.title);
 
@@ -896,6 +897,7 @@ export async function createForumPostAction(
   const user = await requireUser();
   const payload = forumPostSchema.parse({
     body: readText(formData, "body"),
+    imageUrl: readNullableText(formData, "imageUrl"),
   });
   const prisma = getPrisma();
   const thread = await prisma.forumThread.findUniqueOrThrow({
@@ -908,6 +910,7 @@ export async function createForumPostAction(
       threadId,
       authorId: user.id,
       body: payload.body,
+      imageUrl: payload.imageUrl,
     },
   });
   await prisma.forumThread.update({
@@ -1233,6 +1236,7 @@ export async function recordLoreSpinAction(
 ) {
   const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
   const payload = spinResultSchema.parse({
+    prompt: readText(formData, "prompt"),
     result: readText(formData, "result"),
     options: readText(formData, "options"),
     note: readText(formData, "note"),
@@ -1255,9 +1259,11 @@ export async function recordLoreSpinAction(
   const contentLines = [
     "## Spin Result",
     "",
+    `Prompt: ${payload.prompt}`,
+    "",
     `Winner: ${payload.result}`,
     "",
-    "Options Used:",
+    "Weighted Options Used:",
     ...optionLines.map((option) => `- ${option}`),
   ];
 
@@ -1343,6 +1349,7 @@ export async function createWorldNewsPostAction(formData: FormData) {
     title: readText(formData, "title"),
     summary: readText(formData, "summary"),
     content: readText(formData, "content"),
+    heroImageUrl: readNullableText(formData, "heroImageUrl"),
     sourceLabel: readNullableText(formData, "sourceLabel"),
     sourceUrl: readNullableText(formData, "sourceUrl"),
   });
@@ -1368,6 +1375,7 @@ export async function updateWorldNewsPostAction(
     title: readText(formData, "title"),
     summary: readText(formData, "summary"),
     content: readText(formData, "content"),
+    heroImageUrl: readNullableText(formData, "heroImageUrl"),
     sourceLabel: readNullableText(formData, "sourceLabel"),
     sourceUrl: readNullableText(formData, "sourceUrl"),
   });

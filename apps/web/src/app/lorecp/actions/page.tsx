@@ -39,14 +39,17 @@ function latestActionTouch(action: {
 }
 
 function spinOptionsFromReason(reason: string | null) {
-  if (!reason) return [];
+  if (!reason) return ["Success | 1", "Failure | 1"];
 
   const candidates = reason
-    .split(/\r?\n|[;,|]/)
+    .split(/\r?\n|[;,]/)
     .map((entry) => entry.replace(/^spin needed:\s*/i, "").trim())
     .filter((entry) => entry.length >= 2);
 
-  return Array.from(new Set(candidates)).slice(0, 12);
+  const unique = Array.from(new Set(candidates)).slice(0, 12);
+  return unique.length
+    ? unique.map((entry) => (entry.includes("|") ? entry : `${entry} | 1`))
+    : ["Success | 1", "Failure | 1"];
 }
 
 export default async function LoreActionsPage() {
@@ -332,6 +335,10 @@ export default async function LoreActionsPage() {
                           initialOptions={spinOptionsFromReason(
                             action.requiresSpinReason,
                           )}
+                          initialPrompt={
+                            action.requiresSpinReason ??
+                            `Resolve ${action.nation.name} ${action.type} action`
+                          }
                           title={`${action.nation.name} ${action.type} wheel`}
                         />
                       ) : null}

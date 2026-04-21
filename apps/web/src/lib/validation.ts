@@ -1,6 +1,13 @@
 import { AlertCategory, LoreActionStatus, ReactionKind, Role } from "@prisma/client";
 import { z } from "zod";
 
+const optionalUrlSchema = z
+  .string()
+  .url()
+  .nullable()
+  .optional()
+  .or(z.literal("").transform(() => null));
+
 export const nationStatsSchema = z
   .object({
     name: z.string().min(1),
@@ -115,13 +122,9 @@ export const worldNewsPostSchema = z
     title: z.string().min(1).max(160),
     summary: z.string().min(1).max(280),
     content: z.string().min(1),
+    heroImageUrl: optionalUrlSchema,
     sourceLabel: z.string().nullable().optional(),
-    sourceUrl: z
-      .string()
-      .url()
-      .nullable()
-      .optional()
-      .or(z.literal("").transform(() => null)),
+    sourceUrl: optionalUrlSchema,
   })
   .strict();
 
@@ -145,12 +148,14 @@ export const forumThreadSchema = z
     title: z.string().min(4).max(140),
     category: z.string().min(1).max(48),
     body: z.string().min(10).max(8000),
+    imageUrl: optionalUrlSchema,
   })
   .strict();
 
 export const forumPostSchema = z
   .object({
     body: z.string().min(2).max(8000),
+    imageUrl: optionalUrlSchema,
   })
   .strict();
 
@@ -162,6 +167,7 @@ export const alertPreferencesSchema = z
 
 export const spinResultSchema = z
   .object({
+    prompt: z.string().min(1).max(200),
     result: z.string().min(1).max(160),
     options: z.string().min(1).max(4000),
     note: z.string().max(2000).optional().default(""),
