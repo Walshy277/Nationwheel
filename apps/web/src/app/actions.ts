@@ -37,6 +37,7 @@ import {
   isPublicContentKey,
   publicContentDefaults,
 } from "@/lib/public-content";
+import { forumBoardHref, normalizeForumBoard } from "@/lib/forums";
 import { canModerateForums } from "@/lib/role-utils";
 
 function readText(formData: FormData, key: string) {
@@ -870,9 +871,13 @@ export async function createNationMessageAction(formData: FormData) {
 
 export async function createForumThreadAction(formData: FormData) {
   const user = await requireUser();
+  const board = normalizeForumBoard(readText(formData, "category"));
+  if (!board) {
+    throw new Error("Choose a valid forum board.");
+  }
   const payload = forumThreadSchema.parse({
     title: readText(formData, "title"),
-    category: readText(formData, "category"),
+    category: board.name,
     body: readText(formData, "body"),
     imageUrl: readNullableText(formData, "imageUrl"),
   });
@@ -887,6 +892,7 @@ export async function createForumThreadAction(formData: FormData) {
   });
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(payload.category));
   redirect(`/forums/${thread.slug}`);
 }
 
@@ -902,7 +908,7 @@ export async function createForumPostAction(
   const prisma = getPrisma();
   const thread = await prisma.forumThread.findUniqueOrThrow({
     where: { id: threadId },
-    select: { slug: true },
+    select: { slug: true, category: true },
   });
 
   await prisma.forumPost.create({
@@ -919,6 +925,7 @@ export async function createForumPostAction(
   });
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(thread.category));
   revalidatePath(`/forums/${thread.slug}`);
 }
 
@@ -933,7 +940,7 @@ export async function toggleForumReactionAction(
   const prisma = getPrisma();
   const thread = await prisma.forumThread.findUniqueOrThrow({
     where: { id: threadId },
-    select: { slug: true },
+    select: { slug: true, category: true },
   });
 
   const existing = await prisma.forumReaction.findUnique({
@@ -959,6 +966,7 @@ export async function toggleForumReactionAction(
   }
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(thread.category));
   revalidatePath(`/forums/${thread.slug}`);
 }
 
@@ -971,7 +979,7 @@ export async function toggleForumThreadPinnedAction(threadId: string) {
   const prisma = getPrisma();
   const thread = await prisma.forumThread.findUniqueOrThrow({
     where: { id: threadId },
-    select: { id: true, slug: true, isPinned: true },
+    select: { id: true, slug: true, category: true, isPinned: true },
   });
 
   await prisma.forumThread.update({
@@ -980,6 +988,7 @@ export async function toggleForumThreadPinnedAction(threadId: string) {
   });
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(thread.category));
   revalidatePath(`/forums/${thread.slug}`);
 }
 
@@ -992,12 +1001,13 @@ export async function deleteForumThreadAction(threadId: string) {
   const prisma = getPrisma();
   const thread = await prisma.forumThread.findUniqueOrThrow({
     where: { id: threadId },
-    select: { slug: true },
+    select: { slug: true, category: true },
   });
 
   await prisma.forumThread.delete({ where: { id: threadId } });
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(thread.category));
   revalidatePath(`/forums/${thread.slug}`);
   redirect("/forums");
 }
@@ -1011,7 +1021,7 @@ export async function deleteForumPostAction(postId: string) {
   const prisma = getPrisma();
   const post = await prisma.forumPost.findUniqueOrThrow({
     where: { id: postId },
-    select: { threadId: true, thread: { select: { slug: true } } },
+    select: { threadId: true, thread: { select: { slug: true, category: true } } },
   });
 
   await prisma.forumPost.delete({ where: { id: postId } });
@@ -1021,6 +1031,7 @@ export async function deleteForumPostAction(postId: string) {
   });
 
   revalidatePath("/forums");
+  revalidatePath(forumBoardHref(post.thread.category));
   revalidatePath(`/forums/${post.thread.slug}`);
 }
 

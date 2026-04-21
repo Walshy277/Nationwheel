@@ -480,7 +480,7 @@ export async function LandingPage() {
                   className="rounded-lg border border-white/10 bg-black/20 p-4 hover:border-emerald-300/70"
                 >
                   <div className="flex flex-wrap items-center gap-2">
-                    <Badge tone={thread.category === "News" ? "warning" : "neutral"}>
+                    <Badge tone={thread.category === "Newsroom" ? "warning" : "neutral"}>
                       {thread.category}
                     </Badge>
                   </div>

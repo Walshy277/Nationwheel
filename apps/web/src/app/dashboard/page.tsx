@@ -107,6 +107,13 @@ const loreLinks: DashboardLink[] = [
     tone: "warning",
   },
   {
+    href: "/lorecp/wheel",
+    title: "Wheel Desk",
+    detail: "Open the weighted wheel queue for spin-required canon actions.",
+    badge: "Spin",
+    tone: "warning",
+  },
+  {
     href: "/lorecp/pages/lore",
     title: "World Lore",
     detail: "Edit the single merged world and setting lore page.",

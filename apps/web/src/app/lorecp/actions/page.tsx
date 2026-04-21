@@ -12,6 +12,7 @@ import { ControlLayout } from "@/components/layout/control-sidebar";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, Panel } from "@/components/ui/shell";
 import { hasDatabase, loreCpLinks } from "@/lib/control-panels";
+import { spinOptionsFromReason } from "@/lib/lore-spins";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageRole } from "@/lib/permissions";
 
@@ -36,20 +37,6 @@ function latestActionTouch(action: {
   return latestUpdate && latestUpdate > action.updatedAt
     ? latestUpdate
     : action.updatedAt;
-}
-
-function spinOptionsFromReason(reason: string | null) {
-  if (!reason) return ["Success | 1", "Failure | 1"];
-
-  const candidates = reason
-    .split(/\r?\n|[;,]/)
-    .map((entry) => entry.replace(/^spin needed:\s*/i, "").trim())
-    .filter((entry) => entry.length >= 2);
-
-  const unique = Array.from(new Set(candidates)).slice(0, 12);
-  return unique.length
-    ? unique.map((entry) => (entry.includes("|") ? entry : `${entry} | 1`))
-    : ["Success | 1", "Failure | 1"];
 }
 
 export default async function LoreActionsPage() {
@@ -181,10 +168,10 @@ export default async function LoreActionsPage() {
                 </a>
                 {spinRequiredActions[0] ? (
                   <a
-                    href={`#action-${spinRequiredActions[0].id}`}
+                    href={`/lorecp/wheel?actionId=${spinRequiredActions[0].id}`}
                     className="rounded-lg border border-amber-200/30 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
                   >
-                    Open first awaiting spin
+                    Open wheel queue
                   </a>
                 ) : null}
                 {staleActions[0] ? (
@@ -216,7 +203,7 @@ export default async function LoreActionsPage() {
               Action attention needed
             </h2>
             <div className="mt-4 grid gap-3 md:grid-cols-2">
-              <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
+            <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
                 <p className="text-xs font-bold uppercase text-amber-100">
                   Requires spin
                 </p>
@@ -229,6 +216,14 @@ export default async function LoreActionsPage() {
                     .map((action) => action.nation.name)
                     .join(", ") || "Clear"}
                 </p>
+                {spinRequiredActions[0] ? (
+                  <a
+                    href={`/lorecp/wheel?actionId=${spinRequiredActions[0].id}`}
+                    className="mt-3 inline-flex rounded-lg border border-amber-200/30 px-3 py-2 text-xs font-bold text-amber-50 hover:bg-amber-200/10"
+                  >
+                    Open Wheel Desk
+                  </a>
+                ) : null}
               </div>
               <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
                 <p className="text-xs font-bold uppercase text-amber-100">

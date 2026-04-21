@@ -9,11 +9,13 @@ import {
   toggleForumReactionAction,
   toggleForumThreadPinnedAction,
 } from "@/app/actions";
+import { ForumNav } from "@/components/forums/forum-nav";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { ContentImage } from "@/components/ui/content-image";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
+import { forumBoardHref, forumBoardFromCategory } from "@/lib/forums";
 import { getPrisma } from "@/lib/prisma";
 import { canModerateForums } from "@/lib/role-utils";
 
@@ -77,16 +79,26 @@ export default async function ForumThreadPage({
 
   if (!thread) notFound();
   const counts = reactionCounts(thread.reactions);
+  const board = forumBoardFromCategory(thread.category);
 
   return (
     <PageShell className="grid gap-6">
       <header className="grid gap-4 border-b border-white/10 pb-6">
-        <Link
-          href="/forums"
-          className="text-sm font-bold text-emerald-100 hover:text-emerald-200"
-        >
-          Back to forums
-        </Link>
+        <div className="flex flex-wrap items-center gap-2 text-sm font-bold text-zinc-400">
+          <Link
+            href="/forums"
+            className="text-emerald-100 hover:text-emerald-200"
+          >
+            Forums
+          </Link>
+          <span>/</span>
+          <Link
+            href={forumBoardHref(thread.category)}
+            className="text-emerald-100 hover:text-emerald-200"
+          >
+            {board?.name ?? thread.category}
+          </Link>
+        </div>
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Badge tone="accent">Forum Thread</Badge>
           <Badge>{thread.category}</Badge>
@@ -100,6 +112,7 @@ export default async function ForumThreadPage({
           Started {thread.createdAt.toLocaleString("en-GB")} by{" "}
           {thread.author.name ?? thread.author.email ?? "Community"}
         </p>
+        <ForumNav user={user} />
         {canModerate ? (
           <div className="mt-4 flex flex-wrap gap-2">
             <form action={toggleForumThreadPinnedAction.bind(null, thread.id)}>

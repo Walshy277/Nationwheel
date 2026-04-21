@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LoreActionStatus } from "@prisma/client";
+import { AlertCategory, LoreActionStatus } from "@prisma/client";
 import { markLeaderNotificationReadAction } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
@@ -43,7 +43,13 @@ export default async function DashboardActionsPage() {
         take: 12,
         where: {
           readAt: null,
-          category: { in: ["ACTION_STATUS", "ACTION_UPDATE", "SPIN_RESULT"] },
+          category: {
+            in: [
+              AlertCategory.ACTION_STATUS,
+              AlertCategory.ACTION_UPDATE,
+              AlertCategory.SPIN_RESULT,
+            ],
+          },
         },
       },
     },

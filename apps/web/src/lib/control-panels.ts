@@ -1,6 +1,7 @@
 export const loreCpLinks = [
   { href: "/lorecp", label: "Nation Review" },
   { href: "/lorecp/actions", label: "Action Tracker" },
+  { href: "/lorecp/wheel", label: "Wheel Desk" },
   { href: "/lorecp/pages/wars", label: "Wars Page" },
   { href: "/lorecp/pages/lore", label: "World Lore" },
   { href: "/lorecp/pages/announcements", label: "Announcements" },
