@@ -12,6 +12,7 @@
     "build": "pnpm -r build",
     "typecheck": "pnpm -r typecheck",
     "lint": "pnpm -r lint",
+    "test:web": "pnpm --filter @nation-wheel/web exec tsx --test src/lib/navigation.test.ts src/lib/permissions.test.ts",
     "db:generate": "pnpm --filter @nation-wheel/web db:generate",
     "db:push": "pnpm --filter @nation-wheel/web db:push",
     "db:seed": "pnpm --filter @nation-wheel/web db:seed"

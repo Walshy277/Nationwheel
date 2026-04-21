@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth";
 import { getPrisma } from "@/lib/prisma";
+import { userHasAnyRole } from "@/lib/role-utils";
 
 export class HttpError extends Error {
   constructor(
@@ -21,8 +22,7 @@ export async function requireUser() {
 
 export async function requireRole(roles: Role[]) {
   const user = await requireUser();
-  const userRoles = new Set([user.role, ...(user.roles ?? [])]);
-  if (!roles.some((role) => userRoles.has(role))) {
+  if (!userHasAnyRole(user, roles)) {
     throw new HttpError(403, "Insufficient permissions");
   }
 
@@ -112,7 +112,6 @@ export async function requirePageUser() {
 
 export async function requirePageRole(roles: Role[]) {
   const user = await requirePageUser();
-  const userRoles = new Set([user.role, ...(user.roles ?? [])]);
-  if (!roles.some((role) => userRoles.has(role))) redirect("/dashboard");
+  if (!userHasAnyRole(user, roles)) redirect("/dashboard");
   return user;
 }

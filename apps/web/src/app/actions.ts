@@ -5,7 +5,11 @@ import { redirect } from "next/navigation";
 import { LoreActionStatus, Prisma, Role } from "@prisma/client";
 import { createNationWikiTemplate } from "@nation-wheel/shared";
 import { getPrisma } from "@/lib/prisma";
-import { requireRole, requireUser, requireWikiEditAccess } from "@/lib/permissions";
+import {
+  requireRole,
+  requireUser,
+  requireWikiEditAccess,
+} from "@/lib/permissions";
 import {
   assignNationSchema,
   discordUserLinkSchema,
@@ -31,6 +35,7 @@ import {
   isPublicContentKey,
   publicContentDefaults,
 } from "@/lib/public-content";
+import { canModerateForums } from "@/lib/role-utils";
 
 function readText(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -923,6 +928,68 @@ export async function toggleForumReactionAction(
 
   revalidatePath("/forums");
   revalidatePath(`/forums/${thread.slug}`);
+}
+
+export async function toggleForumThreadPinnedAction(threadId: string) {
+  const user = await requireUser();
+  if (!canModerateForums(user)) {
+    throw new Error("You do not have permission to moderate forums.");
+  }
+
+  const prisma = getPrisma();
+  const thread = await prisma.forumThread.findUniqueOrThrow({
+    where: { id: threadId },
+    select: { id: true, slug: true, isPinned: true },
+  });
+
+  await prisma.forumThread.update({
+    where: { id: threadId },
+    data: { isPinned: !thread.isPinned },
+  });
+
+  revalidatePath("/forums");
+  revalidatePath(`/forums/${thread.slug}`);
+}
+
+export async function deleteForumThreadAction(threadId: string) {
+  const user = await requireUser();
+  if (!canModerateForums(user)) {
+    throw new Error("You do not have permission to moderate forums.");
+  }
+
+  const prisma = getPrisma();
+  const thread = await prisma.forumThread.findUniqueOrThrow({
+    where: { id: threadId },
+    select: { slug: true },
+  });
+
+  await prisma.forumThread.delete({ where: { id: threadId } });
+
+  revalidatePath("/forums");
+  revalidatePath(`/forums/${thread.slug}`);
+  redirect("/forums");
+}
+
+export async function deleteForumPostAction(postId: string) {
+  const user = await requireUser();
+  if (!canModerateForums(user)) {
+    throw new Error("You do not have permission to moderate forums.");
+  }
+
+  const prisma = getPrisma();
+  const post = await prisma.forumPost.findUniqueOrThrow({
+    where: { id: postId },
+    select: { threadId: true, thread: { select: { slug: true } } },
+  });
+
+  await prisma.forumPost.delete({ where: { id: postId } });
+  await prisma.forumThread.update({
+    where: { id: post.threadId },
+    data: { updatedAt: new Date() },
+  });
+
+  revalidatePath("/forums");
+  revalidatePath(`/forums/${post.thread.slug}`);
 }
 
 export async function toggleWorldNewsReactionAction(

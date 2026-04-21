@@ -3,13 +3,16 @@ import Link from "next/link";
 import { ReactionKind } from "@prisma/client";
 import {
   createForumThreadAction,
+  deleteForumThreadAction,
   toggleForumReactionAction,
+  toggleForumThreadPinnedAction,
 } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
+import { canModerateForums } from "@/lib/role-utils";
 
 export const metadata: Metadata = {
   title: "Forums",
@@ -27,7 +30,7 @@ const categories = [
 ] as const;
 
 const reactionLabels: Record<ReactionKind, string> = {
-  LIKE: "👍",
+  LIKE: "\uD83D\uDC4D",
   SUPPORT: "Support",
   CONCERN: "Concern",
   INSIGHT: "Insight",
@@ -45,6 +48,7 @@ function reactionCounts(reactions: Array<{ kind: ReactionKind }>) {
 
 export default async function ForumsPage() {
   const user = await getCurrentUser();
+  const canModerate = canModerateForums(user);
   const threads = hasDatabase()
     ? await getPrisma().forumThread.findMany({
         orderBy: [{ isPinned: "desc" }, { updatedAt: "desc" }],
@@ -184,12 +188,17 @@ export default async function ForumsPage() {
                       {group.threads.length === 1 ? "" : "s"}
                     </p>
                   </div>
-                  <a
-                    href="#new-thread"
-                    className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
-                  >
-                    New Topic
-                  </a>
+                  <div className="flex flex-wrap gap-2">
+                    {canModerate ? (
+                      <Badge tone="warning">Moderation enabled</Badge>
+                    ) : null}
+                    <a
+                      href="#new-thread"
+                      className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                    >
+                      New Topic
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className="hidden grid-cols-[minmax(0,1fr)_96px_120px_240px] border-b border-white/10 px-5 py-2 text-xs font-bold uppercase text-zinc-500 lg:grid">
@@ -229,6 +238,30 @@ export default async function ForumsPage() {
                         <div className="mt-3 line-clamp-2 text-sm">
                           <WikiRenderer content={thread.body} />
                         </div>
+                        {canModerate ? (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            <form
+                              action={toggleForumThreadPinnedAction.bind(
+                                null,
+                                thread.id,
+                              )}
+                            >
+                              <button className="rounded-md border border-amber-300/50 px-2.5 py-1 text-xs font-bold text-amber-100 hover:bg-amber-300/10">
+                                {thread.isPinned ? "Unpin" : "Pin"}
+                              </button>
+                            </form>
+                            <form
+                              action={deleteForumThreadAction.bind(
+                                null,
+                                thread.id,
+                              )}
+                            >
+                              <button className="rounded-md border border-rose-400/40 px-2.5 py-1 text-xs font-bold text-rose-100 hover:bg-rose-400/10">
+                                Delete
+                              </button>
+                            </form>
+                          </div>
+                        ) : null}
                       </div>
                       <div className="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-center lg:border-0 lg:bg-transparent">
                         <p className="text-2xl font-black text-zinc-50">

@@ -4,13 +4,17 @@ import { notFound } from "next/navigation";
 import { ReactionKind } from "@prisma/client";
 import {
   createForumPostAction,
+  deleteForumPostAction,
+  deleteForumThreadAction,
   toggleForumReactionAction,
+  toggleForumThreadPinnedAction,
 } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getCurrentUser } from "@/lib/auth";
 import { hasDatabase } from "@/lib/control-panels";
 import { getPrisma } from "@/lib/prisma";
+import { canModerateForums } from "@/lib/role-utils";
 
 export async function generateMetadata({
   params,
@@ -32,7 +36,7 @@ export async function generateMetadata({
 }
 
 const reactionLabels: Record<ReactionKind, string> = {
-  LIKE: "👍",
+  LIKE: "\uD83D\uDC4D",
   SUPPORT: "Support",
   CONCERN: "Concern",
   INSIGHT: "Insight",
@@ -55,6 +59,7 @@ export default async function ForumThreadPage({
 }) {
   const { slug } = await params;
   const user = await getCurrentUser();
+  const canModerate = canModerateForums(user);
   if (!hasDatabase()) notFound();
 
   const thread = await getPrisma().forumThread.findUnique({
@@ -84,6 +89,7 @@ export default async function ForumThreadPage({
         <div className="mt-4 flex flex-wrap items-center gap-2">
           <Badge tone="accent">Forum Thread</Badge>
           <Badge>{thread.category}</Badge>
+          {thread.isPinned ? <Badge tone="warning">Pinned</Badge> : null}
           <Badge>{thread.posts.length} replies</Badge>
         </div>
         <h1 className="mt-4 text-4xl font-black text-zinc-50">
@@ -93,6 +99,20 @@ export default async function ForumThreadPage({
           Started {thread.createdAt.toLocaleString("en-GB")} by{" "}
           {thread.author.name ?? thread.author.email ?? "Community"}
         </p>
+        {canModerate ? (
+          <div className="mt-4 flex flex-wrap gap-2">
+            <form action={toggleForumThreadPinnedAction.bind(null, thread.id)}>
+              <button className="rounded-lg border border-amber-300/50 px-3 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10">
+                {thread.isPinned ? "Unpin Thread" : "Pin Thread"}
+              </button>
+            </form>
+            <form action={deleteForumThreadAction.bind(null, thread.id)}>
+              <button className="rounded-lg border border-rose-400/40 px-3 py-2 text-sm font-bold text-rose-100 hover:bg-rose-400/10">
+                Delete Thread
+              </button>
+            </form>
+          </div>
+        ) : null}
       </header>
 
       <Panel className="overflow-hidden p-0">
@@ -153,9 +173,18 @@ export default async function ForumThreadPage({
                   <span className="text-xs font-bold uppercase text-zinc-500">
                     Reply
                   </span>
-                  <span className="text-xs text-zinc-500">
-                    {post.createdAt.toLocaleString("en-GB")}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="text-xs text-zinc-500">
+                      {post.createdAt.toLocaleString("en-GB")}
+                    </span>
+                    {canModerate ? (
+                      <form action={deleteForumPostAction.bind(null, post.id)}>
+                        <button className="rounded-md border border-rose-400/40 px-2 py-1 text-xs font-bold text-rose-100 hover:bg-rose-400/10">
+                          Delete
+                        </button>
+                      </form>
+                    ) : null}
+                  </div>
                 </div>
                 <div className="mt-4">
                   <WikiRenderer content={post.body} />

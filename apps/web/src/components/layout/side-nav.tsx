@@ -9,8 +9,8 @@ import {
   publicDirectoryGroups,
   staffDirectoryGroups,
   type SiteDirectoryGroup,
-  type SiteDirectoryLink,
 } from "@/lib/site-directory";
+import { SideNavClient } from "./side-nav-client";
 
 type NavBadgeCounts = {
   mail: number;
@@ -55,12 +55,6 @@ async function getUnreadCounts(userId: string | undefined): Promise<NavBadgeCoun
   return { mail, notifications };
 }
 
-function badgeForLink(href: string, counts: NavBadgeCounts) {
-  if (href === "/dashboard/inbox") return counts.mail;
-  if (href === "/dashboard/notifications") return counts.notifications;
-  return 0;
-}
-
 function filterStaffGroups(groups: SiteDirectoryGroup[], roles: Role[]) {
   return groups
     .map((group) => {
@@ -82,64 +76,6 @@ function filterStaffGroups(groups: SiteDirectoryGroup[], roles: Role[]) {
     .filter((group) => group.links.length > 0);
 }
 
-function SideNavLink({
-  link,
-  badgeCount = 0,
-}: {
-  link: SiteDirectoryLink;
-  badgeCount?: number;
-}) {
-  const badgeLabel = badgeCount > 99 ? "99+" : badgeCount.toString();
-
-  return (
-    <Link
-      href={link.href}
-      className="group grid gap-1 rounded-lg border border-transparent px-3 py-2 hover:border-emerald-300/35 hover:bg-white/[0.04]"
-    >
-      <span className="flex items-center justify-between gap-2 text-sm font-bold text-zinc-100 group-hover:text-emerald-100">
-        <span>{link.label}</span>
-        {badgeCount ? (
-          <span className="rounded-full bg-amber-300 px-2 py-0.5 text-[10px] font-black leading-none text-zinc-950">
-            {badgeLabel}
-          </span>
-        ) : null}
-      </span>
-      <span className="line-clamp-2 text-xs leading-5 text-zinc-500 group-hover:text-zinc-300">
-        {link.detail}
-      </span>
-    </Link>
-  );
-}
-
-function SideNavGroup({
-  title,
-  links,
-  counts,
-}: {
-  title: string;
-  links: SiteDirectoryLink[];
-  counts: NavBadgeCounts;
-}) {
-  if (!links.length) return null;
-
-  return (
-    <section className="grid gap-2">
-      <h2 className="px-3 text-xs font-black uppercase tracking-wide text-zinc-500">
-        {title}
-      </h2>
-      <div className="grid gap-1">
-        {links.map((link) => (
-          <SideNavLink
-            key={link.href}
-            link={link}
-            badgeCount={badgeForLink(link.href, counts)}
-          />
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export async function SideNav() {
   const user = await getCurrentUser();
   const roles = user
@@ -159,56 +95,40 @@ export async function SideNav() {
       detail: "Every public page, player tool, and staff panel.",
     },
   ];
+  const groups = [
+    { title: "World", links: worldLinks },
+    ...publicDirectoryGroups.slice(1).map((group) => ({
+      title: group.title,
+      links: group.links,
+    })),
+    ...playerGroups.map((group) => ({
+      title: group.title,
+      links: myNationLink ? [...group.links, myNationLink] : group.links,
+    })),
+    ...staffGroups.map((group) => ({ title: group.title, links: group.links })),
+  ];
 
   return (
     <aside className="hidden xl:block">
       <div className="sticky top-[112px] h-[calc(100vh-112px)] overflow-y-auto border-r border-white/10 bg-[#080907]/72 px-3 py-5 backdrop-blur-xl">
-        <nav className="grid gap-6" aria-label="Global side navigation">
-          <SideNavGroup title="World" links={worldLinks} counts={counts} />
-          {publicDirectoryGroups.slice(1).map((group) => (
-            <SideNavGroup
-              key={group.title}
-              title={group.title}
-              links={group.links}
-              counts={counts}
-            />
-          ))}
-          {playerGroups.map((group) => (
-            <SideNavGroup
-              key={group.title}
-              title={group.title}
-              links={
-                myNationLink ? [...group.links, myNationLink] : group.links
-              }
-              counts={counts}
-            />
-          ))}
-          {staffGroups.map((group) => (
-            <SideNavGroup
-              key={group.title}
-              title={group.title}
-              links={group.links}
-              counts={counts}
-            />
-          ))}
-          {!user ? (
-            <section className="rounded-lg border border-emerald-300/20 bg-emerald-900/8 p-3">
-              <h2 className="text-xs font-black uppercase tracking-wide text-emerald-100">
-                Player Access
-              </h2>
-              <p className="mt-2 text-xs leading-5 text-zinc-300">
-                Sign in for dashboard, postal service, notifications, and staff
-                tools.
-              </p>
-              <Link
-                href="/login"
-                className="mt-3 inline-flex w-full justify-center rounded-lg bg-emerald-900 px-3 py-2 text-sm font-black text-emerald-50 hover:bg-emerald-800"
-              >
-                Login
-              </Link>
-            </section>
-          ) : null}
-        </nav>
+        <SideNavClient counts={counts} groups={groups} />
+        {!user ? (
+          <section className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-900/8 p-3">
+            <h2 className="text-xs font-black uppercase tracking-wide text-emerald-100">
+              Player Access
+            </h2>
+            <p className="mt-2 text-xs leading-5 text-zinc-300">
+              Sign in for dashboard, postal service, notifications, and staff
+              tools.
+            </p>
+            <Link
+              href="/login"
+              className="mt-3 inline-flex w-full justify-center rounded-lg bg-emerald-900 px-3 py-2 text-sm font-black text-emerald-50 hover:bg-emerald-800"
+            >
+              Login
+            </Link>
+          </section>
+        ) : null}
       </div>
     </aside>
   );

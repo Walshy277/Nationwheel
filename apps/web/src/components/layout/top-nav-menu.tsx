@@ -2,9 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { isActivePath } from "@/lib/navigation";
 import {
   primaryNavLinks,
   publicDirectoryGroups,
@@ -28,10 +30,12 @@ function MenuSection({
   title,
   links,
   onNavigate,
+  pathname,
 }: {
   title: string;
   links: NavLink[];
   onNavigate: () => void;
+  pathname: string;
 }) {
   return (
     <section>
@@ -39,24 +43,47 @@ function MenuSection({
         {title}
       </div>
       <div className="grid gap-2">
-        {links.map((link) => (
-          <Link
-            key={link.href}
-            href={link.href}
-            role="menuitem"
-            onClick={onNavigate}
-            className="group rounded-lg border border-white/8 bg-white/[0.02] px-3 py-3 hover:border-emerald-300/40 hover:bg-white/5"
-          >
-            <span className="block font-bold text-zinc-100 group-hover:text-emerald-100">
-              {link.label}
-            </span>
-            {link.detail ? (
-              <span className="mt-1 block text-xs leading-5 text-zinc-500 group-hover:text-zinc-300">
-                {link.detail}
+        {links.map((link) => {
+          const isActive = isActivePath(pathname, link.href);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              role="menuitem"
+              onClick={onNavigate}
+              aria-current={isActive ? "page" : undefined}
+              className={[
+                "group rounded-lg border px-3 py-3",
+                isActive
+                  ? "border-emerald-300/35 bg-emerald-900/15"
+                  : "border-white/8 bg-white/[0.02] hover:border-emerald-300/40 hover:bg-white/5",
+              ].join(" ")}
+            >
+              <span
+                className={[
+                  "block font-bold",
+                  isActive
+                    ? "text-emerald-100"
+                    : "text-zinc-100 group-hover:text-emerald-100",
+                ].join(" ")}
+              >
+                {link.label}
               </span>
-            ) : null}
-          </Link>
-        ))}
+              {link.detail ? (
+                <span
+                  className={[
+                    "mt-1 block text-xs leading-5",
+                    isActive
+                      ? "text-zinc-300"
+                      : "text-zinc-500 group-hover:text-zinc-300",
+                  ].join(" ")}
+                >
+                  {link.detail}
+                </span>
+              ) : null}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );
@@ -67,20 +94,29 @@ function NavIconButton({
   label,
   count,
   children,
+  pathname,
 }: {
   href: string;
   label: string;
   count: number;
   children: ReactNode;
+  pathname?: string;
 }) {
   const displayCount = count > 99 ? "99+" : count.toString();
+  const isActive = pathname ? isActivePath(pathname, href) : false;
 
   return (
     <Link
       href={href}
       aria-label={count ? `${label}, ${count} unread` : label}
       title={count ? `${label}: ${count} unread` : label}
-      className="relative grid h-10 w-10 place-items-center rounded-lg border border-white/10 text-zinc-200 hover:border-emerald-300/60 hover:bg-white/5 hover:text-white"
+      aria-current={isActive ? "page" : undefined}
+      className={[
+        "relative grid h-10 w-10 place-items-center rounded-lg border text-zinc-200",
+        isActive
+          ? "border-emerald-300/40 bg-emerald-900/18 text-emerald-100"
+          : "border-white/10 hover:border-emerald-300/60 hover:bg-white/5 hover:text-white",
+      ].join(" ")}
     >
       {children}
       {count ? (
@@ -141,6 +177,7 @@ export function TopNavMenu({
 }) {
   const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -183,18 +220,33 @@ export function TopNavMenu({
 
         <nav className="order-3 grid w-full gap-2 text-sm text-zinc-300 lg:order-none lg:flex lg:w-auto lg:items-center lg:gap-1 xl:hidden">
           <div className="-mx-1 flex items-center gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
-            {primaryNavLinks.map((link) => (
+            {primaryNavLinks.map((link) => {
+              const isActive = isActivePath(pathname, link.href);
+              return (
               <Link
                 key={link.href}
                 href={link.href}
-                className="shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
+                aria-current={isActive ? "page" : undefined}
+                className={[
+                  "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold",
+                  isActive
+                    ? "bg-emerald-900/18 text-emerald-100"
+                    : "hover:bg-white/5 hover:text-white",
+                ].join(" ")}
               >
                 {link.label}
               </Link>
-            ))}
+              );
+            })}
             <Link
               href="/directory"
-              className="shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold hover:bg-white/5 hover:text-white"
+              aria-current={isActivePath(pathname, "/directory") ? "page" : undefined}
+              className={[
+                "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold",
+                isActivePath(pathname, "/directory")
+                  ? "bg-emerald-900/18 text-emerald-100"
+                  : "hover:bg-white/5 hover:text-white",
+              ].join(" ")}
             >
               Directory
             </Link>
@@ -226,6 +278,7 @@ export function TopNavMenu({
                       title={group.title}
                       links={group.links}
                       onNavigate={() => setIsOpen(false)}
+                      pathname={pathname}
                     />
                   ))}
                 </div>
@@ -308,6 +361,7 @@ export function TopNavMenu({
                 href="/dashboard/notifications"
                 label="Notifications"
                 count={unreadCounts.notifications}
+                pathname={pathname}
               >
                 <BellIcon />
               </NavIconButton>
@@ -315,6 +369,7 @@ export function TopNavMenu({
                 href="/dashboard/inbox"
                 label="Postal mail"
                 count={unreadCounts.mail}
+                pathname={pathname}
               >
                 <LetterIcon />
               </NavIconButton>
@@ -322,7 +377,17 @@ export function TopNavMenu({
           ) : null}
           <Link
             href={userLabel ? "/dashboard" : "/login"}
-            className="rounded-lg border border-white/10 px-3 py-2 text-sm font-semibold text-zinc-200 hover:border-emerald-300/60 hover:bg-white/5"
+            aria-current={
+              isActivePath(pathname, userLabel ? "/dashboard" : "/login")
+                ? "page"
+                : undefined
+            }
+            className={[
+              "rounded-lg border px-3 py-2 text-sm font-semibold text-zinc-200",
+              isActivePath(pathname, userLabel ? "/dashboard" : "/login")
+                ? "border-emerald-300/40 bg-emerald-900/18 text-emerald-100"
+                : "border-white/10 hover:border-emerald-300/60 hover:bg-white/5",
+            ].join(" ")}
           >
             {userLabel ?? "Login"}
           </Link>
