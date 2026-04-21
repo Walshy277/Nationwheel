@@ -37,6 +37,15 @@ enum ReactionKind {
   INSIGHT
 }
 
+enum AlertCategory {
+  MAIL
+  ACTION_STATUS
+  ACTION_UPDATE
+  WIKI_EDIT
+  PROFILE_UPDATE
+  SPIN_RESULT
+}
+
 model User {
   id                String             @id @default(cuid())
   name              String?
@@ -47,6 +56,7 @@ model User {
   passwordHash      String?
   role              Role               @default(USER)
   roles             Role[]             @default([USER])
+  alertOptOuts      AlertCategory[]    @default([])
   leaderOf          Nation[]           @relation("NationLeader")
   wikiUpdates       NationWiki[]       @relation("WikiUpdatedBy")
   revisions         NationRevision[]   @relation("RevisionChangedBy")
@@ -152,6 +162,7 @@ model LeaderNotification {
   nation          Nation   @relation(fields: [nationId], references: [id], onDelete: Cascade)
   messageId       String?
   message         NationMessage? @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  category        AlertCategory @default(ACTION_UPDATE)
   title           String
   body            String
   href            String?

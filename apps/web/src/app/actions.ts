@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { LoreActionStatus, Prisma, Role } from "@prisma/client";
+import { AlertCategory, LoreActionStatus, Prisma, Role } from "@prisma/client";
 import { createNationWikiTemplate } from "@nation-wheel/shared";
 import { getPrisma } from "@/lib/prisma";
 import {
@@ -12,6 +12,7 @@ import {
 } from "@/lib/permissions";
 import {
   assignNationSchema,
+  alertPreferencesSchema,
   discordUserLinkSchema,
   forumPostSchema,
   forumThreadSchema,
@@ -27,6 +28,7 @@ import {
   publicLorePageSchema,
   reactionSchema,
   roleUpdateSchema,
+  spinResultSchema,
   wikiUpdateSchema,
   worldNewsPostSchema,
 } from "@/lib/validation";
@@ -131,12 +133,14 @@ function userHasStaffRole(user: { role: Role; roles?: Role[] | null }) {
 async function notifyNationLeader({
   nationId,
   actorUserId,
+  category,
   title,
   body,
   href,
 }: {
   nationId: string;
   actorUserId?: string | null;
+  category: AlertCategory;
   title: string;
   body: string;
   href?: string;
@@ -144,14 +148,19 @@ async function notifyNationLeader({
   const prisma = getPrisma();
   const nation = await prisma.nation.findUnique({
     where: { id: nationId },
-    select: { leaderUserId: true },
+    select: {
+      leaderUserId: true,
+      leaderUser: { select: { alertOptOuts: true } },
+    },
   });
 
   if (!nation?.leaderUserId || nation.leaderUserId === actorUserId) return;
+  if (nation.leaderUser?.alertOptOuts.includes(category)) return;
 
   await prisma.leaderNotification.create({
     data: {
       nationId,
+      category,
       title,
       body,
       href,
@@ -306,6 +315,7 @@ export async function updateNationStatsAction(
     await notifyNationLeader({
       nationId,
       actorUserId: user.id,
+      category: AlertCategory.PROFILE_UPDATE,
       title: "Nation stats updated",
       body: "Staff updated your nation's structured canon stats.",
       href: `/nations/${payload.slug}`,
@@ -416,6 +426,7 @@ export async function updateWikiAction(nationId: string, formData: FormData) {
     await notifyNationLeader({
       nationId,
       actorUserId: user.id,
+      category: AlertCategory.WIKI_EDIT,
       title: "Nation wiki updated",
       body: "Staff edited your nation's public wiki.",
       href: nation?.slug ? `/nations/${nation.slug}` : "/dashboard/wiki",
@@ -460,6 +471,7 @@ export async function updateNationFlagAction(
     await notifyNationLeader({
       nationId,
       actorUserId: user.id,
+      category: AlertCategory.PROFILE_UPDATE,
       title: "Profile picture updated",
       body: "Staff updated your nation's public profile picture.",
       href: `/nations/${current.slug}`,
@@ -507,6 +519,7 @@ export async function updateNationOverviewAction(
   await notifyNationLeader({
     nationId,
     actorUserId: user.id,
+    category: AlertCategory.PROFILE_UPDATE,
     title: "Nation overview updated",
     body: "Lore staff updated your nation's public overview.",
     href: `/nations/${current.slug}`,
@@ -541,6 +554,7 @@ export async function createLoreActionAction(formData: FormData) {
   await notifyNationLeader({
     nationId: payload.nationId,
     actorUserId: user.id,
+    category: AlertCategory.ACTION_STATUS,
     title: "New canon action tracked",
     body: `Lore staff added a ${payload.type} action to your nation tracker.`,
     href: "/dashboard/actions",
@@ -587,6 +601,7 @@ export async function updateLoreActionStatusAction(
   await notifyNationLeader({
     nationId: current.nationId,
     actorUserId: user.id,
+    category: AlertCategory.ACTION_STATUS,
     title: "Action status updated",
     body:
       payload.status === LoreActionStatus.REQUIRES_SPIN
@@ -689,6 +704,7 @@ export async function completeLoreActionAction(
   await notifyNationLeader({
     nationId: result.nationId,
     actorUserId: user.id,
+    category: AlertCategory.ACTION_STATUS,
     title: "Action completed",
     body:
       result.statUpdateCount > 0
@@ -742,6 +758,7 @@ export async function updateLoreActionAction(
   await notifyNationLeader({
     nationId: payload.nationId,
     actorUserId: user.id,
+    category: AlertCategory.ACTION_UPDATE,
     title: "Canon action edited",
     body: `Lore staff edited a ${payload.type} action on your nation tracker.`,
     href: "/dashboard/actions",
@@ -780,6 +797,7 @@ export async function addLoreActionUpdateAction(
   await notifyNationLeader({
     nationId: action.nationId,
     actorUserId: user.id,
+    category: AlertCategory.ACTION_UPDATE,
     title: "Action update posted",
     body: "Lore staff posted a new update on one of your canon actions.",
     href: "/dashboard/actions",
@@ -806,7 +824,12 @@ export async function createNationMessageAction(formData: FormData) {
   });
   const toNation = await prisma.nation.findUniqueOrThrow({
     where: { id: payload.toNationId },
-    select: { id: true, name: true },
+    select: {
+      id: true,
+      name: true,
+      leaderUserId: true,
+      leaderUser: { select: { alertOptOuts: true } },
+    },
   });
 
   if (fromNation.leaderUserId !== user.id) {
@@ -822,16 +845,22 @@ export async function createNationMessageAction(formData: FormData) {
     },
   });
 
-  await prisma.leaderNotification.create({
-    data: {
-      nationId: toNation.id,
-      messageId: message.id,
-      title: `Message from ${fromNation.name}`,
-      body: payload.subject,
-      href: "/dashboard/inbox",
-      createdByUserId: user.id,
-    },
-  });
+  if (
+    toNation.leaderUserId &&
+    !toNation.leaderUser?.alertOptOuts.includes(AlertCategory.MAIL)
+  ) {
+    await prisma.leaderNotification.create({
+      data: {
+        nationId: toNation.id,
+        messageId: message.id,
+        category: AlertCategory.MAIL,
+        title: `Message from ${fromNation.name}`,
+        body: payload.subject,
+        href: "/dashboard/inbox",
+        createdByUserId: user.id,
+      },
+    });
+  }
 
   revalidatePath("/dashboard");
   revalidatePath("/dashboard/inbox");
@@ -1177,6 +1206,97 @@ export async function markLeaderNotificationReadAction(notificationId: string) {
   revalidatePath("/dashboard/inbox");
   revalidatePath("/dashboard/notifications");
   revalidatePath("/dashboard/messages");
+}
+
+export async function updateAlertPreferencesAction(formData: FormData) {
+  const user = await requireUser();
+  const payload = alertPreferencesSchema.parse({
+    alertOptOuts: formData
+      .getAll("alertOptOuts")
+      .filter((value): value is AlertCategory => typeof value === "string"),
+  });
+
+  await getPrisma().user.update({
+    where: { id: user.id },
+    data: { alertOptOuts: payload.alertOptOuts },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/dashboard/inbox");
+  revalidatePath("/dashboard/notifications");
+}
+
+export async function recordLoreSpinAction(
+  actionId: string,
+  formData: FormData,
+) {
+  const user = await requireRole([Role.LORE, Role.ADMIN, Role.OWNER]);
+  const payload = spinResultSchema.parse({
+    result: readText(formData, "result"),
+    options: readText(formData, "options"),
+    note: readText(formData, "note"),
+  });
+  const prisma = getPrisma();
+  const current = await prisma.loreAction.findUniqueOrThrow({
+    where: { id: actionId },
+    select: {
+      id: true,
+      nationId: true,
+      type: true,
+      nation: { select: { name: true } },
+    },
+  });
+
+  const optionLines = payload.options
+    .split("\n")
+    .map((option) => option.trim())
+    .filter(Boolean);
+  const contentLines = [
+    "## Spin Result",
+    "",
+    `Winner: ${payload.result}`,
+    "",
+    "Options Used:",
+    ...optionLines.map((option) => `- ${option}`),
+  ];
+
+  if (payload.note) {
+    contentLines.push("", "Lore Note:", payload.note);
+  }
+
+  await prisma.$transaction([
+    prisma.loreActionUpdate.create({
+      data: {
+        actionId,
+        content: contentLines.join("\n"),
+        createdByUserId: user.id,
+      },
+    }),
+    prisma.loreAction.update({
+      where: { id: actionId },
+      data: {
+        status: LoreActionStatus.CURRENT,
+        requiresSpinReason: null,
+      },
+    }),
+  ]);
+
+  revalidatePath("/lorecp");
+  revalidatePath("/lorecp/actions");
+  revalidatePath("/dashboard");
+  revalidatePath("/dashboard/actions");
+  revalidatePath("/actions");
+  revalidatePath(`/lorecp/nations/${current.nationId}`);
+
+  await notifyNationLeader({
+    nationId: current.nationId,
+    actorUserId: user.id,
+    category: AlertCategory.SPIN_RESULT,
+    title: "Spin result recorded",
+    body: `Lore staff spun a decision wheel for your ${current.type.toLowerCase()} action. Result: ${payload.result}.`,
+    href: "/dashboard/actions",
+  });
 }
 
 export async function updatePublicLorePageAction(

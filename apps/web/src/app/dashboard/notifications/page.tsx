@@ -2,22 +2,32 @@ import Link from "next/link";
 import {
   markInboxReadAction,
   markLeaderNotificationReadAction,
+  updateAlertPreferencesAction,
 } from "@/app/actions";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
+import { alertCategoryLabel, alertPreferenceOptions } from "@/lib/alerts";
 import { requirePageUser } from "@/lib/permissions";
 import { getPrisma } from "@/lib/prisma";
 
 export default async function DashboardNotificationsPage() {
   const user = await requirePageUser();
-  const notifications = await getPrisma().leaderNotification.findMany({
-    where: { nation: { leaderUserId: user.id } },
-    orderBy: { createdAt: "desc" },
-    take: 100,
-    include: { nation: { select: { name: true } } },
-  });
+  const prisma = getPrisma();
+  const [notifications, preferences] = await Promise.all([
+    prisma.leaderNotification.findMany({
+      where: { nation: { leaderUserId: user.id } },
+      orderBy: { createdAt: "desc" },
+      take: 100,
+      include: { nation: { select: { name: true } } },
+    }),
+    prisma.user.findUniqueOrThrow({
+      where: { id: user.id },
+      select: { alertOptOuts: true },
+    }),
+  ]);
   const unreadNotifications = notifications.filter(
     (notification) => !notification.readAt,
   );
+  const optOuts = new Set(preferences.alertOptOuts);
 
   return (
     <PageShell className="grid gap-6">
@@ -80,6 +90,51 @@ export default async function DashboardNotificationsPage() {
         ) : null}
       </Panel>
 
+      <Panel className="grid gap-4">
+        <div>
+          <Badge tone="accent">Alert Preferences</Badge>
+          <h2 className="mt-3 text-2xl font-bold text-zinc-50">
+            Choose what reaches the bell
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-300">
+            Tick the categories you want to mute. Postal mail still lands in
+            your inbox even if its bell alert is muted here.
+          </p>
+        </div>
+        <form
+          action={updateAlertPreferencesAction}
+          className="grid gap-3 lg:grid-cols-2"
+        >
+          {alertPreferenceOptions.map((option) => (
+            <label
+              key={option.category}
+              className="flex items-start gap-3 rounded-lg border border-white/10 bg-black/20 p-4"
+            >
+              <input
+                type="checkbox"
+                name="alertOptOuts"
+                value={option.category}
+                defaultChecked={optOuts.has(option.category)}
+                className="mt-1 h-4 w-4 rounded border-white/20 bg-black/40 text-emerald-500"
+              />
+              <span className="grid gap-1">
+                <span className="text-sm font-bold text-zinc-100">
+                  Mute {option.label}
+                </span>
+                <span className="text-sm leading-6 text-zinc-400">
+                  {option.detail}
+                </span>
+              </span>
+            </label>
+          ))}
+          <div className="lg:col-span-2">
+            <button className="rounded-lg bg-emerald-900 px-5 py-3 font-bold text-emerald-50 hover:bg-emerald-800">
+              Save alert preferences
+            </button>
+          </div>
+        </form>
+      </Panel>
+
       <section className="grid gap-3">
         {notifications.map((notification) => (
           <Panel
@@ -97,6 +152,9 @@ export default async function DashboardNotificationsPage() {
                     {notification.readAt ? "Read" : "Unread"}
                   </Badge>
                   <Badge>{notification.nation.name}</Badge>
+                  <Badge tone="accent">
+                    {alertCategoryLabel(notification.category)}
+                  </Badge>
                 </div>
                 <h2 className="mt-3 text-xl font-bold text-zinc-50">
                   {notification.title}

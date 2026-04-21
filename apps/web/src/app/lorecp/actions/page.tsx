@@ -7,6 +7,7 @@ import {
   updateLoreActionStatusAction,
 } from "@/app/actions";
 import { DatabaseRequired } from "@/components/control/database-required";
+import { SpinWheel } from "@/components/control/spin-wheel";
 import { ControlLayout } from "@/components/layout/control-sidebar";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, Panel } from "@/components/ui/shell";
@@ -35,6 +36,17 @@ function latestActionTouch(action: {
   return latestUpdate && latestUpdate > action.updatedAt
     ? latestUpdate
     : action.updatedAt;
+}
+
+function spinOptionsFromReason(reason: string | null) {
+  if (!reason) return [];
+
+  const candidates = reason
+    .split(/\r?\n|[;,|]/)
+    .map((entry) => entry.replace(/^spin needed:\s*/i, "").trim())
+    .filter((entry) => entry.length >= 2);
+
+  return Array.from(new Set(candidates)).slice(0, 12);
 }
 
 export default async function LoreActionsPage() {
@@ -312,6 +324,16 @@ export default async function LoreActionsPage() {
                           Rygaa notification logged{" "}
                           {action.rygaaNotifiedAt.toLocaleString("en-GB")}.
                         </p>
+                      ) : null}
+
+                      {action.status === LoreActionStatus.REQUIRES_SPIN ? (
+                        <SpinWheel
+                          actionId={action.id}
+                          initialOptions={spinOptionsFromReason(
+                            action.requiresSpinReason,
+                          )}
+                          title={`${action.nation.name} ${action.type} wheel`}
+                        />
                       ) : null}
 
                       <form
