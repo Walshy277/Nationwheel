@@ -88,6 +88,14 @@ export default async function PublicActionsPage() {
           >
             Completed Archive
           </a>
+          {active[0] ? (
+            <Link
+              href={`/actions/${active[0].id}`}
+              className="rounded-lg bg-emerald-900 px-4 py-2 text-sm font-bold text-emerald-50 hover:bg-emerald-800"
+            >
+              Open Latest Action
+            </Link>
+          ) : null}
         </div>
       </div>
 
@@ -103,17 +111,25 @@ export default async function PublicActionsPage() {
         </div>
         {active.map((action) => (
           <Panel key={action.id}>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                tone={
-                  action.status === LoreActionStatus.REQUIRES_SPIN
-                    ? "warning"
-                    : "accent"
-                }
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge
+                  tone={
+                    action.status === LoreActionStatus.REQUIRES_SPIN
+                      ? "warning"
+                      : "accent"
+                  }
+                >
+                  {action.status.replace("_", " ")}
+                </Badge>
+                <Badge>{action.type}</Badge>
+              </div>
+              <Link
+                href={`/actions/${action.id}`}
+                className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
               >
-                {action.status.replace("_", " ")}
-              </Badge>
-              <Badge>{action.type}</Badge>
+                Open Action
+              </Link>
             </div>
             <h2 className="mt-4 text-2xl font-bold text-zinc-50">
               <Link
@@ -192,9 +208,17 @@ export default async function PublicActionsPage() {
                     </Link>
                   </h3>
                 </div>
-                <span className="text-sm font-semibold text-zinc-500">
-                  {action.updatedAt.toLocaleString("en-GB")}
-                </span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-sm font-semibold text-zinc-500">
+                    {action.updatedAt.toLocaleString("en-GB")}
+                  </span>
+                  <Link
+                    href={`/actions/${action.id}`}
+                    className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                  >
+                    Open Action
+                  </Link>
+                </div>
               </div>
               <div className="line-clamp-3">
                 <WikiRenderer content={action.action} />

@@ -79,6 +79,24 @@ export default async function DashboardActionsPage() {
           This view is trimmed down to the things that matter: what is blocked,
           what is active, and what staff changed most recently.
         </p>
+        <div className="mt-5 flex flex-wrap gap-3">
+          {spinRequired[0] ? (
+            <Link
+              href={`/dashboard/actions/${spinRequired[0].id}`}
+              className="rounded-lg bg-amber-300 px-4 py-3 text-sm font-bold text-zinc-950 hover:bg-amber-200"
+            >
+              Open awaiting spin
+            </Link>
+          ) : null}
+          {current[0] ? (
+            <Link
+              href={`/dashboard/actions/${current[0].id}`}
+              className="rounded-lg border border-emerald-300/70 px-4 py-3 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
+            >
+              Open latest active action
+            </Link>
+          ) : null}
+        </div>
       </div>
 
       {nations.length === 0 ? (
@@ -114,6 +132,14 @@ export default async function DashboardActionsPage() {
             <p className="mt-1 text-3xl font-black text-amber-50">
               {spinRequired.length}
             </p>
+            {spinRequired[0] ? (
+              <Link
+                href={`/dashboard/actions/${spinRequired[0].id}`}
+                className="mt-3 inline-flex text-sm font-bold text-amber-50 hover:text-amber-100"
+              >
+                Open first blocked action
+              </Link>
+            ) : null}
           </Panel>
           <Panel className="bg-black/20">
             <p className="text-xs font-bold uppercase text-zinc-500">
@@ -203,10 +229,18 @@ export default async function DashboardActionsPage() {
                 key={action.id}
                 className="border-amber-300/25 bg-amber-300/10"
               >
-                <div className="flex flex-wrap items-center gap-2">
-                  <Badge>{action.nation.name}</Badge>
-                  <Badge tone="warning">Requires spin</Badge>
-                  <Badge>{action.type}</Badge>
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge>{action.nation.name}</Badge>
+                    <Badge tone="warning">Requires spin</Badge>
+                    <Badge>{action.type}</Badge>
+                  </div>
+                  <Link
+                    href={`/dashboard/actions/${action.id}`}
+                    className="rounded-lg border border-amber-200/50 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
+                  >
+                    Open Action
+                  </Link>
                 </div>
                 <p className="mt-3 text-sm font-semibold text-amber-100/90">
                   Estimated completion: {action.timeframe}
@@ -235,10 +269,18 @@ export default async function DashboardActionsPage() {
 
           return (
             <Panel key={action.id}>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>{action.nation.name}</Badge>
-                <Badge tone="accent">Current</Badge>
-                <Badge>{action.type}</Badge>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>{action.nation.name}</Badge>
+                  <Badge tone="accent">Current</Badge>
+                  <Badge>{action.type}</Badge>
+                </div>
+                <Link
+                  href={`/dashboard/actions/${action.id}`}
+                  className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                >
+                  Open Action
+                </Link>
               </div>
               <p className="mt-3 text-sm font-semibold text-zinc-400">
                 Estimated completion: {action.timeframe}
@@ -286,10 +328,18 @@ export default async function DashboardActionsPage() {
         <div className="grid gap-3 lg:grid-cols-2">
           {completed.map((action) => (
             <Panel key={action.id}>
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge>{action.nation.name}</Badge>
-                <Badge tone="accent">Completed</Badge>
-                <Badge>{action.type}</Badge>
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>{action.nation.name}</Badge>
+                  <Badge tone="accent">Completed</Badge>
+                  <Badge>{action.type}</Badge>
+                </div>
+                <Link
+                  href={`/dashboard/actions/${action.id}`}
+                  className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                >
+                  Open Action
+                </Link>
               </div>
               <p className="mt-3 text-sm text-zinc-500">
                 {action.updatedAt.toLocaleString("en-GB")}

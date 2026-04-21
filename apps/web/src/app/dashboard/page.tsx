@@ -517,6 +517,14 @@ export default async function DashboardPage() {
                   .map((action) => action.nation.name)
                   .join(", ") || "Clear"}
               </p>
+              {staffSpinActions[0] ? (
+                <Link
+                  href="/lorecp/actions"
+                  className="mt-3 inline-flex text-sm font-bold text-amber-50 hover:text-amber-100"
+                >
+                  Open spin queue
+                </Link>
+              ) : null}
             </div>
             <div className="rounded-lg border border-amber-200/20 bg-black/20 p-4">
               <p className="text-xs font-bold uppercase text-amber-100">

@@ -124,7 +124,8 @@ export default async function LoreActionsPage() {
   return (
     <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-6">
-        <Panel>
+        <Panel className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
+          <div>
           <Badge tone="warning">Daily lore loop</Badge>
           <h1 className="mt-4 text-4xl font-black text-zinc-50">
             Action Tracker
@@ -162,6 +163,47 @@ export default async function LoreActionsPage() {
               </p>
               <p className="mt-1 text-2xl font-black text-zinc-50">
                 {completedActions.length}
+              </p>
+            </div>
+          </div>
+          </div>
+          <div className="grid gap-3">
+            <div className="rounded-lg border border-amber-300/25 bg-amber-300/10 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-amber-100">
+                Fast lane
+              </p>
+              <div className="mt-3 grid gap-2">
+                <a
+                  href="#create-action"
+                  className="rounded-lg border border-amber-200/30 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
+                >
+                  Track new action
+                </a>
+                {spinRequiredActions[0] ? (
+                  <a
+                    href={`#action-${spinRequiredActions[0].id}`}
+                    className="rounded-lg border border-amber-200/30 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
+                  >
+                    Open first awaiting spin
+                  </a>
+                ) : null}
+                {staleActions[0] ? (
+                  <a
+                    href={`#action-${staleActions[0].id}`}
+                    className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                  >
+                    Open oldest stale action
+                  </a>
+                ) : null}
+              </div>
+            </div>
+            <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-zinc-500">
+                Queue summary
+              </p>
+              <p className="mt-2 text-sm leading-6 text-zinc-300">
+                Keep the main board for live work. Use the quick lane above to
+                jump straight into blocked or stale actions.
               </p>
             </div>
           </div>
@@ -220,55 +262,76 @@ export default async function LoreActionsPage() {
           </div>
           <form
             action={createLoreActionAction}
-            className="mt-5 grid gap-3 xl:grid-cols-2"
+            className="mt-5 grid gap-4 xl:grid-cols-[240px_240px_minmax(0,1fr)]"
           >
-            <select name="nationId" required className="px-3 py-2">
-              <option value="">Select nation</option>
-              {nations.map((nation) => (
-                <option key={nation.id} value={nation.id}>
-                  {nation.name}
+            <label className="grid gap-2 text-sm font-bold text-zinc-100">
+              Nation
+              <select name="nationId" required className="px-3 py-2">
+                <option value="">Select nation</option>
+                {nations.map((nation) => (
+                  <option key={nation.id} value={nation.id}>
+                    {nation.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100">
+              Action Type
+              <input
+                name="type"
+                required
+                placeholder="Election, war move, treaty, reform"
+                className="px-3 py-2"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100">
+              Timeframe
+              <input
+                name="timeframe"
+                required
+                placeholder="Approx. timeframe"
+                className="px-3 py-2"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100">
+              Status
+              <select
+                name="status"
+                defaultValue={LoreActionStatus.CURRENT}
+                className="px-3 py-2"
+              >
+                <option value={LoreActionStatus.CURRENT}>Current</option>
+                <option value={LoreActionStatus.REQUIRES_SPIN}>
+                  Requires spin
                 </option>
-              ))}
-            </select>
-            <input
-              name="type"
-              required
-              placeholder="Action type"
-              className="px-3 py-2"
-            />
-            <input
-              name="timeframe"
-              required
-              placeholder="Approx. timeframe"
-              className="px-3 py-2"
-            />
-            <select
-              name="status"
-              defaultValue={LoreActionStatus.CURRENT}
-              className="px-3 py-2"
-            >
-              <option value={LoreActionStatus.CURRENT}>Current</option>
-              <option value={LoreActionStatus.REQUIRES_SPIN}>
-                Requires spin
-              </option>
-            </select>
-            <input
-              name="source"
-              placeholder="TikTok source or note"
-              className="px-3 py-2 xl:col-span-2"
-            />
-            <textarea
-              name="action"
-              required
-              placeholder="Nation:, Action Type:, Action:"
-              className="min-h-32 p-3 xl:col-span-2"
-            />
-            <input
-              name="requiresSpinReason"
-              placeholder="Spin reason, if needed"
-              className="px-3 py-2 xl:col-span-2"
-            />
-            <button className="rounded-lg bg-amber-300 px-4 py-2 font-bold text-zinc-950 hover:bg-amber-200 xl:col-span-2">
+              </select>
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100 xl:col-span-2">
+              Source
+              <input
+                name="source"
+                placeholder="TikTok source or note"
+                className="px-3 py-2"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100 xl:col-span-3">
+              Action Brief
+              <textarea
+                name="action"
+                required
+                placeholder="Describe the canon action clearly. Markdown and BBCode are supported."
+                className="min-h-36 p-3"
+              />
+            </label>
+            <label className="grid gap-2 text-sm font-bold text-zinc-100 xl:col-span-3">
+              Spin Prompt or Reason
+              <input
+                name="requiresSpinReason"
+                placeholder="Only needed if the action requires a wheel decision"
+                className="px-3 py-2"
+              />
+            </label>
+            <button className="rounded-lg bg-amber-300 px-4 py-3 font-bold text-zinc-950 hover:bg-amber-200 xl:col-span-3">
               Track Action
             </button>
           </form>
@@ -300,11 +363,20 @@ export default async function LoreActionsPage() {
                   {items.map((action) => (
                     <article
                       key={action.id}
+                      id={`action-${action.id}`}
                       className="rounded-lg border border-white/10 bg-black/20 p-4"
                     >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <Badge>{action.nation.name}</Badge>
-                        <Badge tone="accent">{action.type}</Badge>
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <Badge>{action.nation.name}</Badge>
+                          <Badge tone="accent">{action.type}</Badge>
+                        </div>
+                        <a
+                          href={`#action-${action.id}`}
+                          className="rounded-lg border border-white/10 px-3 py-2 text-sm font-bold text-zinc-100 hover:bg-white/5"
+                        >
+                          Focus
+                        </a>
                       </div>
                       <p className="mt-3 text-sm font-semibold text-zinc-300">
                         Timeframe: {action.timeframe}
