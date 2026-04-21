@@ -37,6 +37,11 @@ export const metadata: Metadata = {
     description:
       "A map-first strategy world platform for nation profiles, lore, and Discord governance.",
   },
+  icons: {
+    icon: "/icon.jpg",
+    shortcut: "/icon.jpg",
+    apple: "/icon.jpg",
+  },
 };
 
 export default function RootLayout({

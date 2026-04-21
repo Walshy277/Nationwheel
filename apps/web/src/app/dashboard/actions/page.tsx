@@ -3,6 +3,7 @@ import { LoreActionStatus } from "@prisma/client";
 import { markLeaderNotificationReadAction } from "@/app/actions";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
+import { alertCategoryLabel } from "@/lib/alerts";
 import { getPrisma } from "@/lib/prisma";
 import { requirePageUser } from "@/lib/permissions";
 
@@ -10,6 +11,16 @@ const activeStatuses = new Set<LoreActionStatus>([
   LoreActionStatus.CURRENT,
   LoreActionStatus.REQUIRES_SPIN,
 ]);
+
+function latestTouch(action: {
+  updatedAt: Date;
+  updates: Array<{ createdAt: Date }>;
+}) {
+  const latestUpdate = action.updates[0]?.createdAt;
+  return latestUpdate && latestUpdate > action.updatedAt
+    ? latestUpdate
+    : action.updatedAt;
+}
 
 export default async function DashboardActionsPage() {
   const user = await requirePageUser();
@@ -29,8 +40,11 @@ export default async function DashboardActionsPage() {
       },
       notifications: {
         orderBy: { createdAt: "desc" },
-        take: 8,
-        where: { readAt: null },
+        take: 12,
+        where: {
+          readAt: null,
+          category: { in: ["ACTION_STATUS", "ACTION_UPDATE", "SPIN_RESULT"] },
+        },
       },
     },
   });
@@ -38,7 +52,15 @@ export default async function DashboardActionsPage() {
   const actions = nations.flatMap((nation) =>
     nation.loreActions.map((action) => ({ ...action, nation })),
   );
-  const active = actions.filter((action) => activeStatuses.has(action.status));
+  const active = actions
+    .filter((action) => activeStatuses.has(action.status))
+    .sort((left, right) => latestTouch(right).getTime() - latestTouch(left).getTime());
+  const spinRequired = active.filter(
+    (action) => action.status === LoreActionStatus.REQUIRES_SPIN,
+  );
+  const current = active.filter(
+    (action) => action.status === LoreActionStatus.CURRENT,
+  );
   const completed = actions.filter(
     (action) => action.status === LoreActionStatus.COMPLETED,
   );
@@ -51,11 +73,11 @@ export default async function DashboardActionsPage() {
       <div>
         <Badge tone="accent">My Actions</Badge>
         <h1 className="mt-4 text-4xl font-black text-zinc-50">
-          My Nation Actions
+          Canon Action Tracker
         </h1>
         <p className="mt-3 max-w-3xl text-zinc-300">
-          Track staff-managed canon actions, spin requirements, and lore team
-          updates for nations linked to your account.
+          This view is trimmed down to the things that matter: what is blocked,
+          what is active, and what staff changed most recently.
         </p>
       </div>
 
@@ -75,20 +97,57 @@ export default async function DashboardActionsPage() {
         </Panel>
       ) : null}
 
+      {nations.length ? (
+        <div className="grid gap-3 md:grid-cols-4">
+          <Panel className="bg-black/20">
+            <p className="text-xs font-bold uppercase text-zinc-500">
+              Active actions
+            </p>
+            <p className="mt-1 text-3xl font-black text-zinc-50">
+              {active.length}
+            </p>
+          </Panel>
+          <Panel className="border-amber-300/25 bg-amber-300/10">
+            <p className="text-xs font-bold uppercase text-amber-100">
+              Requires spin
+            </p>
+            <p className="mt-1 text-3xl font-black text-amber-50">
+              {spinRequired.length}
+            </p>
+          </Panel>
+          <Panel className="bg-black/20">
+            <p className="text-xs font-bold uppercase text-zinc-500">
+              Unread action alerts
+            </p>
+            <p className="mt-1 text-3xl font-black text-zinc-50">
+              {notifications.length}
+            </p>
+          </Panel>
+          <Panel className="bg-black/20">
+            <p className="text-xs font-bold uppercase text-zinc-500">
+              Completed archive
+            </p>
+            <p className="mt-1 text-3xl font-black text-zinc-50">
+              {completed.length}
+            </p>
+          </Panel>
+        </div>
+      ) : null}
+
       {notifications.length ? (
         <Panel className="border-amber-300/40 bg-amber-300/10">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <Badge tone="warning">New Staff Updates</Badge>
+              <Badge tone="warning">Needs Attention</Badge>
               <h2 className="mt-3 text-2xl font-bold text-amber-50">
-                Notifications
+                New action updates
               </h2>
             </div>
             <Link
-              href="/dashboard/inbox"
+              href="/dashboard/notifications"
               className="rounded-lg border border-amber-200/50 px-3 py-2 text-sm font-bold text-amber-50 hover:bg-amber-200/10"
             >
-              View all
+              Open Bell
             </Link>
           </div>
           <div className="mt-4 grid gap-3">
@@ -101,7 +160,13 @@ export default async function DashboardActionsPage() {
                 )}
                 className="rounded-lg border border-amber-200/20 bg-black/20 p-3"
               >
-                <p className="text-sm font-bold text-amber-50">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone="warning">
+                    {alertCategoryLabel(notification.category)}
+                  </Badge>
+                  <Badge>{notification.nation.name}</Badge>
+                </div>
+                <p className="mt-3 text-sm font-bold text-amber-50">
                   {notification.title}
                 </p>
                 <p className="mt-1 text-sm text-amber-100">
@@ -126,63 +191,87 @@ export default async function DashboardActionsPage() {
         </Panel>
       ) : null}
 
+      {spinRequired.length ? (
+        <section className="grid gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h2 className="text-2xl font-black text-zinc-50">Waiting On Spin</h2>
+            <Badge tone="warning">{spinRequired.length}</Badge>
+          </div>
+          <div className="grid gap-3">
+            {spinRequired.map((action) => (
+              <Panel
+                key={action.id}
+                className="border-amber-300/25 bg-amber-300/10"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge>{action.nation.name}</Badge>
+                  <Badge tone="warning">Requires spin</Badge>
+                  <Badge>{action.type}</Badge>
+                </div>
+                <p className="mt-3 text-sm font-semibold text-amber-100/90">
+                  Estimated completion: {action.timeframe}
+                </p>
+                {action.requiresSpinReason ? (
+                  <p className="mt-3 rounded-lg border border-amber-300/30 bg-black/20 p-3 text-sm text-amber-50">
+                    {action.requiresSpinReason}
+                  </p>
+                ) : null}
+                <div className="mt-4">
+                  <WikiRenderer content={action.action} />
+                </div>
+              </Panel>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       <section className="grid gap-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-2xl font-black text-zinc-50">Active Actions</h2>
-          <Badge tone="accent">{active.length}</Badge>
+          <h2 className="text-2xl font-black text-zinc-50">Current Queue</h2>
+          <Badge tone="accent">{current.length}</Badge>
         </div>
-        {active.map((action) => (
-          <Panel key={action.id}>
-            <div className="flex flex-wrap items-center gap-2">
-              <Badge>{action.nation.name}</Badge>
-              <Badge
-                tone={
-                  action.status === LoreActionStatus.REQUIRES_SPIN
-                    ? "warning"
-                    : "accent"
-                }
-              >
-                {action.status.replace("_", " ")}
-              </Badge>
-              <Badge>{action.type}</Badge>
-            </div>
-            <p className="mt-3 text-sm font-semibold text-zinc-400">
-              Estimated completion: {action.timeframe}
-            </p>
-            <div className="mt-4">
-              <WikiRenderer content={action.action} />
-            </div>
-            {action.requiresSpinReason ? (
-              <p className="mt-4 rounded-lg border border-amber-300/30 bg-amber-300/10 p-3 text-sm text-amber-100">
-                Requires spin: {action.requiresSpinReason}
-              </p>
-            ) : null}
-            {action.updates.length ? (
-              <div className="mt-5 grid gap-2">
-                <h3 className="text-sm font-bold uppercase text-zinc-400">
-                  Staff Updates
-                </h3>
-                {action.updates.map((update) => (
-                  <div
-                    key={update.id}
-                    className="rounded-lg border border-white/10 bg-black/20 p-3"
-                  >
-                    <WikiRenderer content={update.content} />
-                    <p className="mt-2 text-xs text-zinc-500">
-                      {update.createdAt.toLocaleString("en-GB")} by{" "}
-                      {update.createdByUser?.name ??
-                        update.createdByUser?.email ??
-                        "Lore team"}
-                    </p>
-                  </div>
-                ))}
+        {current.map((action) => {
+          const latestUpdate = action.updates[0];
+
+          return (
+            <Panel key={action.id}>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge>{action.nation.name}</Badge>
+                <Badge tone="accent">Current</Badge>
+                <Badge>{action.type}</Badge>
               </div>
-            ) : null}
-          </Panel>
-        ))}
-        {nations.length && active.length === 0 ? (
+              <p className="mt-3 text-sm font-semibold text-zinc-400">
+                Estimated completion: {action.timeframe}
+              </p>
+              <div className="mt-4">
+                <WikiRenderer content={action.action} />
+              </div>
+              {latestUpdate ? (
+                <div className="mt-5 rounded-lg border border-white/10 bg-black/20 p-3">
+                  <p className="text-xs font-bold uppercase text-zinc-500">
+                    Latest staff update
+                  </p>
+                  <div className="mt-2">
+                    <WikiRenderer content={latestUpdate.content} />
+                  </div>
+                  <p className="mt-2 text-xs text-zinc-500">
+                    {latestUpdate.createdAt.toLocaleString("en-GB")} by{" "}
+                    {latestUpdate.createdByUser?.name ??
+                      latestUpdate.createdByUser?.email ??
+                      "Lore team"}
+                  </p>
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-zinc-500">
+                  No staff update has been posted on this action yet.
+                </p>
+              )}
+            </Panel>
+          );
+        })}
+        {nations.length && current.length === 0 ? (
           <Panel className="text-zinc-300">
-            No active actions are assigned to your nation right now.
+            No current actions are assigned to your nation right now.
           </Panel>
         ) : null}
       </section>

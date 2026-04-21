@@ -281,6 +281,9 @@ export default async function DashboardPage() {
         : action.updatedAt;
     return latestTouch < staleCutoff;
   });
+  const unreadNotificationCount = leaderCounts?.[0] ?? 0;
+  const unreadMailCount = leaderCounts?.[1] ?? 0;
+  const myActiveActionCount = leaderCounts?.[2] ?? 0;
 
   if (!user) {
     return (
@@ -322,6 +325,17 @@ export default async function DashboardPage() {
             Signed in as <span className="font-bold">{accountLabel}</span>.
             Your roles are {(user.roles?.length ? user.roles : [user.role]).join(", ")}.
           </p>
+          <div className="mt-5 flex flex-wrap gap-2">
+            <Badge tone={unreadNotificationCount ? "warning" : "neutral"}>
+              {unreadNotificationCount} unread alerts
+            </Badge>
+            <Badge tone={unreadMailCount ? "warning" : "neutral"}>
+              {unreadMailCount} unread mail
+            </Badge>
+            <Badge tone={myActiveActionCount ? "accent" : "neutral"}>
+              {myActiveActionCount} active actions
+            </Badge>
+          </div>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
               href="/dashboard/wiki"
@@ -414,6 +428,61 @@ export default async function DashboardPage() {
         </div>
       </Panel>
 
+      {(unreadNotificationCount || unreadMailCount || myActiveActionCount) ? (
+        <Panel className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+          <div>
+            <Badge tone="warning">Attention Queue</Badge>
+            <h2 className="mt-3 text-2xl font-bold text-zinc-50">
+              What needs checking now
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-300">
+              The dashboard now surfaces the three day-to-day queues directly:
+              bell alerts, postal mail, and active canon workload.
+            </p>
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-bold uppercase text-zinc-500">
+                  Bell alerts
+                </p>
+                <p className="mt-1 text-3xl font-black text-zinc-50">
+                  {unreadNotificationCount}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-bold uppercase text-zinc-500">
+                  Postal mail
+                </p>
+                <p className="mt-1 text-3xl font-black text-zinc-50">
+                  {unreadMailCount}
+                </p>
+              </div>
+              <div className="rounded-lg border border-white/10 bg-black/20 p-4">
+                <p className="text-xs font-bold uppercase text-zinc-500">
+                  My canon actions
+                </p>
+                <p className="mt-1 text-3xl font-black text-zinc-50">
+                  {myActiveActionCount}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/dashboard/notifications"
+              className="rounded-lg border border-emerald-300/70 px-4 py-3 text-sm font-bold text-emerald-100 hover:bg-emerald-900/10"
+            >
+              Open Bell
+            </Link>
+            <Link
+              href="/dashboard/inbox"
+              className="rounded-lg border border-white/10 px-4 py-3 text-sm font-bold text-zinc-100 hover:bg-white/5"
+            >
+              Open Mail
+            </Link>
+          </div>
+        </Panel>
+      ) : null}
+
       {staffSpinActions.length || staleActions.length ? (
         <Panel className="border-amber-300/35 bg-amber-300/10">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -500,6 +569,16 @@ export default async function DashboardPage() {
               (leaderCounts?.[0] ?? 0) + (leaderCounts?.[1] ?? 0)
                 ? "warning"
                 : "neutral",
+          },
+          {
+            href: "/dashboard/notifications",
+            title: "Notification Bell",
+            detail:
+              "Control alert preferences and clear staff, spin, and system updates.",
+            badge: unreadNotificationCount
+              ? `${unreadNotificationCount} Unread`
+              : "Bell",
+            tone: unreadNotificationCount ? "warning" : "neutral",
           },
           ...(myNation
             ? [
