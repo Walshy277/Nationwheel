@@ -90,17 +90,17 @@ export default async function WorldNewsPage() {
     <PageShell className="grid gap-6">
       <header className="border-y border-white/15 py-6 text-center">
         <Badge tone="accent">World News</Badge>
-        <h1 className="mt-4 text-5xl font-black tracking-tight text-zinc-50 md:text-7xl">
+        <h1 className="mt-4 text-4xl font-black tracking-tight text-zinc-50 sm:text-5xl md:text-7xl">
           The Nation Wheel Gazette
         </h1>
-        <p className="mt-3 text-sm font-semibold uppercase tracking-[0.24em] text-zinc-400">
+        <p className="mt-3 text-sm font-semibold uppercase tracking-wide text-zinc-400 sm:tracking-[0.24em]">
           Reports from the world stage
         </p>
       </header>
 
       {tickerItems.length ? (
         <div className="overflow-hidden rounded-lg border border-amber-300/30 bg-amber-300/10">
-          <div className="flex min-w-max animate-[ticker_32s_linear_infinite] gap-8 px-4 py-3 text-sm font-bold uppercase tracking-wide text-amber-50">
+          <div className="flex w-max animate-[ticker_32s_linear_infinite] gap-8 px-4 py-3 text-sm font-bold uppercase tracking-wide text-amber-50">
             {[...tickerItems, ...tickerItems].map((item, index) => (
               <span key={`${item}-${index}`}>Breaking: {item}</span>
             ))}
@@ -111,10 +111,10 @@ export default async function WorldNewsPage() {
       {leadPost ? (
         <Panel className="grid gap-6 lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.65fr)]">
           <article className="min-w-0">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+            <p className="text-xs font-bold uppercase tracking-wide text-zinc-500 sm:tracking-[0.18em]">
               Lead Report · {leadPost.publishedAt.toLocaleString("en-GB")}
             </p>
-            <h2 className="mt-3 text-4xl font-black leading-tight text-zinc-50 md:text-5xl">
+            <h2 className="mt-3 text-3xl font-black leading-tight text-zinc-50 sm:text-4xl md:text-5xl">
               {leadPost.title}
             </h2>
             {leadPost.heroImageUrl ? (
@@ -131,7 +131,7 @@ export default async function WorldNewsPage() {
               <WikiRenderer content={leadPost.content} />
             </div>
             <div className="mt-6 border-t border-white/10 pt-5">
-              <p className="mb-3 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+              <p className="mb-3 text-xs font-bold uppercase tracking-wide text-zinc-500 sm:tracking-[0.16em]">
                 Reader reaction
               </p>
               <NewsReactions
@@ -150,7 +150,7 @@ export default async function WorldNewsPage() {
             </div>
           </article>
           <aside className="rounded-lg border border-white/10 bg-black/20 p-4">
-            <h3 className="text-sm font-black uppercase tracking-[0.18em] text-amber-100">
+            <h3 className="text-sm font-black uppercase tracking-wide text-amber-100 sm:tracking-[0.18em]">
               Announcements
             </h3>
             <div className="mt-4">
@@ -181,7 +181,7 @@ export default async function WorldNewsPage() {
           {otherPosts.map((post) => (
             <Panel key={post.id} className="grid content-start gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
+                <p className="text-xs font-bold uppercase tracking-wide text-zinc-500 sm:tracking-[0.16em]">
                   {post.publishedAt.toLocaleString("en-GB")}
                 </p>
                 <h2 className="mt-2 text-2xl font-black leading-tight text-zinc-50">

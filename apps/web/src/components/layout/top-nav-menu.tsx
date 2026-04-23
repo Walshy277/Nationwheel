@@ -25,7 +25,7 @@ type UnreadCounts = {
 };
 
 const toolsMenuClassName =
-  "mt-2 grid max-h-[76vh] gap-4 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-3 shadow-2xl shadow-black/30 lg:absolute lg:left-1/2 lg:top-10 lg:mt-0 lg:w-[900px] lg:-translate-x-1/2 lg:grid-cols-[minmax(0,1fr)_300px] lg:p-4 lg:shadow-black/40";
+  "mt-2 grid max-h-[76vh] max-w-[calc(100vw-2rem)] gap-4 overflow-y-auto rounded-lg border border-white/10 bg-[#10120f] p-3 shadow-2xl shadow-black/30 lg:absolute lg:left-1/2 lg:top-10 lg:mt-0 lg:w-[min(900px,calc(100vw-2rem))] lg:-translate-x-1/2 lg:grid-cols-[minmax(0,1fr)_minmax(240px,300px)] lg:p-4 lg:shadow-black/40";
 
 function MenuSection({
   title,
@@ -238,7 +238,7 @@ export function TopNavMenu({
         </Link>
 
         <nav className="order-3 grid w-full gap-2 text-sm text-zinc-300 lg:order-none lg:flex lg:w-auto lg:items-center lg:gap-1 xl:hidden">
-          <div className="-mx-1 flex items-center gap-1 overflow-x-auto px-1 pb-1 lg:mx-0 lg:overflow-visible lg:px-0 lg:pb-0">
+          <div className="flex max-w-full flex-wrap items-center gap-1 pb-1 lg:flex-nowrap lg:overflow-visible lg:pb-0">
             {primaryNavLinks.map((link) => {
               const isActive = isActivePath(pathname, link.href);
               return (
@@ -247,7 +247,7 @@ export function TopNavMenu({
                 href={link.href}
                 aria-current={isActive ? "page" : undefined}
                 className={[
-                  "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold",
+                  "rounded-lg px-3 py-2 font-semibold",
                   isActive
                     ? "bg-emerald-900/18 text-emerald-100"
                     : "hover:bg-white/5 hover:text-white",
@@ -261,7 +261,7 @@ export function TopNavMenu({
               href="/directory"
               aria-current={isActivePath(pathname, "/directory") ? "page" : undefined}
               className={[
-                "shrink-0 whitespace-nowrap rounded-lg px-3 py-2 font-semibold",
+                "rounded-lg px-3 py-2 font-semibold",
                 isActivePath(pathname, "/directory")
                   ? "bg-emerald-900/18 text-emerald-100"
                   : "hover:bg-white/5 hover:text-white",

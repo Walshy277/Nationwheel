@@ -76,7 +76,7 @@ export default async function DashboardWikiPage() {
                 required
                 defaultValue={nation.leaderName ?? ""}
                 placeholder="Enter the current leader name"
-                className="min-h-11 min-w-0 flex-1 rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-zinc-100 sm:min-w-[320px]"
+                className="min-h-11 min-w-0 flex-[1_1_220px] rounded-md border border-white/10 bg-zinc-950 px-3 py-2 text-zinc-100"
               />
               <button className="rounded-lg border border-emerald-300/70 px-4 py-2 font-bold text-emerald-100 hover:bg-emerald-900/10">
                 Save Leader Name
@@ -112,7 +112,7 @@ export default async function DashboardWikiPage() {
             <textarea
               name="content"
               required
-              className="min-h-[420px] w-full p-4 font-mono text-sm leading-7 text-zinc-100"
+              className="min-h-[320px] w-full p-4 font-mono text-sm leading-7 text-zinc-100 sm:min-h-[420px]"
               defaultValue={
                 nation.wiki?.content ?? createNationWikiTemplate(nation)
               }

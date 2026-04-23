@@ -55,7 +55,7 @@ export function ForumThreadRow({
   const canModerate = canModerateForums(user);
 
   return (
-    <article className="grid gap-4 px-4 py-4 hover:bg-white/[0.03] sm:px-5 lg:grid-cols-[minmax(0,1fr)_96px_120px_240px] lg:items-center">
+    <article className="grid gap-4 px-4 py-4 hover:bg-white/[0.03] sm:px-5 lg:grid-cols-[minmax(0,1fr)_96px_120px_minmax(180px,240px)] lg:items-center">
       <div className="min-w-0">
         <div className="flex flex-wrap items-center gap-2">
           {thread.isPinned ? <Badge tone="warning">Pinned</Badge> : null}
@@ -89,7 +89,7 @@ export function ForumThreadRow({
         <p className="text-2xl font-black text-zinc-50">{thread._count.posts}</p>
         <p className="text-xs text-zinc-500 lg:hidden">Replies</p>
       </div>
-      <div className="grid gap-2">
+      <div className="grid min-w-0 gap-2">
         <div className="text-center text-sm font-bold text-zinc-200">
           {thread.reactions.length} total
         </div>
@@ -111,7 +111,7 @@ export function ForumThreadRow({
           ))}
         </div>
       </div>
-      <div className="text-sm leading-6 text-zinc-400">
+      <div className="min-w-0 text-sm leading-6 text-zinc-400">
         {latestPost ? (
           <>
             <p className="font-bold text-zinc-200">

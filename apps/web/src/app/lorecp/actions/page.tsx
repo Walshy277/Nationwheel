@@ -111,8 +111,8 @@ export default async function LoreActionsPage() {
   return (
     <ControlLayout title="LoreCP" links={loreCpLinks}>
       <div className="grid gap-6">
-        <Panel className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-          <div>
+        <Panel className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px] xl:items-start">
+          <div className="min-w-0">
           <Badge tone="warning">Daily lore loop</Badge>
           <h1 className="mt-4 text-4xl font-black text-zinc-50">
             Action Tracker
@@ -154,7 +154,7 @@ export default async function LoreActionsPage() {
             </div>
           </div>
           </div>
-          <div className="grid gap-3">
+          <div className="grid min-w-0 gap-3">
             <div className="rounded-lg border border-amber-300/25 bg-amber-300/10 p-4">
               <p className="text-xs font-bold uppercase tracking-wide text-amber-100">
                 Fast lane
@@ -257,7 +257,7 @@ export default async function LoreActionsPage() {
           </div>
           <form
             action={createLoreActionAction}
-            className="mt-5 grid gap-4 xl:grid-cols-[240px_240px_minmax(0,1fr)]"
+            className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-[minmax(0,240px)_minmax(0,240px)_minmax(0,1fr)]"
           >
             <label className="grid gap-2 text-sm font-bold text-zinc-100">
               Nation

@@ -14,7 +14,7 @@ export function ContentImage({
       src={src}
       alt={alt}
       className={[
-        "h-auto w-full rounded-lg border border-white/10 object-cover",
+        "h-auto max-w-full rounded-lg border border-white/10 object-cover",
         className,
       ].join(" ")}
     />
