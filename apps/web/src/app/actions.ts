@@ -23,6 +23,7 @@ import {
   loreActionStatusSchema,
   loreActionUpdateSchema,
   nationMessageSchema,
+  nationSecretEntrySchema,
   nationStatsSchema,
   overviewUpdateSchema,
   publicLorePageSchema,
@@ -55,7 +56,16 @@ function readOptionalNullableText(formData: FormData, key: string) {
 }
 
 async function readFlagDataUrl(formData: FormData) {
-  const file = formData.get("flag");
+  return readImageDataUrl(formData, "flag", "Flag upload", 5_000_000);
+}
+
+async function readImageDataUrl(
+  formData: FormData,
+  key: string,
+  label: string,
+  maxSize: number,
+) {
+  const file = formData.get(key);
   if (!(file instanceof File) || file.size === 0) return null;
   const supportedImageTypes = new Set([
     "image/png",
@@ -64,14 +74,25 @@ async function readFlagDataUrl(formData: FormData) {
     "image/webp",
   ]);
   if (!supportedImageTypes.has(file.type)) {
-    throw new Error("Flag upload must be a PNG, JPG, GIF, or WebP image.");
+    throw new Error(`${label} must be a PNG, JPG, GIF, or WebP image.`);
   }
-  if (file.size > 5_000_000) {
-    throw new Error("Profile picture must be under 5 MB.");
+  if (file.size > maxSize) {
+    throw new Error(
+      `${label} must be under ${Math.floor(maxSize / 1_000_000)} MB.`,
+    );
   }
 
   const bytes = Buffer.from(await file.arrayBuffer());
   return `data:${file.type};base64,${bytes.toString("base64")}`;
+}
+
+async function readScreenshotDataUrl(formData: FormData) {
+  return readImageDataUrl(
+    formData,
+    "screenshot",
+    "Screenshot upload",
+    8_000_000,
+  );
 }
 
 function slugify(value: string) {
@@ -129,6 +150,22 @@ function highestRole(roles: Role[]) {
 function userHasStaffRole(user: { role: Role; roles?: Role[] | null }) {
   const roles = new Set([user.role, ...(user.roles ?? [])]);
   return roles.has(Role.LORE) || roles.has(Role.ADMIN) || roles.has(Role.OWNER);
+}
+
+async function requireNationSecretAccess(nationId: string) {
+  const user = await requireUser();
+  const nation = await getPrisma().nation.findUniqueOrThrow({
+    where: { id: nationId },
+    select: { leaderUserId: true, slug: true },
+  });
+
+  if (!userHasStaffRole(user) && nation.leaderUserId !== user.id) {
+    throw new Error(
+      "You do not have permission to update this private nation page.",
+    );
+  }
+
+  return { user, nation };
 }
 
 async function notifyNationLeader({
@@ -1314,6 +1351,47 @@ export async function recordLoreSpinAction(
     body: `Lore staff spun a decision wheel for your ${current.type.toLowerCase()} action. Result: ${payload.result}.`,
     href: "/dashboard/actions",
   });
+}
+
+export async function createNationSecretEntryAction(
+  nationId: string,
+  formData: FormData,
+) {
+  const { user, nation } = await requireNationSecretAccess(nationId);
+  const payload = nationSecretEntrySchema.parse({
+    actionId: readNullableText(formData, "actionId"),
+    title: readText(formData, "title"),
+    content: readText(formData, "content"),
+  });
+  const screenshotImage = await readScreenshotDataUrl(formData);
+
+  if (payload.actionId) {
+    const action = await getPrisma().loreAction.findUnique({
+      where: { id: payload.actionId },
+      select: { nationId: true, status: true },
+    });
+
+    if (
+      !action ||
+      action.nationId !== nationId ||
+      action.status !== LoreActionStatus.COMPLETED
+    ) {
+      throw new Error("Choose a completed action from this nation.");
+    }
+  }
+
+  await getPrisma().nationSecretEntry.create({
+    data: {
+      nationId,
+      actionId: payload.actionId ?? undefined,
+      title: payload.title,
+      content: payload.content,
+      screenshotImage: screenshotImage ?? undefined,
+      createdByUserId: user.id,
+    },
+  });
+
+  revalidatePath(`/nations/${nation.slug}/secret`);
 }
 
 export async function updatePublicLorePageAction(

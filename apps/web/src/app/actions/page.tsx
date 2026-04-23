@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LoreActionStatus } from "@prisma/client";
 import Link from "next/link";
+import { CompletedActionsToggle } from "@/components/actions/completed-actions-toggle";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { getPrisma } from "@/lib/prisma";
@@ -190,8 +191,9 @@ export default async function PublicActionsPage() {
           </div>
           <Badge>{completed.length} archived</Badge>
         </div>
-        <div className="grid gap-3">
-          {completed.map((action) => (
+        <CompletedActionsToggle count={completed.length}>
+          <div className="grid gap-3">
+            {completed.map((action) => (
             <Panel key={action.id} className="grid gap-3">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
@@ -243,14 +245,15 @@ export default async function PublicActionsPage() {
                   </div>
                 </div>
               ) : null}
-            </Panel>
-          ))}
-          {completed.length === 0 ? (
-            <Panel className="text-zinc-300">
-              No completed actions have been archived yet.
-            </Panel>
-          ) : null}
-        </div>
+              </Panel>
+            ))}
+            {completed.length === 0 ? (
+              <Panel className="text-zinc-300">
+                No completed actions have been archived yet.
+              </Panel>
+            ) : null}
+          </div>
+        </CompletedActionsToggle>
       </section>
     </PageShell>
   );

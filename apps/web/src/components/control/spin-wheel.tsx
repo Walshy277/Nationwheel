@@ -4,14 +4,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { recordLoreSpinAction } from "@/app/actions";
 
 const wheelPalette = [
-  "#14532d",
-  "#166534",
-  "#854d0e",
-  "#7c2d12",
-  "#1d4ed8",
-  "#7e22ce",
-  "#be123c",
-  "#0f766e",
+  "#047857",
+  "#f59e0b",
+  "#2563eb",
+  "#e11d48",
+  "#7c3aed",
+  "#0d9488",
+  "#ca8a04",
+  "#be185d",
 ];
 
 type WeightedOption = {
@@ -174,7 +174,7 @@ export function SpinWheel({
         </button>
       </div>
 
-      <div className="mt-4 grid gap-5 xl:grid-cols-[minmax(0,1fr)_24rem]">
+      <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_28rem]">
         <div className="grid gap-3">
           <label className="grid gap-2 text-sm font-semibold text-zinc-100">
             Prompt
@@ -195,8 +195,8 @@ export function SpinWheel({
             />
           </label>
           <p className="text-xs leading-5 text-zinc-400">
-            One option per line. Use `label | weight`. Missing weights default
-            to 1.
+            One option per line. Use label | weight. Missing weights default to
+            1. The wheel selects by weight, not by visual label size alone.
           </p>
           {error ? <p className="text-sm text-amber-100">{error}</p> : null}
 
@@ -226,10 +226,10 @@ export function SpinWheel({
         </div>
 
         <div className="grid content-start gap-4">
-          <div className="relative mx-auto w-full max-w-[24rem]">
-            <div className="pointer-events-none absolute left-1/2 top-0 z-20 h-0 w-0 -translate-x-1/2 border-l-[14px] border-r-[14px] border-t-[24px] border-l-transparent border-r-transparent border-t-amber-100 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]" />
+          <div className="relative mx-auto w-full max-w-[28rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.18),rgba(0,0,0,0)_66%)] p-4">
+            <div className="pointer-events-none absolute left-1/2 top-2 z-20 h-0 w-0 -translate-x-1/2 border-l-[18px] border-r-[18px] border-t-[34px] border-l-transparent border-r-transparent border-t-amber-100 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]" />
             <div
-              className="relative aspect-square overflow-hidden rounded-full border-[6px] border-white/15 bg-black/30 shadow-[0_24px_60px_rgba(0,0,0,0.35)]"
+              className="relative aspect-square overflow-hidden rounded-full border-[8px] border-white/15 bg-black/30 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
               style={{
                 backgroundImage: gradient || undefined,
                 transform: `rotate(${rotation}deg)`,
@@ -244,7 +244,7 @@ export function SpinWheel({
                   return (
                     <div
                       key={`${option.label}-${index}`}
-                      className="absolute max-w-[7rem] -translate-x-1/2 -translate-y-1/2 text-center text-[10px] font-black uppercase leading-4 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.85)]"
+                      className="absolute max-w-[8rem] -translate-x-1/2 -translate-y-1/2 rounded-md bg-black/28 px-2 py-1 text-center text-[10px] font-black uppercase leading-4 text-white shadow-sm backdrop-blur-[1px]"
                       style={coordinates}
                     >
                       {option.label}
@@ -256,8 +256,8 @@ export function SpinWheel({
                   Add at least two options to render the wheel.
                 </div>
               )}
-              <div className="absolute left-1/2 top-1/2 z-10 grid h-20 w-20 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-white/15 bg-[#10130f] text-center shadow-xl shadow-black/40">
-                <span className="px-3 text-[10px] font-black uppercase tracking-wide text-zinc-400">
+              <div className="absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-amber-100/30 bg-[#10130f] text-center shadow-xl shadow-black/50">
+                <span className="px-3 text-[10px] font-black uppercase tracking-wide text-amber-100">
                   Nation Wheel
                 </span>
               </div>
@@ -288,7 +288,16 @@ export function SpinWheel({
                   key={`${option.label}-odds-${index}`}
                   className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm"
                 >
-                  <span className="font-bold text-zinc-100">{option.label}</span>
+                  <span className="flex min-w-0 items-center gap-2 font-bold text-zinc-100">
+                    <span
+                      className="h-3 w-3 shrink-0 rounded-full"
+                      style={{
+                        backgroundColor:
+                          wheelPalette[index % wheelPalette.length],
+                      }}
+                    />
+                    <span className="truncate">{option.label}</span>
+                  </span>
                   <span className="text-zinc-400">
                     {option.weight} · {(option.chance * 100).toFixed(1)}%
                   </span>

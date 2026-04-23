@@ -48,6 +48,8 @@ export default async function NationPage({
   const canEditStats =
     roles.has(Role.LORE) || roles.has(Role.ADMIN) || roles.has(Role.OWNER);
   const isAdmin = roles.has(Role.ADMIN) || roles.has(Role.OWNER);
+  const canViewSecretRecords =
+    Boolean(user && nation.leaderUserId === user.id) || canEditStats;
 
   return (
     <PageShell>
@@ -56,6 +58,7 @@ export default async function NationPage({
         wiki={nation.wiki}
         canEditStats={canEditStats}
         isAdmin={isAdmin}
+        canViewSecretRecords={canViewSecretRecords}
       />
     </PageShell>
   );

@@ -62,6 +62,7 @@ model User {
   revisions         NationRevision[]   @relation("RevisionChangedBy")
   loreActions       LoreAction[]       @relation("LoreActionCreatedBy")
   loreActionUpdates LoreActionUpdate[] @relation("LoreActionUpdateCreatedBy")
+  secretEntries     NationSecretEntry[] @relation("NationSecretEntryCreatedBy")
   publicPageUpdates PublicLorePage[]   @relation("PublicPageUpdatedBy")
   newsPosts         WorldNewsPost[]    @relation("WorldNewsPostAuthor")
   newsReactions     WorldNewsReaction[]
@@ -98,6 +99,7 @@ model Nation {
   wiki         NationWiki?
   revisions    NationRevision[]
   loreActions  LoreAction[]
+  secretEntries NationSecretEntry[]
   notifications LeaderNotification[]
   sentMessages NationMessage[] @relation("NationMessageFrom")
   receivedMessages NationMessage[] @relation("NationMessageTo")
@@ -142,6 +144,7 @@ model LoreAction {
   createdByUserId    String?
   createdByUser      User?              @relation("LoreActionCreatedBy", fields: [createdByUserId], references: [id])
   updates            LoreActionUpdate[]
+  secretEntries      NationSecretEntry[]
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 }
@@ -154,6 +157,24 @@ model LoreActionUpdate {
   createdByUserId String?
   createdByUser   User?      @relation("LoreActionUpdateCreatedBy", fields: [createdByUserId], references: [id])
   createdAt       DateTime   @default(now())
+}
+
+model NationSecretEntry {
+  id              String      @id @default(cuid())
+  nationId        String
+  nation          Nation      @relation(fields: [nationId], references: [id], onDelete: Cascade)
+  actionId        String?
+  action          LoreAction? @relation(fields: [actionId], references: [id], onDelete: SetNull)
+  title           String
+  content         String
+  screenshotImage String?
+  createdByUserId String?
+  createdByUser   User?       @relation("NationSecretEntryCreatedBy", fields: [createdByUserId], references: [id])
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@index([nationId, createdAt])
+  @@index([actionId])
 }
 
 model LeaderNotification {

@@ -173,3 +173,11 @@ export const spinResultSchema = z
     note: z.string().max(2000).optional().default(""),
   })
   .strict();
+
+export const nationSecretEntrySchema = z
+  .object({
+    actionId: z.string().nullable().optional(),
+    title: z.string().min(3).max(160),
+    content: z.string().min(1).max(8000),
+  })
+  .strict();

@@ -77,6 +77,7 @@ export type TrackedLoreAction = {
 
 export type NationSummary = NationStats & {
   id: string;
+  leaderUserId?: string | null;
   leaderName: string | null;
   summary: string;
   trackedActions?: TrackedLoreAction[];

@@ -16,11 +16,13 @@ export function NationProfile({
   wiki,
   canEditStats = false,
   isAdmin = false,
+  canViewSecretRecords = false,
 }: {
   nation: NationSummary;
   wiki: string;
   canEditStats?: boolean;
   isAdmin?: boolean;
+  canViewSecretRecords?: boolean;
 }) {
   const overview = createNationOverview(nation);
 
@@ -58,6 +60,14 @@ export function NationProfile({
           <p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-300">
             {nation.government} with a size of {nation.people}.
           </p>
+          {canViewSecretRecords ? (
+            <Link
+              href={`/nations/${nation.slug}/secret`}
+              className="mt-5 inline-flex rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10"
+            >
+              Private Records
+            </Link>
+          ) : null}
         </div>
       </Panel>
 

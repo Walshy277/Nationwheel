@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo, useState } from "react";
 import { isActivePath } from "@/lib/navigation";
 import type { SiteDirectoryLink } from "@/lib/site-directory";
 
@@ -109,9 +110,37 @@ export function SideNavClient({
   counts: NavBadgeCounts;
   groups: SideNavGroupData[];
 }) {
+  const [query, setQuery] = useState("");
+  const visibleGroups = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    if (!normalized) return groups;
+
+    return groups
+      .map((group) => ({
+        ...group,
+        links: group.links.filter((link) =>
+          `${link.label} ${link.detail} ${link.href}`
+            .toLowerCase()
+            .includes(normalized),
+        ),
+      }))
+      .filter((group) => group.links.length > 0);
+  }, [groups, query]);
+
   return (
     <nav className="grid gap-6" aria-label="Global side navigation">
-      {groups.map((group) => (
+      <label className="grid gap-2 px-1">
+        <span className="text-xs font-black uppercase tracking-wide text-zinc-500">
+          Search nav
+        </span>
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Find any page"
+          className="min-h-10 px-3 text-sm"
+        />
+      </label>
+      {visibleGroups.map((group) => (
         <SideNavGroup
           key={group.title}
           title={group.title}

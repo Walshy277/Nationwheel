@@ -80,6 +80,7 @@ export async function getNationProfile(slug: string) {
 
   const normalized = normalizeNation({
     id: nation.id,
+    leaderUserId: nation.leaderUserId,
     name: nation.name,
     slug: nation.slug,
     people: nation.people,

@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { GlobalSearchForm } from "@/components/search/global-search-form";
 import { isActivePath } from "@/lib/navigation";
 import {
   primaryNavLinks,
@@ -160,6 +161,24 @@ function LetterIcon() {
     >
       <path d="M4 6h16v12H4z" />
       <path d="m4 7 8 6 8-6" />
+    </svg>
+  );
+}
+
+function SearchIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+    >
+      <circle cx="11" cy="11" r="8" />
+      <path d="m21 21-4.3-4.3" />
     </svg>
   );
 }
@@ -355,6 +374,15 @@ export function TopNavMenu({
         </nav>
 
         <div className="flex items-center gap-2">
+          <GlobalSearchForm compact />
+          <NavIconButton
+            href="/search"
+            label="Search"
+            count={0}
+            pathname={pathname}
+          >
+            <SearchIcon />
+          </NavIconButton>
           {userLabel ? (
             <>
               <NavIconButton

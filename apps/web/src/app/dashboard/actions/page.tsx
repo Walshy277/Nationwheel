@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertCategory, LoreActionStatus } from "@prisma/client";
 import { markLeaderNotificationReadAction } from "@/app/actions";
+import { CompletedActionsToggle } from "@/components/actions/completed-actions-toggle";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, PageShell, Panel } from "@/components/ui/shell";
 import { alertCategoryLabel } from "@/lib/alerts";
@@ -331,8 +332,9 @@ export default async function DashboardActionsPage() {
           </h2>
           <Badge>{completed.length}</Badge>
         </div>
-        <div className="grid gap-3 lg:grid-cols-2">
-          {completed.map((action) => (
+        <CompletedActionsToggle count={completed.length}>
+          <div className="grid gap-3 lg:grid-cols-2">
+            {completed.map((action) => (
             <Panel key={action.id}>
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -363,14 +365,15 @@ export default async function DashboardActionsPage() {
                   </div>
                 </div>
               ) : null}
-            </Panel>
-          ))}
-          {nations.length && completed.length === 0 ? (
-            <Panel className="text-zinc-300">
-              No completed actions have been archived for your nation yet.
-            </Panel>
-          ) : null}
-        </div>
+              </Panel>
+            ))}
+            {nations.length && completed.length === 0 ? (
+              <Panel className="text-zinc-300">
+                No completed actions have been archived for your nation yet.
+              </Panel>
+            ) : null}
+          </div>
+        </CompletedActionsToggle>
       </section>
     </PageShell>
   );

@@ -36,6 +36,11 @@ export const primaryNavLinks: SiteDirectoryLink[] = [
     label: "Map",
     detail: "Season 1 world reference map.",
   },
+  {
+    href: "/how-to-use",
+    label: "How To Use",
+    detail: "Role-by-role guide to every page, workflow, and control panel.",
+  },
 ];
 
 export const publicDirectoryGroups: SiteDirectoryGroup[] = [
@@ -48,6 +53,7 @@ export const publicDirectoryGroups: SiteDirectoryGroup[] = [
       primaryNavLinks[2]!,
       primaryNavLinks[3]!,
       primaryNavLinks[4]!,
+      primaryNavLinks[5]!,
     ],
   },
   {
