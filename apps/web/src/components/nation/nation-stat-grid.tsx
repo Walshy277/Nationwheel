@@ -24,7 +24,7 @@ export function NationStatGrid({ nation }: { nation: NationStats }) {
   ] as const;
 
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid gap-3 sm:grid-cols-2">
       <MetricCard
         label="People"
         value={nation.people}

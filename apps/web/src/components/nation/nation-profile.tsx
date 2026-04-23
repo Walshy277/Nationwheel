@@ -11,6 +11,27 @@ import { NationTimeline } from "@/components/nation/nation-timeline";
 import { WikiRenderer } from "@/components/nation/wiki-renderer";
 import { Badge, Panel } from "@/components/ui/shell";
 
+function SummaryStat({
+  label,
+  value,
+}: {
+  label: string;
+  value: string | null | undefined;
+}) {
+  if (!value) return null;
+
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/25 p-3">
+      <span className="block text-[11px] font-bold uppercase tracking-wide text-zinc-500">
+        {label}
+      </span>
+      <strong className="mt-1 block text-sm leading-6 text-zinc-100">
+        {value}
+      </strong>
+    </div>
+  );
+}
+
 export function NationProfile({
   nation,
   wiki,
@@ -27,51 +48,65 @@ export function NationProfile({
   const overview = createNationOverview(nation);
 
   return (
-    <div className="grid gap-6">
-      <Panel className="grid gap-6 lg:grid-cols-[minmax(140px,220px)_minmax(0,1fr)] lg:items-center">
-        {nation.flagImage ? (
-          <div className="relative aspect-[3/2] w-full max-w-[240px] overflow-hidden rounded-lg border border-white/10 bg-black/30 p-2">
-            <Image
-              src={nation.flagImage}
-              alt={`${nation.name} flag`}
-              fill
-              unoptimized
-              sizes="(min-width: 1024px) 220px, 70vw"
-              className="object-contain"
-            />
+    <div className="grid gap-5 sm:gap-6">
+      <Panel className="overflow-hidden p-0">
+        <div className="grid gap-0 lg:grid-cols-[minmax(220px,320px)_minmax(0,1fr)]">
+          <div className="grid place-items-center border-b border-white/10 bg-emerald-900/8 p-5 lg:border-b-0 lg:border-r lg:p-6">
+            {nation.flagImage ? (
+              <div className="relative aspect-[3/2] w-full max-w-[260px] overflow-hidden rounded-lg border border-white/10 bg-black/30 p-2 shadow-inner shadow-black/30">
+                <Image
+                  src={nation.flagImage}
+                  alt={`${nation.name} flag`}
+                  fill
+                  unoptimized
+                  sizes="(min-width: 1024px) 260px, 80vw"
+                  className="object-contain"
+                />
+              </div>
+            ) : (
+              <div className="grid aspect-[3/2] w-full max-w-[260px] place-items-center rounded-lg border border-emerald-300/35 bg-emerald-900/10 text-5xl font-black text-emerald-100">
+                {nation.name.slice(0, 2).toUpperCase()}
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="grid aspect-[3/2] w-full max-w-[240px] place-items-center rounded-lg border border-emerald-300/35 bg-emerald-900/10 text-4xl font-black text-emerald-100">
-            {nation.name.slice(0, 2).toUpperCase()}
+
+          <div className="min-w-0 p-5 sm:p-6">
+            <div className="flex flex-wrap gap-2">
+              <Badge tone="accent">Nation Profile</Badge>
+              <Badge>
+                {nation.leaderName
+                  ? `Leader: ${nation.leaderName}`
+                  : "Leader unassigned"}
+              </Badge>
+              {nation.block ? <Badge>{nation.block}</Badge> : null}
+            </div>
+            <h1 className="mt-4 break-words text-4xl font-black leading-tight text-zinc-50 sm:text-5xl">
+              {nation.name}
+            </h1>
+            <p className="mt-3 max-w-4xl text-base leading-7 text-zinc-300 sm:text-lg sm:leading-8">
+              {nation.government} with a population of {nation.people}.
+            </p>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+              <SummaryStat label="Population" value={nation.people} />
+              <SummaryStat label="Government" value={nation.government} />
+              <SummaryStat label="Economy" value={nation.economy} />
+              <SummaryStat label="Military" value={nation.military} />
+            </div>
+
+            {canViewSecretRecords ? (
+              <Link
+                href={`/nations/${nation.slug}/secret`}
+                className="mt-5 inline-flex rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10"
+              >
+                Private Records
+              </Link>
+            ) : null}
           </div>
-        )}
-        <div className="min-w-0">
-          <div className="mb-3 flex flex-wrap gap-2">
-            <Badge tone="accent">Nation Profile</Badge>
-            <Badge>
-              {nation.leaderName
-                ? `Leader: ${nation.leaderName}`
-                : "Leader unassigned"}
-            </Badge>
-          </div>
-          <h1 className="break-words text-4xl font-black tracking-tight text-zinc-50">
-            {nation.name}
-          </h1>
-          <p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-300">
-            {nation.government} with a size of {nation.people}.
-          </p>
-          {canViewSecretRecords ? (
-            <Link
-              href={`/nations/${nation.slug}/secret`}
-              className="mt-5 inline-flex rounded-lg border border-amber-300/70 px-4 py-2 text-sm font-bold text-amber-100 hover:bg-amber-300/10"
-            >
-              Private Records
-            </Link>
-          ) : null}
         </div>
       </Panel>
 
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_.9fr]">
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">
         <Panel>
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-xl font-bold text-zinc-50">Overview</h2>
@@ -81,7 +116,7 @@ export function NationProfile({
               <Badge>Generated</Badge>
             )}
           </div>
-          <p className="leading-8 text-zinc-300">{overview}</p>
+          <p className="text-base leading-8 text-zinc-300">{overview}</p>
         </Panel>
         <Panel>
           <h2 className="mb-4 text-xl font-bold text-zinc-50">Stats</h2>
@@ -320,17 +355,19 @@ export function NationProfile({
         </Panel>
       ) : null}
 
-      <NationTimeline nation={nation} />
-
-      <Panel>
-        <h2 className="mb-4 text-xl font-bold text-zinc-50">Wiki</h2>
-        <WikiRenderer content={wiki} />
-      </Panel>
-
-      <Panel>
-        <h2 className="mb-4 text-xl font-bold text-zinc-50">Map</h2>
-        <NationMap />
-      </Panel>
+      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(320px,0.75fr)]">
+        <Panel>
+          <h2 className="mb-4 text-xl font-bold text-zinc-50">Wiki</h2>
+          <WikiRenderer content={wiki} />
+        </Panel>
+        <div className="grid content-start gap-5">
+          <NationTimeline nation={nation} />
+          <Panel>
+            <h2 className="mb-4 text-xl font-bold text-zinc-50">Map</h2>
+            <NationMap />
+          </Panel>
+        </div>
+      </div>
     </div>
   );
 }
