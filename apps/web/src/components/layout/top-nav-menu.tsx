@@ -223,7 +223,7 @@ export function TopNavMenu({
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#080907]/95 shadow-lg shadow-black/20 backdrop-blur-xl">
       <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:flex-nowrap lg:gap-5 lg:px-8">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href="/" className="flex min-w-0 items-center gap-3">
           <Image
             src="/assets/nationwheel_logo.jpg"
             alt="Nation Wheel"
@@ -232,7 +232,7 @@ export function TopNavMenu({
             className="h-10 w-10 rounded-lg border border-emerald-300/35 object-cover"
             priority
           />
-          <span className="text-sm font-bold uppercase text-zinc-100">
+          <span className="min-w-0 truncate text-sm font-bold uppercase text-zinc-100">
             Nation Wheel
           </span>
         </Link>
@@ -373,7 +373,7 @@ export function TopNavMenu({
           </div>
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
           <GlobalSearchForm compact />
           <NavIconButton
             href="/search"

@@ -44,7 +44,7 @@ export default async function AdminUsersPage() {
               key={user.id}
               data-control-search-item
               data-search={`${user.name ?? ""} ${user.email ?? ""} ${user.discordId ?? ""} ${user.role} ${user.roles.join(" ")} ${user.leaderOf.map((nation) => nation.name).join(" ")}`}
-              className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_260px_260px_280px]"
+              className="grid gap-4 xl:grid-cols-2 2xl:grid-cols-[minmax(0,1fr)_minmax(190px,230px)_minmax(210px,240px)_minmax(220px,260px)]"
             >
               <div className="min-w-0">
                 <h2 className="break-words text-xl font-bold text-white">
@@ -69,7 +69,7 @@ export default async function AdminUsersPage() {
 
               <form
                 action={updateUserRoleAction.bind(null, user.id)}
-                className="grid content-start gap-2"
+                className="grid min-w-0 content-start gap-2"
               >
                 <label className="text-xs font-bold uppercase tracking-wide text-slate-400">
                   Role
@@ -100,10 +100,10 @@ export default async function AdminUsersPage() {
 
               <form
                 action={updateUserDiscordAction.bind(null, user.id)}
-                className="grid content-start gap-2"
+                className="grid min-w-0 content-start gap-2"
               >
                 <label
-                  className="text-xs font-bold uppercase tracking-wide text-slate-400"
+                  className="break-words text-xs font-bold uppercase tracking-wide text-slate-400"
                   htmlFor={`discord-${user.id}`}
                 >
                   Discord User ID
@@ -115,7 +115,7 @@ export default async function AdminUsersPage() {
                   pattern="\d{17,20}"
                   defaultValue={user.discordId ?? ""}
                   placeholder="1492546030112079892"
-                  className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+                  className="min-w-0 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
                 />
                 <button className="rounded-lg border border-sky-300/70 px-4 py-2 text-sm font-bold text-sky-100">
                   Save Discord
@@ -124,10 +124,10 @@ export default async function AdminUsersPage() {
 
               <form
                 action={assignUserNationAction.bind(null, user.id)}
-                className="grid content-start gap-2"
+                className="grid min-w-0 content-start gap-2"
               >
                 <label
-                  className="text-xs font-bold uppercase tracking-wide text-slate-400"
+                  className="break-words text-xs font-bold uppercase tracking-wide text-slate-400"
                   htmlFor={`nation-${user.id}`}
                 >
                   Link Existing Nation
@@ -136,7 +136,7 @@ export default async function AdminUsersPage() {
                   id={`nation-${user.id}`}
                   name="nationId"
                   defaultValue=""
-                  className="rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
+                  className="min-w-0 rounded-md border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100"
                 >
                   <option value="">Select a nation</option>
                   {nations.map((nation) => (

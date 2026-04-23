@@ -10,7 +10,7 @@ export function NationMap({ className }: { className?: string }) {
         className,
       )}
     >
-      <div className="relative aspect-[1366/768] min-h-[320px]">
+      <div className="relative aspect-[1366/768] min-h-[180px] sm:min-h-[320px]">
         <Image
           src={mapImage}
           alt="Nation Wheel world map"

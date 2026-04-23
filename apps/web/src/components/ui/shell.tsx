@@ -34,7 +34,7 @@ export function Panel({
     <section
       {...props}
       className={cn(
-        "rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-xl shadow-black/22 ring-1 ring-white/[0.06] sm:p-6",
+        "min-w-0 rounded-lg border border-[color:var(--line)] bg-[color:var(--panel)]/96 p-5 shadow-xl shadow-black/22 ring-1 ring-white/[0.06] sm:p-6",
         "max-[420px]:p-4",
         className,
       )}

@@ -77,6 +77,10 @@ function normalizeOptionsForSave(options: WeightedOption[]) {
   return options.map((option) => `${option.label} | ${option.weight}`).join("\n");
 }
 
+function displayLabel(label: string) {
+  return label.length > 28 ? `${label.slice(0, 25)}...` : label;
+}
+
 export function SpinWheel({
   actionId,
   initialOptions,
@@ -174,15 +178,15 @@ export function SpinWheel({
         </button>
       </div>
 
-      <div className="mt-5 grid gap-5 xl:grid-cols-[minmax(0,1fr)_28rem]">
-        <div className="grid gap-3">
+      <div className="mt-5 grid gap-5 2xl:grid-cols-[minmax(0,1fr)_minmax(320px,28rem)]">
+        <div className="grid min-w-0 gap-3 2xl:order-1">
           <label className="grid gap-2 text-sm font-semibold text-zinc-100">
             Prompt
             <input
               value={prompt}
               onChange={(event) => setPrompt(event.target.value)}
               placeholder="What is this spin deciding?"
-              className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50"
+              className="min-h-11 min-w-0 rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50"
             />
           </label>
           <label className="grid gap-2 text-sm font-semibold text-zinc-100">
@@ -191,7 +195,7 @@ export function SpinWheel({
               value={optionsText}
               onChange={(event) => setOptionsText(event.target.value)}
               placeholder={"Success | 5\nPartial success | 3\nFailure | 1"}
-              className="min-h-36 rounded-lg border border-white/10 bg-black/30 p-3 text-sm font-medium text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50"
+              className="min-h-44 min-w-0 resize-y rounded-lg border border-white/10 bg-black/30 p-3 text-sm font-medium leading-6 text-zinc-100 outline-none placeholder:text-zinc-500 focus:border-amber-300/50"
             />
           </label>
           <p className="text-xs leading-5 text-zinc-400">
@@ -225,11 +229,11 @@ export function SpinWheel({
           </form>
         </div>
 
-        <div className="grid content-start gap-4">
-          <div className="relative mx-auto w-full max-w-[28rem] rounded-full bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.18),rgba(0,0,0,0)_66%)] p-4">
-            <div className="pointer-events-none absolute left-1/2 top-2 z-20 h-0 w-0 -translate-x-1/2 border-l-[18px] border-r-[18px] border-t-[34px] border-l-transparent border-r-transparent border-t-amber-100 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]" />
+        <div className="grid min-w-0 content-start gap-4 2xl:order-2">
+          <div className="relative mx-auto w-full max-w-[min(100%,22rem)] rounded-full bg-[radial-gradient(circle_at_center,rgba(251,191,36,0.18),rgba(0,0,0,0)_66%)] p-3 sm:max-w-[26rem] sm:p-4 2xl:max-w-[28rem]">
+            <div className="pointer-events-none absolute left-1/2 top-1 z-20 h-0 w-0 -translate-x-1/2 border-l-[14px] border-r-[14px] border-t-[26px] border-l-transparent border-r-transparent border-t-amber-100 drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)] sm:top-2 sm:border-l-[18px] sm:border-r-[18px] sm:border-t-[34px]" />
             <div
-              className="relative aspect-square overflow-hidden rounded-full border-[8px] border-white/15 bg-black/30 shadow-[0_24px_70px_rgba(0,0,0,0.45)]"
+              className="relative aspect-square overflow-hidden rounded-full border-[6px] border-white/15 bg-black/30 shadow-[0_24px_70px_rgba(0,0,0,0.45)] sm:border-[8px]"
               style={{
                 backgroundImage: gradient || undefined,
                 transform: `rotate(${rotation}deg)`,
@@ -240,14 +244,15 @@ export function SpinWheel({
             >
               {hasEnoughOptions ? (
                 options.map((option, index) => {
-                  const coordinates = polarCoordinate(option.centerAngle, 34);
+                  const coordinates = polarCoordinate(option.centerAngle, 36);
                   return (
                     <div
                       key={`${option.label}-${index}`}
-                      className="absolute max-w-[8rem] -translate-x-1/2 -translate-y-1/2 rounded-md bg-black/28 px-2 py-1 text-center text-[10px] font-black uppercase leading-4 text-white shadow-sm backdrop-blur-[1px]"
+                      title={option.label}
+                      className="absolute max-w-[5.5rem] -translate-x-1/2 -translate-y-1/2 rounded-md bg-black/35 px-1.5 py-1 text-center text-[9px] font-black uppercase leading-3 text-white shadow-sm backdrop-blur-[1px] sm:max-w-[8rem] sm:px-2 sm:text-[10px] sm:leading-4"
                       style={coordinates}
                     >
-                      {option.label}
+                      {displayLabel(option.label)}
                     </div>
                   );
                 })
@@ -256,8 +261,8 @@ export function SpinWheel({
                   Add at least two options to render the wheel.
                 </div>
               )}
-              <div className="absolute left-1/2 top-1/2 z-10 grid h-24 w-24 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-amber-100/30 bg-[#10130f] text-center shadow-xl shadow-black/50">
-                <span className="px-3 text-[10px] font-black uppercase tracking-wide text-amber-100">
+              <div className="absolute left-1/2 top-1/2 z-10 grid h-16 w-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-amber-100/30 bg-[#10130f] text-center shadow-xl shadow-black/50 sm:h-24 sm:w-24">
+                <span className="px-2 text-[8px] font-black uppercase tracking-wide text-amber-100 sm:px-3 sm:text-[10px]">
                   Nation Wheel
                 </span>
               </div>

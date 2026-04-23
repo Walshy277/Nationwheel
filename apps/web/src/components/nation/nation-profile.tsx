@@ -28,7 +28,7 @@ export function NationProfile({
 
   return (
     <div className="grid gap-6">
-      <Panel className="grid gap-6 lg:grid-cols-[minmax(160px,220px)_1fr] lg:items-center">
+      <Panel className="grid gap-6 lg:grid-cols-[minmax(140px,220px)_minmax(0,1fr)] lg:items-center">
         {nation.flagImage ? (
           <div className="relative aspect-[3/2] w-full max-w-[240px] overflow-hidden rounded-lg border border-white/10 bg-black/30 p-2">
             <Image
@@ -45,7 +45,7 @@ export function NationProfile({
             {nation.name.slice(0, 2).toUpperCase()}
           </div>
         )}
-        <div>
+        <div className="min-w-0">
           <div className="mb-3 flex flex-wrap gap-2">
             <Badge tone="accent">Nation Profile</Badge>
             <Badge>
@@ -54,7 +54,7 @@ export function NationProfile({
                 : "Leader unassigned"}
             </Badge>
           </div>
-          <h1 className="text-4xl font-black tracking-tight text-zinc-50">
+          <h1 className="break-words text-4xl font-black tracking-tight text-zinc-50">
             {nation.name}
           </h1>
           <p className="mt-4 max-w-3xl text-lg leading-8 text-zinc-300">

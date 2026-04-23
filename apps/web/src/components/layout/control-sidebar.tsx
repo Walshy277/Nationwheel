@@ -19,8 +19,8 @@ export function ControlLayout({
   children: ReactNode;
 }) {
   return (
-    <main className="mx-auto grid w-full max-w-screen-2xl gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[280px_minmax(0,1fr)] lg:px-8">
-      <aside className="rounded-lg border border-white/10 bg-[color:var(--panel)]/94 p-4 shadow-lg shadow-black/20 lg:sticky lg:top-24 lg:self-start">
+    <main className="mx-auto grid w-full max-w-screen-2xl min-w-0 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[260px_minmax(0,1fr)] lg:px-8 xl:grid-cols-[280px_minmax(0,1fr)]">
+      <aside className="min-w-0 rounded-lg border border-white/10 bg-[color:var(--panel)]/94 p-4 shadow-lg shadow-black/20 lg:sticky lg:top-24 lg:self-start">
         <div className="grid gap-4">
           <div className="grid gap-3 rounded-lg border border-white/10 bg-black/20 p-4">
             <div className="flex flex-wrap items-center gap-2">
@@ -57,15 +57,15 @@ export function ControlLayout({
           </div>
 
           <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
-          <Link
-            href="/dashboard"
-            className="rounded-md border border-emerald-300/35 bg-emerald-900/10 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/15"
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/directory"
-            className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-200 hover:bg-white/5"
+            <Link
+              href="/dashboard"
+              className="rounded-md border border-emerald-300/35 bg-emerald-900/10 px-3 py-2 text-sm font-bold text-emerald-100 hover:bg-emerald-900/15"
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/directory"
+              className="rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm font-bold text-zinc-200 hover:bg-white/5"
             >
               Directory
             </Link>
